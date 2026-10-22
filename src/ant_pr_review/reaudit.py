@@ -40,15 +40,28 @@ def run_reaudit(run: Run, backend: Backend, models: list[str], lang: str,
     sub = Run(run.path(DIR))
     if status(run).get("inputs_sha") != digest and sub.root.exists():
         shutil.rmtree(sub.root)  # another revision: earlier answers do not apply
+    units = plan_units("outbound", m["lenses"], m["jurisdictions"], "quick", posture_of(intake),
+                       roles_of(intake)["identities"])
+    audit_text(run, DIR, text, units, "quick", backend, models, lang, thresholds, say=say)
+    ok = any(r.get("status") == "ok" for r in load_records(sub, "04-reviews").values())
+    return _done(run, {"status": "done" if ok else "failed", "inputs_sha": digest})
+
+
+def audit_text(run: Run, folder: str, text: str, units: list[dict], depth: str, backend: Backend,
+               models: list[str], lang: str, thresholds: dict[str, float], *, say=print) -> dict:
+    """Round 1 of the given units on a text, in its own folder under the run, with a
+    provisional synthesis (the re-audit here; each drafted version, D-0005)."""
+    intake = read_json(run.path("00-intake.json"))
+    m = read_json(run.path("03-matrix.json"))
+    context = read_json(run.path("02-context.json"), default={"status": "skipped"})
+    sub = Run(run.path(folder))
     sub.root.mkdir(parents=True, exist_ok=True)
     write_json(sub.path("00-intake.json"), dict(intake, targets=[{"kind": "text",
                                                                    "value": text}]))
     if not sub.path("01-sources/segments.json").exists():
         run_sources(sub, crawler=None)
     write_json(sub.path("02-context.json"), context)
-    units = plan_units("outbound", m["lenses"], m["jurisdictions"], "quick", posture_of(intake),
-                       roles_of(intake)["identities"])
-    matrix = dict(m, depth="quick", units=units)
+    matrix = dict(m, depth=depth, units=units)
     write_json(sub.path("03-matrix.json"), matrix)
     run_round1(sub, backend, models, lang, say=say)
     syn = synthesize(matrix=matrix, reviews=load_records(sub, "04-reviews"), debates={},
@@ -57,8 +70,7 @@ def run_reaudit(run: Run, backend: Backend, models: list[str], lang: str,
     for o in syn["jurisdictions"].values():
         o["provisional"] = True
     write_json(sub.path("06-synthesis.json"), syn)
-    ok = any(r.get("status") == "ok" for r in load_records(sub, "04-reviews").values())
-    return _done(run, {"status": "done" if ok else "failed", "inputs_sha": digest})
+    return syn
 
 
 def _done(run: Run, st: dict) -> dict:

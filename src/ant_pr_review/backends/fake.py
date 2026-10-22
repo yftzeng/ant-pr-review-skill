@@ -87,6 +87,31 @@ class FakeBackend(Backend):
         return {"findings": [{"summary": "fake news item", "url": "https://example.org/fake-source",
                               "date": "2026-10-01", "relevance": "low"}]}
 
+    def _draft(self, model, ids, paras, bias, prompt, schema):
+        lead = {"who": "we", "what": "a fault", "when": "today", "where": "our service",
+                "why": "under investigation", "how": "replacement"}
+
+        def v(approach, order):
+            parts = {"stance": "We are sorry that the fault affected you.",
+                     "facts": "Today we confirmed a fault in our service.",
+                     "cause": "The cause is still under investigation.",
+                     "measures": "Stop using it; we replace it free from Monday at 10:00."}
+            return {"approach": approach, "title": f"[fake:{model}] Statement",
+                    "paragraphs": [{"text": parts[k], "part": k} for k in order],
+                    "lead_5w1h": lead,
+                    "claims": [{"text": "a fault in our service", "basis": ["C1"],
+                                "class": "public"}]}
+        return {"versions": [v("apology first", ["stance", "facts", "cause", "measures"]),
+                             v("action first", ["measures", "facts", "stance", "cause"])],
+                "blocking_questions": [], "contradictions": []}
+
+    def _draft_review(self, *a):
+        return {"versions": [{"version": "V1", "issues": []},
+                             {"version": "V2", "issues": []}]}
+
+    def _draft_reason(self, *a):
+        return {"reason": "[fake] It ranks first on its verdict and a 90% pass rate."}
+
     def _debate(self, model, ids, paras, bias, prompt, schema):
         targets = re.findall(r'"target": "([^"]+)"', prompt)
         return {"responses": [{"target": t, "position": "corroborate", "evidence": "same",

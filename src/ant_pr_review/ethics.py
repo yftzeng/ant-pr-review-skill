@@ -61,6 +61,10 @@ PERSONA = [
     r"sound(?:s|ing)? like (?:an? )?(?:ordinary|real|regular|independent|genuine|normal) "
     r"(?:user|customer|person|netizen|consumer|fan)",
     r"像(?:普通|真實|真实|一般)(?:網友|网友|用戶|用户|消費者|消费者|路人)",
+    # coordinated posts passed off as spontaneous (D-0005)
+    r"(?:so (?:that )?(?:it|they|this|these|the posts?) |make (?:it|them|this|these|the posts?) )"
+    r"(?:looks?|appears?|seems?|look|appear|seem) (?:organic|grassroots|spontaneous)",
+    r"看起來(?:像是?)?自發", r"看起来(?:像是?)?自发",
 ]
 
 _EV = [re.compile(p, re.I) for p in EVASION]

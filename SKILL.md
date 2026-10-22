@@ -36,13 +36,14 @@ robots.txt, a site-profile block, internal addresses, a login or paywall (also H
 
 - **Interactive (preferred when the user is at the terminal):** tell them to type `! ant-pr-review`. Arrow-key menus then cover:
   - the roster (any vendor, at least 2);
-  - the direction;
-  - targets;
+  - the purpose: audit (default) or drafting;
+  - the direction (audit) or the brief (drafting);
+  - targets (audit) or optional material (drafting);
   - the context card: org, named parties, jurisdictions (default Taiwan), channels, stakeholders, publish date, keywords, embargo;
   - depth (quick or full) and lenses;
   - the context-scan queries;
   - the final decision.
-- **Driven by you:** first ask with AskUserQuestion for the direction (outbound / operation / inbound), our role (standpoint: responsible by default, affected, related; then identities such as responsible:organization, affected:victims, related:partners — astroturf and Chinese party or state organs are never a role; a ruling or opposition party can be), the posture (clarify_apologize, the default / promote / expose / rebut), the means for the plan (white / gray / black, default all), the targets, the jurisdictions, the depth, whether the material is still embargoed, and the named parties. Then run the command below in the background, because a run takes minutes:
+- **Driven by you:** first ask with AskUserQuestion for the purpose (audit content we have, the default, or draft our statement), then for the direction (outbound / operation / inbound), our role (standpoint: responsible by default, affected, related; then identities such as responsible:organization, affected:victims, related:partners — astroturf and Chinese party or state organs are never a role; a ruling or opposition party can be), the posture (clarify_apologize, the default / promote / expose / rebut), the means for the plan (white / gray / black, default all), the targets, the jurisdictions, the depth, whether the material is still embargoed, and the named parties. Then run the command below in the background, because a run takes minutes:
 
   ```
   ant-pr-review new --yes --direction outbound --target <url-or-path-or-text> [--target ...] \
@@ -54,6 +55,7 @@ robots.txt, a site-profile block, internal addresses, a login or paywall (also H
     [--speaker "<who, role>"] [--background "..."] [--locked "<sentence>" ...] [--focus "..."]
   ```
 
+  - **Drafting** (D-0005): write the brief to a `.json` or `.toml` file with the user's answers, never your guesses: `kind` (incident, product, data, conduct, dispute, rumour, announcement, other), `confirmed`, `alleged`, `unknown` (lists of facts; at least one confirmed or alleged), `affected`, `emotion` (anger, fear, grief, confusion, betrayal, disappointment, worry, none), `outcome`, `decision` (publish, revise, delay, respond, monitor, investigate, withdraw, escalate), `prior`, `actions_done`, `actions_in_progress`, `actions_planned`, `approvers`, `tier4` (injury, data_breach, lawsuit, regulator, criminal, minors). Then run `ant-pr-review new --yes --brief <file> [--target <material> ...]` with the other flags above (no `--direction`: drafting is outbound). Material is read only to check facts. An exposé with no confirmed fact pauses before any call.
   - `--embargo` means nothing is searched on the web.
   - `--company-lookup` lets a `--yes` run look up `--tax-id` in Taiwan's registry and search for competitors. Only the tax ID or the name leaves the machine; ask the user first. Under embargo a `--yes` run never looks anything up, even with the flag. Competitors are graded by their sources: only confirmed ones enter the card in a `--yes` run.
   - `--context-scan` lets a `--yes` run search recent news. Only pass it when the user agreed, because the query strings leave the machine.
@@ -69,6 +71,7 @@ Exit codes:
 
 Read the newest `08-report.v<N>.md` in the run folder (printed as `Workspace:`). With several jurisdictions there is also one `08-report.v<N>.<jurisdiction>.md` per jurisdiction. Tell the user:
 - the verdict per jurisdiction, the overall verdict and the strictest jurisdiction;
+- for drafting: each version's approach, verdict, top score and pass rate, the recommended one and its reason, the version that went to the full review, the claim register (anything not public), open questions, contradictions, the tier-4 sign-off, and whether `10-final.md` was written or which placeholders and internal notes block it;
 - the company profile, if any: registry facts with their source and date, the industry, and confirmed competitors apart from leads ("no record found" is not "does not exist");
 - every red line that is confirmed or needs a ruling, per jurisdiction;
 - the top risks by score (L×I), with anchors (e.g. `D1.P03.S2`), including any marked WIDE or SPLIT;

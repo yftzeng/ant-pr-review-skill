@@ -35,6 +35,47 @@ def classify_target(s: str) -> dict:
     return {"kind": "text", "value": s}
 
 
+PURPOSES = ["audit", "drafting"]
+
+
+def ask_purpose(io: IO, t: T) -> str:
+    return radio(io, t, t("intake.purpose"), [(p, t(f"intake.purpose.{p}")) for p in PURPOSES],
+                 default="audit")
+
+
+def purpose_of(intake: dict) -> str:
+    """An intake written before D-0005 is an audit."""
+    return "drafting" if intake.get("purpose") == "drafting" else "audit"
+
+
+def ask_brief(io: IO, t: T) -> dict:
+    """D-0005: the fixed questions of a drafting run."""
+    from .drafting import DECISIONS, EMOTIONS, KINDS, TIER4, check_brief
+    lines = lambda key: (io.say(question(t(key))),
+                         collect_lines(io, t, prompt(""), lambda s: dim("  ✓")))[1]
+    raw = {"kind": radio(io, t, t("brief.kind"), [(k, t(f"brief.kind.{k}")) for k in KINDS],
+                         default=KINDS[0])}
+    while True:
+        for f in ("confirmed", "alleged", "unknown"):
+            raw[f] = lines(f"brief.{f}")
+        if raw["confirmed"] or raw["alleged"]:
+            break
+        io.say(t("brief.need_fact"))
+    raw["affected"] = ask_text(io, t("brief.affected")).strip()
+    raw["emotion"] = radio(io, t, t("brief.emotion"),
+                           [(e, t(f"brief.emotion.{e}")) for e in EMOTIONS], default=EMOTIONS[0])
+    raw["outcome"] = ask_text(io, t("brief.outcome")).strip()
+    raw["decision"] = radio(io, t, t("brief.decision"),
+                            [(d, t(f"brief.decision.{d}")) for d in DECISIONS],
+                            default=DECISIONS[0])
+    for f in ("prior", "actions_done", "actions_in_progress", "actions_planned"):
+        raw[f] = lines(f"brief.{f}")
+    raw["approvers"] = split_list(ask_text(io, t("brief.approvers")))
+    raw["tier4"] = checkbox(io, t, t("brief.tier4"), [(x, t(f"brief.tier4.{x}")) for x in TIER4],
+                            [])
+    return check_brief(raw)
+
+
 def ask_direction(io: IO, t: T) -> str:
     return radio(io, t, t("intake.direction"),
                  [(d, t(f"intake.direction.{d}")) for d in DIRECTIONS], default="outbound")
@@ -126,9 +167,10 @@ def means_of(intake: dict) -> list[str]:
     return list(intake.get("means") or MEANS)
 
 
-def collect_targets(io: IO, t: T) -> list[dict]:
+def collect_targets(io: IO, t: T, *, required: bool = True,
+                    help_key: str = "intake.targets_help") -> list[dict]:
     while True:
-        io.say(question(t("intake.targets_help")))
+        io.say(question(t(help_key)))
         targets: list[dict] = []
         empty_run = 0
         while True:
@@ -151,7 +193,7 @@ def collect_targets(io: IO, t: T) -> list[dict]:
                 continue
             targets.append(tgt)
             io.say(dim(t(f"intake.ack.{tgt['kind']}", n=len(targets))))
-        if targets:
+        if targets or not required:
             return targets
         io.say(t("intake.need_target"))
 
@@ -254,9 +296,19 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
                            posture: str | None = None, means: str | None = None,
                            speaker: str = "", background: str = "",
                            locked: list[str] | None = None, focus: str = "",
-                           roles: list[str] | None = None, tax_id: str = "") -> dict:
+                           roles: list[str] | None = None, tax_id: str = "",
+                           purpose: str = "audit", brief: dict | None = None) -> dict:
     if direction not in DIRECTIONS:
         raise ValueError(f"direction must be one of {DIRECTIONS}")
+    if purpose not in PURPOSES:
+        raise ValueError(f"purpose must be one of {PURPOSES}")
+    if purpose == "drafting":
+        if direction != "outbound":
+            raise ValueError("drafting writes our own statement: the direction is outbound")
+        if brief is None:
+            raise ValueError("drafting needs a brief (--brief <file.json|file.toml>)")
+        from .drafting import check_brief
+        brief = check_brief(brief)
     posture = posture or DEFAULT_POSTURE
     if posture not in POSTURES:
         raise ValueError(f"posture must be one of {POSTURES}")
@@ -264,7 +316,7 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
     bad_means = [m for m in chosen if m not in MEANS]
     if bad_means:
         raise ValueError(f"unknown means {bad_means}; choose from {MEANS}")
-    if not targets:
+    if not targets and purpose == "audit":
         raise ValueError("at least one --target is needed")
     jur = [j for j in split_list(jurisdictions or "")] or list(DEFAULT_JURISDICTIONS)
     bad = [j for j in jur if j not in JURISDICTIONS]
@@ -285,19 +337,32 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
     if organs and any(i.split(":")[1] in POLITICAL_IDENTITIES for i in identities):
         raise ValueError(f"a party identity is not available with jurisdiction(s) {organs}: "
                          "there the ruling party is a party or state organ, never our role")
-    return {"direction": direction,
-            "roles": roles_of({"roles": {"identities": identities}}), "posture": posture,
-            "means": [m for m in MEANS if m in chosen],
-            "targets": [classify_target(x) for x in targets], "card": card, "lang": lang}
+    out = {"direction": direction,
+           "roles": roles_of({"roles": {"identities": identities}}), "posture": posture,
+           "means": [m for m in MEANS if m in chosen],
+           "targets": [classify_target(x) for x in targets], "card": card, "lang": lang,
+           "purpose": purpose}
+    if purpose == "drafting":  # D-0005: the targets are material, read only to check facts
+        out.update(brief=brief, materials=out["targets"], targets=[])
+    return out
 
 
 def run_intake_interactive(io: IO, t: T, lang: str) -> dict:
-    direction = ask_direction(io, t)
+    purpose = ask_purpose(io, t)
+    direction = ask_direction(io, t) if purpose == "audit" else "outbound"
     standpoints = ask_standpoints(io, t)
     identities = ask_identities(io, t, standpoints)
     posture = ask_posture(io, t)
     means = ask_means(io, t)
-    targets = collect_targets(io, t)
+    extra: dict = {"purpose": purpose}
+    if purpose == "drafting":
+        extra = {"purpose": "drafting", "brief": ask_brief(io, t),
+                 "materials": collect_targets(io, t, required=False,
+                                              help_key="brief.materials")}
+        targets: list[dict] = []
+    else:
+        targets = collect_targets(io, t)
     card = ask_card(io, t, direction)
     return {"direction": direction, "roles": roles_of({"roles": {"identities": identities}}),
-            "posture": posture, "means": means, "targets": targets, "card": card, "lang": lang}
+            "posture": posture, "means": means, "targets": targets, "card": card, "lang": lang,
+            **extra}

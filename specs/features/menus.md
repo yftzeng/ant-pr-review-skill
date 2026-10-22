@@ -53,8 +53,8 @@ Feature: menus
   @S-menus-008
   Scenario: a real pseudo-terminal drives the CLI with arrow keys
     Given the CLI running in a pty with a saved config
-    When  Down, Enter is sent at the purpose question
-    Then  the run's intake purpose is "drafting"
+    When  Enter is sent at the purpose question and Down, Enter at the direction question
+    Then  the run's intake purpose is "audit" and its direction is "operation"
 ```
 
 ## Must NOT
@@ -63,3 +63,4 @@ Feature: menus
 ## Revisions
 - 2026-10-22 · +S-menus-001..008 +N-menus-001 · decision: none -- user chose stdlib arrow menus (option B) over adding questionary/prompt_toolkit: keeps zero runtime deps and the in-list custom entry
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5; kept unchanged · decision: D-PR-1
+- 2026-10-22 · ~S-menus-008 the purpose question now comes first (drafting mode); the pty test takes audit and moves down the direction question · decision: D-0005

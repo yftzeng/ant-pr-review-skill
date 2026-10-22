@@ -84,7 +84,17 @@ def ph_profile(run: Run, ctx: Ctx) -> None:
 
 def ph_sources(run: Run, ctx: Ctx) -> None:
     """D-PR-15: the crawler and its fallbacks run inside run_sources; what still fails can
-    be retried, pasted by the user, skipped, or left for later."""
+    be retried, pasted by the user, skipped, or left for later. A drafting run reads its
+    material here, into its own folder: the review reads the chosen version (D-0005)."""
+    intake = read_json(run.path("00-intake.json"))
+    optional = intake.get("purpose") == "drafting"  # material only checks facts
+    if optional:
+        if not intake.get("materials"):
+            return
+        sub = Run(run.path("08-drafts/materials"))
+        sub.root.mkdir(parents=True, exist_ok=True)
+        write_json(sub.path("00-intake.json"), dict(intake, targets=intake["materials"]))
+        run = sub
     crawler = ctx.crawler or make_crawler(ctx.store)
     renderer = ctx.options["renderer"] if "renderer" in ctx.options else default_renderer()
     consent: bool | set[int] = True if ctx.options.get("archive_on_block") else set()
@@ -114,7 +124,7 @@ def ph_sources(run: Run, ctx: Ctx) -> None:
                 ctx.say(ctx.t("sources.blocked_hint"))
             if urls:
                 ctx.say(ctx.t("sources.paste_hint"))
-            if ok_count:
+            if ok_count or optional:
                 return
             raise Stop("no source could be read")
         opts = [("retry", ctx.t("sources.retry"))]
@@ -132,9 +142,9 @@ def ph_sources(run: Run, ctx: Ctx) -> None:
         if act == "paste":
             paste_texts(run, ctx, urls)
             continue
-        if act == "continue" and ok_count:
+        if act == "continue" and (ok_count or optional):
             return
-        if act == "stop" or (act == "continue" and not ok_count):
+        if act == "stop" or act == "continue":
             raise Stop("sources")
 
 
@@ -184,8 +194,11 @@ def ph_context(run: Run, ctx: Ctx) -> None:
     write_json(run.path("02-context.json"), out)
 
 
-def call_estimate(units: list[dict], models: list[str], jurisdictions: list[str]) -> int:
+def call_estimate(units: list[dict], models: list[str], jurisdictions: list[str],
+                  drafting: bool = False) -> int:
     n = len(units) * len(models) * 2              # round 1 + debate
+    if drafting:                                  # D-0005: write, review, reason; 2 audits
+        n += 3 + 2 * len(units) * len(models)
     if len(jurisdictions) > 1:
         n += 2 + len(jurisdictions) * len(models)  # compare + final + discussion
     return n
@@ -211,7 +224,8 @@ def ph_matrix(run: Run, ctx: Ctx) -> None:
         if not units:
             raise Stop("no checklist item applies to these lenses and direction")
         ctx.say(info(t("matrix.summary", units=len(units), models=len(ctx.models),
-                       calls=call_estimate(units, ctx.models, js))))
+                       calls=call_estimate(units, ctx.models, js,
+                                           intake.get("purpose") == "drafting"))))
         for u in units:
             ctx.say(f"    {u['id']:<22} {len(u['items']):>2} items × {len(ctx.models)} models")
         if not ctx.interactive or confirm(ctx.io, t, t("matrix.confirm"), default=True):
@@ -247,6 +261,16 @@ def _handle_failures(run: Run, ctx: Ctx, failed, label: str, retry) -> None:
         if act == "continue":
             return
         raise Stop(label)
+
+
+def ph_draft(run: Run, ctx: Ctx) -> None:
+    from .drafting import run_draft
+    out = run_draft(run, ctx.backend, ctx.models, ctx.lang, ctx.cfg.thresholds, io=ctx.io,
+                    interactive=ctx.interactive, say=ctx.say)
+    if out["status"] == "stopped":
+        raise Stop(out["reason"])
+    if out["status"] == "done":
+        ctx.say(info(ctx.t("draft.done", id=out["chosen"], reason=out["reason"])))
 
 
 def ph_review(run: Run, ctx: Ctx) -> None:
@@ -330,7 +354,7 @@ def ph_decision(run: Run, ctx: Ctx) -> None:
 
 PHASE_FUNCS = {
     "intake": ph_intake, "profile": ph_profile, "sources": ph_sources, "context": ph_context, "matrix": ph_matrix,
-    "review": ph_review, "factcheck": ph_factcheck, "debate": ph_debate,
+    "draft": ph_draft, "review": ph_review, "factcheck": ph_factcheck, "debate": ph_debate,
     "synthesis": ph_synthesis, "jmerge": ph_jmerge, "plans": ph_plans, "reaudit": ph_reaudit,
     "report": ph_report, "decision": ph_decision,
 }

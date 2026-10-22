@@ -23,7 +23,7 @@ ant-pr-review = "ant_pr_review.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-ant_pr_review = ["locales/*.json", "checklists/*.toml", "jurisdictions/*.toml", "parties.toml"]
+ant_pr_review = ["locales/*.json", "checklists/*.toml", "jurisdictions/*.toml", "parties.toml", "examples.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

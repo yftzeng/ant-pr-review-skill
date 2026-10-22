@@ -15,6 +15,7 @@ PHASES = [
     "sources",
     "context",
     "matrix",
+    "draft",
     "review",
     "factcheck",
     "debate",
@@ -34,6 +35,8 @@ PHASE_INPUTS: dict[str, list[str]] = {
     "sources": ["00-intake.json"],
     "context": ["00-intake.json"],
     "matrix": ["00-intake.json"],
+    # D-0005: writes 01-sources (the chosen version) for the review; a no-op for an audit
+    "draft": ["00-intake.json", "02-context.json", "03-matrix.json", "08-drafts/materials"],
     "review": ["03-matrix.json", "01-sources/segments.json", "01-sources/injection-scan.json",
                "02-context.json"],
     "factcheck": ["04-reviews"],

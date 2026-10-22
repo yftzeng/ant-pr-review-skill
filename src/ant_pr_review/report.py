@@ -1,6 +1,7 @@
 """Report: consolidated plus one per jurisdiction, versioned, with a linter."""
 from __future__ import annotations
 
+import json
 import re
 from datetime import datetime
 
@@ -370,6 +371,115 @@ def _fenced(text: str) -> list[str]:
     return [fence + "text", text.replace(fence, "'" * 3).rstrip("\n"), fence]
 
 
+def drafting_lines(t: T, d: dict) -> list[str]:
+    """D-0005: the brief's counts, each version with its numbers and checks, the
+    recommendation with its reason, the claim register and the stage review."""
+    out = []
+    if d.get("decision"):
+        out.append(f"- {t('draft.brief_counts', **d['brief'])} · "
+                   f"{t('draft.decision', d=t('brief.decision.' + d['decision']))}")
+    if d.get("tier4"):
+        out.append(f"- ⚠ {t('draft.tier4', flags=sep(t).join(t('brief.tier4.' + x) for x in d['tier4']))}")
+    for w in d.get("warnings", []):
+        out.append(f"- ⚠ {t('draft.warn.' + w)}")
+    if d.get("contradictions"):
+        out += [f"- {t('draft.contradictions')}"] + [f"  - {safe(c)}" for c in d["contradictions"]]
+    if d.get("open_questions"):
+        out += [f"- {t('draft.open_questions')}"] + [f"  - {safe(q)}" for q in d["open_questions"]]
+    if d.get("status") == "stopped":
+        out.append(f"- ✗ {cell(d.get('reason', ''))}")
+    if d.get("ethics", {}).get("first"):
+        out.append(f"- {t('draft.ethics', n=len(d['ethics']['first']))}")
+    vs = [v for v in d.get("versions", []) if "verdict" in v]
+    if vs:
+        out += ["", f"| {t('draft.version')} | {t('draft.approach')} | {t('report.verdict')} | "
+                f"{t('draft.top')} | {t('report.overall_rate')} | {t('draft.placeholders')} | W | "
+                f"{t('draft.disqualified')} |", "|---|---|---|---:|---|---:|---|---|"]
+        for v in vs:
+            mark = " ★" if v["id"] == d.get("recommended") else ""
+            out.append(f"| {v['id']}{mark} | {safe(v['approach'])} | "
+                       f"{t('verdict.' + v['verdict'])} | {v['top']} | "
+                       f"`{bar(v['passed'], v['applicable'])}` | {len(v['placeholders'])} | "
+                       f"{sep(t).join(sorted({h['id'] for h in v['w']})) or '—'} | "
+                       f"{safe('; '.join(v['disqualified'])) or '—'} |")
+    if d.get("recommended"):
+        by = d["reason_by"] if d["reason_by"] != "code" else t("draft.by_code")
+        out += ["", f"**{t('draft.recommended_line', id=d['recommended'])}** — {safe(d['reason'])} "
+                f"({by})"]
+        if d.get("chosen") and d["chosen"] != d["recommended"]:
+            out.append(f"- {t('draft.chosen_other', id=d['chosen'])}")
+    for v in vs:
+        if v.get("w"):
+            out += ["", f"**{v['id']} · W1-W8**", ""]
+            out += [f"- {h['id']} {t('draft.w.' + h['id'])} {h['where']}: {safe(h['hit'])}"
+                    for h in v["w"]]
+    chosen = next((v for v in vs if v["id"] == d.get("chosen")), None)
+    if chosen and chosen.get("claims"):
+        out += ["", f"**{t('draft.register')} ({chosen['id']})**", "",
+                f"| {t('draft.claim')} | {t('draft.basis')} | {t('draft.class')} |",
+                "|---|---|---|"]
+        out += [f"| {safe(c['text'])} | {', '.join(c['basis']) or '—'} | "
+                f"{t('draft.class.' + c['class'])}"
+                + (f" ({t('draft.downgraded')})" if c.get("downgraded") else "") + " |"
+                for c in chosen["claims"]]
+    st = d.get("stage")
+    if st:
+        out += ["", f"**{t('draft.stage')}** ({st['writer']} → {st['reviewer']})", ""]
+        if st["status"] != "ok":
+            out.append(f"- {t('plans.stage.not_reviewed', stage='D', reason=st['reason'] or st['status'])}")
+        for vid, issues in st.get("issues", {}).items():
+            out += [f"- {vid} · {t('draft.issue.' + i['kind'])}: {safe(i['text'])}"
+                    for i in issues] or [f"- {vid}: {t('report.none')}"]
+    return out
+
+
+def export_final(run: Run) -> dict:
+    """D-0005, N-drafting-001: the ready-to-publish file only from a clean final text. Not
+    clean: a placeholder or internal note; a claim still needing validation; a figure the
+    revision added that neither the chosen version nor the brief has. Whenever no clean
+    export is written, an earlier one is removed."""
+    from .drafting import _norm, deliverable_issues
+    final = run.path("10-final.md")
+    intake = read_json(run.path("00-intake.json"), default={})
+    d = read_json(run.path("08-drafts/summary.json"), default={})
+    if intake.get("purpose") != "drafting" or d.get("status") != "done":
+        final.unlink(missing_ok=True)  # no finished draft, no export
+        return {"applies": False}
+    chosen = f"08-drafts/{d['chosen']}.md"
+    src = "09-plans/A.md" if run.path("09-plans/A.md").exists() else chosen
+    text = run.path(src).read_text(encoding="utf-8")
+    issues = deliverable_issues(text)
+    version = next((v for v in d.get("versions", []) if v.get("id") == d["chosen"]), {})
+    body = _norm(text)
+    issues += [{"kind": "needs_validation", "match": c["text"][:80], "line": 0}
+               for c in version.get("claims", [])
+               if c.get("class") == "needs_validation" and _norm(c["text"]) in body]
+    brief = intake.get("brief", {})
+    known = run.path(chosen).read_text(encoding="utf-8") + json.dumps(brief, ensure_ascii=False)
+    have = set(re.findall(r"\d+(?:[.,:/]\d+)*", known))
+    for n, line in enumerate(text.splitlines(), 1):
+        issues += [{"kind": "new_figure", "match": x, "line": n}
+                   for x in re.findall(r"\d+(?:[.,:/]\d+)*", line) if x not in have]
+    verdict = read_json(run.path("06-synthesis.json"), default={}).get("consolidated", {}) \
+        .get("verdict")
+    if verdict in ("escalate", "no_go"):  # a lawyer first, or not at all
+        issues.insert(0, {"kind": "verdict", "match": verdict, "line": 0})
+    if issues:
+        final.unlink(missing_ok=True)  # not clean: an earlier export goes
+        return {"applies": True, "written": False, "source": src, "issues": issues}
+    write_text_atomic(final, text)
+    return {"applies": True, "written": True, "source": src, "issues": []}
+
+
+def export_lines(t: T, ex: dict) -> list[str]:
+    if ex.get("written"):
+        return [t("draft.exported", path="10-final.md", src=ex["source"])]
+    return [t("draft.blocked", src=ex["source"])] + [
+        f"- {t('draft.issue_kind.' + i['kind'])}"
+        + (f" {t('draft.line', n=i['line'])}" if i["line"] else "") + f": `{cell(i['match'])}`"
+        for i in ex["issues"]]
+
+
 def _plans_sections(t: T, run: Run, scope: str | None) -> list[str]:
     from .reaudit import status as reaudit_status
     out: list[str] = []
@@ -512,8 +622,9 @@ def render(run: Run, syn: dict, *, lang: str, version: int, changelog: list[str]
     label = t("report.consolidated") if scope is None else t("jur." + scope)
     L = [f"# {t('report.title')} — {cell(_title(run))} · {label} (v{version})", ""]
     L.append(f"- {t('report.run')}: `{run.id}`  ·  {datetime.now():%Y-%m-%d %H:%M}")
-    L.append(f"- {t('report.direction')}: {t('intake.direction.' + intake['direction'])}")
-    from .intake import identity_label, means_of, posture_of, roles_of
+    from .intake import identity_label, means_of, posture_of, purpose_of, roles_of
+    L.append(f"- {t('report.direction')}: {t('intake.direction.' + intake['direction'])} · "
+             f"{t('intake.purpose')} {t('intake.purpose.' + purpose_of(intake))}")
     L.append(f"- {t('report.role')}: "
              + sep(t).join(identity_label(t, i) for i in roles_of(intake)["identities"]))
     L.append(f"- {t('report.posture')}: {t('posture.' + posture_of(intake))} · "
@@ -537,6 +648,12 @@ def render(run: Run, syn: dict, *, lang: str, version: int, changelog: list[str]
     prof = read_json(run.path("01-profile.json"), default={})
     if prof.get("status") == "done":
         L += [f"## {t('report.profile')}", ""] + profile_lines(t, prof) + [""]
+    drafts = read_json(run.path("08-drafts/summary.json"), default={})
+    if purpose_of(intake) == "drafting" and drafts:
+        L += [f"## {t('report.drafting')}", ""] + drafting_lines(t, drafts) + [""]
+        ex = export_final(run) if scope is None else {}
+        if ex.get("applies"):
+            L += [f"### {t('report.export')}", ""] + export_lines(t, ex) + [""]
     L += [f"## {t('report.provenance')}", "",
           f"| {t('report.model')} | {t('report.vendor')} | backend | ID | ok | refused | failed |",
           "|---|---|---|---|---:|---:|---:|"]
@@ -657,6 +774,6 @@ def write_report(run: Run, syn: dict, *, lang: str, changelog: list[str] | None 
             "verdicts": {j: o["verdict"] for j, o in syn["jurisdictions"].items()},
             "red_lines": {j: {k: v["status"] for k, v in o["red_lines"].items()}
                           for j, o in syn["jurisdictions"].items()},
-            "risks": len(syn["risks"]), "lint": problems}
+            "risks": len(syn["risks"]), "lint": problems, "final": export_final(run)}
     write_json(run.path(f"08-report.v{version}.json"), meta)
     return meta

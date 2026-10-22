@@ -1,0 +1,85 @@
+# drafting mode (D-0005)
+@@ src/ant_pr_review/drafting.py
+-         if cls == "public" and not (basis and set(basis) <= confirmed):
++         if cls == "public" and not confirmed & set(basis):
+@@ src/ant_pr_review/drafting.py
+-         if item["in_text"] and cls in ("not_supportable", "internal"):
++         if item["in_text"] and cls == "not_supportable":
+@@ src/ant_pr_review/drafting.py
+-     return SequenceMatcher(None, body(a), body(b), autojunk=False).ratio() >= ALIKE
++     return False
+@@ src/ant_pr_review/drafting.py
+-         bool(iv[1]["disqualified"]), VERDICT_ORDER.index(iv[1]["verdict"]), iv[1]["top"],
++         VERDICT_ORDER.index(iv[1]["verdict"]), iv[1]["top"],
+@@ src/ant_pr_review/drafting.py
+-     if reason and _cites(reason, best, versions):
++     if reason:
+@@ src/ant_pr_review/drafting.py
+-     if posture == "expose" and not any(f["status"] == "confirmed" for f in brief["facts"]):
++     if False:
+@@ src/ant_pr_review/drafting.py
+- MAX_QUESTIONS = 3
++ MAX_QUESTIONS = 5
+@@ src/ant_pr_review/drafting.py
+-     if best["disqualified"]:
++     if False:
+@@ src/ant_pr_review/drafting.py
+-     if posture in ("clarify_apologize", "rebut"):
++     if True:
+@@ src/ant_pr_review/drafting.py
+-     if not any(f["status"] in ("confirmed", "alleged") for f in facts):
++     if not facts:
+@@ src/ant_pr_review/drafting.py
+-     if checker == writer:
++     if False:
+@@ src/ant_pr_review/report.py
+-     if issues:
++     if False:
+@@ src/ant_pr_review/report.py
+-         final.unlink(missing_ok=True)  # not clean: an earlier export goes
++         pass
+@@ src/ant_pr_review/intake.py
+-         if direction != "outbound":
++         if False:
+@@ src/ant_pr_review/prompts.py
+-             if tier4 else "")
++             if False else "")
+@@ src/ant_pr_review/ethics.py
+-     r"(?:so (?:that )?(?:it|they|this|these|the posts?) |make (?:it|them|this|these|the posts?) )"
++     r"(?:)"
+@@ src/ant_pr_review/drafting.py
+-     hits = _scan_all({"v": versions, "q": open_q, "c": contradictions})
++     hits = []
+@@ src/ant_pr_review/drafting.py
+-         if not v["applicable"]:  # no reviewer answered: never ranked as clean
++         if False:
+@@ src/ant_pr_review/drafting.py
+-     run.path("10-final.md").unlink(missing_ok=True)  # an earlier export no longer applies
++     pass
+@@ src/ant_pr_review/drafting.py
+-         if q and not ethics.scan_text(q):
++         if q:
+@@ src/ant_pr_review/drafting.py
+- INTERNAL = re.compile(r"\[removed by ethics guard|\b(?:TODO|TBD|FIXME)\b|內部備註|内部备注|僅供內部|仅供内部|[【（(\[]\s*(?:內部|内部|internal|INTERNAL)"
++ INTERNAL = re.compile(r"\b(?:TODO|TBD|FIXME)\b|內部備註|内部备注|僅供內部|仅供内部|[【（(\[]\s*(?:內部|内部|internal|INTERNAL)"
+@@ src/ant_pr_review/drafting.py
+-     if ids != {best["id"]}:
++     if not ids:
+@@ src/ant_pr_review/report.py
+-     if verdict in ("escalate", "no_go"):  # a lawyer first, or not at all
++     if verdict == "no_go":
+@@ src/ant_pr_review/report.py
+-                    for x in re.findall(r"\d+(?:[.,:/]\d+)*", line) if x not in have]
++                    for x in re.findall(r"\d+(?:[.,:/]\d+)*", line) if False]
+@@ src/ant_pr_review/report.py
+-                if c.get("class") == "needs_validation" and _norm(c["text"]) in body]
++                if False]
+@@ src/ant_pr_review/report.py
+-         final.unlink(missing_ok=True)  # no finished draft, no export
++         pass
+@@ src/ant_pr_review/pipeline.py
+-             if ok_count or optional:
++             if ok_count:
+@@ src/ant_pr_review/cli.py
+-         run.path("08-drafts/writer.json").unlink(missing_ok=True)
++         pass

@@ -47,8 +47,8 @@ Licences: #1-6 MIT (root LICENSE at the commit read); #7 none; #8 code MPL-2.0, 
 | Tell affected people what to do now; set the next update time, promise no fix time | checklist SOC-07, JOU-08 |
 | Staff hear it before or with the public | checklist INT-04 |
 | The enemy is a system, never a named competitor | checklist EXP-04 (posture expose) |
-| Facts first: confirmed vs rumour, who is affected, what is public | planned: drafting-mode fixed questions |
-| Tier 4 (breach, injury, lawsuit, regulator): counsel first, holding statement only | planned: drafting mode |
+| Facts first: confirmed vs rumour, who is affected, what is public | drafting brief: confirmed / alleged / unknown, affected (S-drafting-001, 002) |
+| Tier 4 (breach, injury, lawsuit, regulator): counsel first, holding statement only | drafting tier-4 flags (S-drafting-006) |
 | Track every promise; watch for a second wave | planned: report promise tracker |
 
 | Left out | Why |
@@ -72,8 +72,8 @@ Licences: #1-6 MIT (root LICENSE at the commit read); #7 none; #8 code MPL-2.0, 
 
 | Borrowed | Where here |
 |---|---|
-| Inverted pyramid; the lead paragraph stands alone with 5W1H; quotes add insight | planned: drafting-mode structure check and fixed questions |
-| Write the Chinese release natively, not as a translation | planned: drafting-mode language rule |
+| Inverted pyramid; the lead paragraph stands alone with 5W1H; quotes add insight | drafting prompt and W7 (S-drafting-009); quotes: not checked |
+| Write the Chinese release natively, not as a translation | `prompts.draft_system` |
 
 | Left out | Why |
 |---|---|
@@ -149,7 +149,7 @@ Code MPL-2.0, documents CC-BY-SA-4.0: ideas only, paraphrased.
 | Everything a simulation produces is labelled as such | the stakeholder matrix's reaction column is "model-simulated" |
 | AI use is declared, never turned into evidence | checklist REG-05 |
 | Accessible summary | checklist SOC-09 |
-| Critical errors cannot be averaged away; each route records evidence, uncertainty, alternatives, reason, approval | planned: drafting mode |
+| Critical errors cannot be averaged away; each route records evidence, uncertainty, alternatives, reason, approval | drafting: disqualification ranks first, the reason cites the numbers (S-drafting-007, 011) |
 | Source registry: URL, access date, locator, review status | planned: company profile lookup |
 
 | Left out | Why |
@@ -167,7 +167,7 @@ No licence file (the README says MIT): ideas only.
 | Sample invalid statement: "pure rumour, we reserve the right to sue" | checklist JOU-11 (counter-example) |
 | Plain words, no jargon | checklist SOC-09 |
 | Kuaishou and WeChat Channels | `jurisdictions/cn.toml` platforms |
-| Four parts: facts, stance, preliminary cause, measures; accident vs fault | planned: drafting-mode structure |
+| Four parts: facts, stance, preliminary cause, measures; accident vs fault | drafting parts and W3 (S-drafting-009) |
 
 | Left out | Why |
 |---|---|
@@ -186,7 +186,7 @@ MIT, but the concept is from a paid column: ideas only.
 | Harm × spread sets response intensity; low spread is no excuse when we bear responsibility | checklist RSP-05 |
 | No early scapegoat (temp worker, franchisee, supplier, hacked account) | checklist JOU-06 |
 | Protect people before repairing reputation | `timeline.build` harm-first rule (S-plans-031) |
-| Flag contradictions in the answers; list open unknowns before advising | planned: drafting-mode fixed questions |
+| Flag contradictions in the answers; list open unknowns before advising | drafting: contradictions and open questions in the report (S-drafting-005) |
 | Evidence grades A/B/C; at least one A or two independent B sources | planned: company profile lookup |
 
 | Left out | Why |
@@ -206,7 +206,7 @@ MIT.
 | A staff memo forbidding comment even on personal accounts (a counter-example) | checklist INT-05 |
 | File with the exchange or regulator before the media; an embargo binds only those who agreed | `timeline.build` disclosure-first rule (S-plans-032); timeline prompt |
 | Ghostwritten bylines as a disclosure question | checklist LEG-03 |
-| Holding statement, hostile FAQ with "we don't know yet", spokesperson landmines | planned: drafting-mode artefacts |
+| Holding statement, hostile FAQ with "we don't know yet", spokesperson landmines | tier-4 holding statements (S-drafting-006) and the plan C kit; spokesperson landmines: planned |
 
 | Left out | Why |
 |---|---|
@@ -223,7 +223,7 @@ MIT. A rewriting skill aimed at "降低機械感" (less machine-like); only read
 |---|---|
 | No quote without an authorised source; never simulate an executive speaking | checklist INT-03 (a named person's first person) |
 | The headline goes only as far as the facts; a caveat lower down does not save it | checklist JOU-12 |
-| Main clause first, verbs not nominalisations, one name per thing, the remove-the-brand test, adjectives become evidence; writing for the ear | planned: drafting-mode writing checks |
+| Main clause first, verbs not nominalisations, one name per thing, the remove-the-brand test, adjectives become evidence; writing for the ear | drafting prompt; W6 nominalisation, W8 unsupported superlatives (S-drafting-009); one name per thing, the remove-the-brand test and writing for the ear: not checked |
 
 | Left out | Why |
 |---|---|
@@ -240,7 +240,7 @@ MIT.
 | Never claim or guess that a text is AI-generated; no "AI probability" | checklist THR-05 |
 | Protected details (names, dates, amounts, scope, quotes) checked after an edit | `plans.protected_changes`: plan A's removed and added numbers, amounts and quotes are disclosed (S-plans-034) |
 | Reverse check after a rewrite: facts unchanged, views not strengthened | the re-audit (S-plans-019) and the warning above |
-| Evidence labels: confirmed, sourced but unchecked, judgement, assumption, gap | planned: drafting-mode claim register |
+| Evidence labels: confirmed, sourced but unchecked, judgement, assumption, gap | drafting claim register (S-drafting-007) |
 
 | Left out | Why |
 |---|---|
@@ -272,8 +272,8 @@ MIT.
 | Can the organisation honour the message; change the action before the words | checklist INT-06 |
 | Option ladder: none, monitor, internal correction, targeted, public; commitment and reversibility of each | checklist RSP-01 |
 | Editorial choices, possible effect and intent kept apart; timing or tone does not prove paid placement | checklist THR-05 |
-| "Decision required" (publish, revise, delay, respond, monitor, investigate, withdraw, escalate) | planned: drafting-mode fixed questions |
-| Claims: safe to say publicly, internal only, not supportable, needs validation | planned: drafting-mode claim register |
+| "Decision required" (publish, revise, delay, respond, monitor, investigate, withdraw, escalate) | drafting brief `decision` |
+| Claims: safe to say publicly, internal only, not supportable, needs validation | drafting claim register, enforced in code (S-drafting-007) |
 | Pre-launch sort: change the action, prepare the answer, monitor | planned: report risk grouping |
 
 | Left out | Why |
@@ -304,7 +304,7 @@ MIT.
 | An official page proves a claim, not a market position; a search result or AI summary is a lead | planned: company profile lookup (source labels) |
 | "Not found" is not "does not exist" | planned: company profile lookup (scoped absence) |
 | Five competitor roles: direct, indirect, workaround, inaction, mental benchmark | planned: company profile lookup |
-| Different slogans are not different strategies; at most three blocking questions | planned: drafting mode |
+| Different slogans are not different strategies; at most three blocking questions | drafting: near-duplicates retried then dropped, three questions (S-drafting-004, 005) |
 
 | Left out | Why |
 |---|---|
@@ -335,7 +335,7 @@ MIT. Only risk assessment is borrowed; nothing that writes political persuasion.
 | A legislator's immunity (Constitution art. 73) does not cover those who repeat the accusation | checklist LEG-13; `tw.toml` law |
 | Swap the parties' names to test a sentence's fairness; loaded labels and unequal verbs | checklist POL-04 (detection only) |
 | Anti-Infiltration Act and Political Donations Act | `tw.toml` laws (unverified) |
-| A figure carries its period, scope and source | planned: drafting-mode claim register |
+| A figure carries its period, scope and source | drafting: every claim names its basis; period and scope: not checked |
 
 | Left out | Why |
 |---|---|
@@ -354,8 +354,8 @@ MIT.
 | Put an accusation to its target, and say so when there is no answer | checklist EXP-05 |
 | Minors, sexual-violence victims and suicide: no identifying details; WHO guidance | checklist LEG-12; `tw.toml` law |
 | Presumption of innocence; investigation secrecy (偵查不公開) | checklist LEG-13; `tw.toml` law (Code of Criminal Procedure art. 245) |
-| No unsourced facts: a gap stays a "[to verify]" placeholder | planned: drafting mode (export blocked while placeholders remain) |
-| Stop and ask on contradictions, a single source for an accusation, sensitive subjects | planned: drafting-mode fixed questions |
+| No unsourced facts: a gap stays a "[to verify]" placeholder | drafting export gate (S-drafting-008) |
+| Stop and ask on contradictions, a single source for an accusation, sensitive subjects | drafting: an exposé without a confirmed fact stops; blocking questions; tier-4 flags (S-drafting-003, 005, 006) |
 
 | Left out | Why |
 |---|---|
@@ -389,11 +389,11 @@ MIT.
 
 | Borrowed | Where here |
 |---|---|
-| A proposed pause is not written as a done pause | checklist JOU-14; planned: drafting-mode claim register (action status) |
+| A proposed pause is not written as a done pause | checklist JOU-14; drafting brief actions with status, the draft review's status_overstated |
 | No unbounded compensation; say what continues as normal; suppliers are no scapegoat | checklist INT-07 |
 | Answering an expectation gap with a definition ("complies with regulations") | checklist SOC-11 |
-| Open with the affected people's strongest emotion | planned: drafting-mode fixed question |
-| Strip placeholders and internal notes from the deliverable | planned: report check on plan A and the C kit |
+| Open with the affected people's strongest emotion | drafting brief `emotion`, `prompts.draft_system` |
+| Strip placeholders and internal notes from the deliverable | drafting export gate on the final text (S-drafting-008); the C kit: planned |
 
 | Left out | Why |
 |---|---|
@@ -415,7 +415,7 @@ MIT.
 | An implied culprit through arranged facts; people before the product when someone was hurt | checklist JOU-06, SOC-07 (amended) |
 | A speaker's own stake is declared | checklist LEG-03 (amended) |
 | A disclaimer limited to communication risk that does not cleanse black tactics | `report.disclaimer` (S-review-matrix-030) |
-| Dated, attributed case patterns and counter-patterns with short quotes | planned: drafting-mode examples file |
+| Dated, attributed case patterns and counter-patterns with short quotes | `examples.toml` (S-drafting-015): organisations only, unverified |
 
 | Left out | Why |
 |---|---|

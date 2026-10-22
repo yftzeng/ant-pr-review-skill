@@ -38,6 +38,10 @@ def build_parser() -> argparse.ArgumentParser:
     sub = p.add_subparsers(dest="cmd")
 
     n = sub.add_parser("new", parents=[common], help="start a new run (default command)")
+    n.add_argument("--purpose", choices=["audit", "drafting"], default="audit",
+                   help="audit content we have (default) or draft our statement from --brief")
+    n.add_argument("--brief", help="drafting: the brief as a .json or .toml file (D-0005); "
+                                   "--target is then material read only to check facts")
     n.add_argument("--direction", choices=DIRECTIONS)
     n.add_argument("--role", action="append", default=[],
                    help="our identity <standpoint>:<party>, e.g. responsible:organization, "
@@ -156,7 +160,10 @@ def make_feed_crawler(store: Store):
 def split_feeds(io: IO, t: T, intake: dict, store: Store, *, interactive: bool,
                 limit: int | None) -> list[dict]:
     """Turn each RSS/Atom URL into chosen articles; every article becomes its own intake.
-    Non-feed targets stay together in one intake, as before."""
+    Non-feed targets stay together in one intake, as before. A drafting run has no
+    targets: its material stays with its one brief (D-0005)."""
+    if intake.get("purpose") == "drafting":
+        return [intake]
     from .sources.crawler import FetchError
     from .sources.feeds import FEED_TYPES, parse_feed
     crawler = make_feed_crawler(store)
@@ -275,8 +282,15 @@ def cmd_new(args, io: IO, store: Store, cfg: Config) -> int:
             break
     ctx = make_ctx(args, io, store, cfg)
     io.say(banner(ctx.t, ctx.models))
-    if args.target or args.yes:
+    if args.target or args.yes or args.brief:
         try:
+            brief = None
+            if args.brief:
+                from .drafting import load_brief
+                try:
+                    brief = load_brief(args.brief)
+                except (OSError, ValueError) as e:  # JSON and TOML errors are ValueErrors
+                    raise ValueError(f"cannot read --brief {args.brief}: {e}") from e
             intake = build_intake_from_args(
                 args.direction or "outbound", args.target, lang=ctx.lang,
                 jurisdictions=args.jurisdictions, org=args.org, parties=args.party,
@@ -284,7 +298,9 @@ def cmd_new(args, io: IO, store: Store, cfg: Config) -> int:
                 publish_at=args.publish_at, keywords=args.keywords, embargo=args.embargo,
                 posture=args.posture, means=args.means, speaker=args.speaker,
                 background=args.background, locked=args.locked, focus=args.focus,
-                roles=args.role or None, tax_id=args.tax_id)
+                roles=args.role or None, tax_id=args.tax_id,
+                purpose="drafting" if args.brief and args.purpose == "audit" else args.purpose,
+                brief=brief)
         except ValueError as e:
             io.say(f"error: {e}")
             return EXIT_USAGE
@@ -295,8 +311,11 @@ def cmd_new(args, io: IO, store: Store, cfg: Config) -> int:
                           limit=args.feed_limit)
     runs = []
     for it in intakes:
-        first = it["targets"][0]
-        slug = first.get("title") or slug_for(first["value"])
+        if it.get("purpose") == "drafting":  # no target: named after the first fact
+            slug = "draft-" + slug_for(it["brief"]["facts"][0]["text"])
+        else:
+            first = it["targets"][0]
+            slug = first.get("title") or slug_for(first["value"])
         run = create_run(store.runs_dir, slug, models=ctx.models, backend=ctx.backend.name,
                          lang=ctx.lang)
         io.say(ctx.t("run.created", path=str(run.root)))
@@ -328,6 +347,8 @@ def cmd_rerun(args, io, store, cfg) -> int:
                           ("jmerge", "07-jmerge")):
         if order <= PHASES.index(phase) and run.path(folder).exists():
             shutil.rmtree(run.path(folder))
+    if order <= PHASES.index("draft"):  # D-0005: write afresh, never replay the cache
+        run.path("08-drafts/writer.json").unlink(missing_ok=True)
     return cmd_resume(args, io, store, cfg)
 
 
@@ -421,7 +442,8 @@ def summary_rows(store: Store) -> list[dict]:
     rows = []
     for r in list_runs(store.runs_dir):
         intake = read_json(r.path("00-intake.json"), default={})
-        first = (intake.get("targets") or [{}])[0]
+        facts = (intake.get("brief") or {}).get("facts") or [{}]
+        first = (intake.get("targets") or [{"value": facts[0].get("text", "")}])[0]
         title = first.get("title") or (first.get("value", "").strip().splitlines() or [""])[0]
         title = title.lstrip("# ").strip()[:60]
         v = latest_version(r)

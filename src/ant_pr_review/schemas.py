@@ -230,3 +230,28 @@ CONTEXT_SEARCH = obj({
     "findings": arr(obj({"summary": STR, "url": STR, "date": STR,
                          "relevance": enum(["high", "medium", "low"])})),
 })
+
+# D-0005: drafting. Two versions with their parts, the lead's 5W1H and the claim register.
+DRAFT = obj({
+    "versions": arr(obj({
+        "approach": STR, "title": STR,
+        "paragraphs": arr(obj({"text": STR,
+                               "part": enum(["stance", "facts", "cause", "measures", "other"])})),
+        "lead_5w1h": obj({"who": STR, "what": STR, "when": STR, "where": STR, "why": STR,
+                          "how": STR}),
+        "claims": arr(obj({"text": STR, "basis": arr(STR),
+                           "class": enum(["public", "internal", "not_supportable",
+                                          "needs_validation"])})),
+    })),
+    "blocking_questions": arr(STR),
+    "contradictions": arr(STR),
+})
+
+DRAFT_REVIEW = obj({
+    "versions": arr(obj({"version": STR, "issues": arr(obj({
+        "kind": enum(["unsupported_fact", "contradiction", "missing_part", "status_overstated",
+                      "tone", "other"]),
+        "text": STR}))})),
+})
+
+DRAFT_REASON = obj({"reason": STR})

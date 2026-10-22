@@ -50,7 +50,7 @@ def test_changed_input_marks_downstream_stale(tmp_path):
     newly = run.refresh()
     assert run.status("context") == "done" and run.status("matrix") == "done"
     assert run.status("review") == "stale" and run.status("factcheck") == "stale"
-    assert newly[:2] == ["review", "factcheck"]
+    assert newly[:3] == ["draft", "review", "factcheck"]  # draft reads the matrix (D-0005)
 
 
 # @S-run-workspace-004
