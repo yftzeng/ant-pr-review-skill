@@ -612,5 +612,18 @@
   "draft.issue_kind.needs_validation": "需驗證的說法",
   "draft.issue_kind.new_figure": "版本與問答中都沒有的數字",
   "draft.not_audited": "沒有任何審查模型回答",
-  "draft.issue_kind.verdict": "判定"
+  "draft.issue_kind.verdict": "判定",
+  "brief.characterised": "原因與範圍是否已確認，足以為事件定性？",
+  "brief.characterised.no": "還沒有：只寫等候聲明",
+  "brief.characterised.yes": "是：寫正式說明",
+  "brief.cannot_commit": "聲明不可承認或承諾的事：短關鍵詞，例如「召回」（以文字比對，不是法律判斷；繁體與簡體寫法請各列一次），一行一則（/done）：",
+  "draft.holding": "事實尚不足以定性：只寫等候聲明（已確認的事實、正在做的事、下次更新時間）。",
+  "draft.bounds": "{id} 含有不可承諾的內容",
+  "draft.issue_kind.cannot_commit": "不可承諾的內容",
+  "draft.issue.early_conclusion": "結論快於事實",
+  "draft.issue.commitment_crossed": "越過不可承諾的界線",
+  "draft.w.W9": "模糊數量沒有給數字",
+  "brief.cannot_commit.short": "太短，無法安全比對（{lines}）：請給至少兩個中文字或三個字母的關鍵詞。",
+  "draft.bounds_short": "含不可承諾內容",
+  "decide.final_issues": "已依你的選擇寫出 final.md，但有 {n} 項會讓它不能直接發布："
 }

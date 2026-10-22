@@ -445,7 +445,7 @@ A brand professional's personal commentary on one automotive crisis, with the br
 | Two PR systems behind one co-owned brand; a cited test that nobody stands behind | checklist JOU-18 |
 | Executives' defiant asides after an investigation is announced | checklist STK-01 (amended) |
 | The same-day statement and the disowned test report | `examples.toml` EX-16, EX-17 (organisations not named, unverified) |
-| Crisis grades I–IV, "the higher grade wins", red lines escalate at once, regrading on a schedule; "are the facts enough to characterise it?" sends a holding statement | planned: an event grade in the report; a holding-only gate and a "cannot commit" field in the drafting brief |
+| Crisis grades I–IV, "the higher grade wins", red lines escalate at once, regrading on a schedule; "are the facts enough to characterise it?" sends a holding statement | drafting: the brief asks `characterised` (holding statements only until it is) and `cannot_commit`, matched in code and blocking the export (S-drafting-017..019); W9 vague quantities; fast actions, slow conclusions in the writer and reviewer prompts (S-drafting-020..021). Planned: an event grade in the report |
 | The issue-attention cycle; silence after the statement and evidence while the work goes on | planned: the timeline trigger kinds |
 
 | Left out | Why |

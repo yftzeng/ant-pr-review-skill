@@ -408,8 +408,12 @@ def kit_system(lang: str) -> str:
 
 
 def plan_prompt(risks: list[dict], article: str, intake: dict) -> str:
+    bounds = (intake.get("brief") or {}).get("cannot_commit") or [] \
+        if intake.get("purpose") == "drafting" else []
+    keep_out = (f"Lines we must not concede or promise (keep them out of every revision): "
+                f"{neutralize(json.dumps(bounds, ensure_ascii=False))}\n" if bounds else "")
     return f"""Direction: {intake['direction']}
-{role_block(intake)}
+{keep_out}{role_block(intake)}
 Context card: {card_block(intake)}
 Risks to address (from the panel):
 {neutralize(json.dumps(risks, ensure_ascii=False))}
@@ -528,7 +532,7 @@ def context_prompt(query: str) -> str:
 
 # ---- drafting (D-0005) --------------------------------------------------------------
 
-def draft_system(lang: str, intake: dict, *, tier4: bool) -> str:
+def draft_system(lang: str, intake: dict, *, tier4: bool, holding: bool = False) -> str:
     from .catalog import POSTURE_TEXT
     from .intake import posture_of
     p = posture_of(intake)
@@ -536,7 +540,11 @@ def draft_system(lang: str, intake: dict, *, tier4: bool) -> str:
              "statements only - what is confirmed, what we are doing now, what affected people "
              "should do, and when the next update comes; no cause, no blame, no promise beyond "
              "the actions given; counsel and the approvers sign off before publication.\n"
-             if tier4 else "")
+             if tier4 else
+             "The facts do not yet characterise the event (cause and scope unconfirmed): write "
+             "holding statements only - what is confirmed, what we are doing now and when, what "
+             "affected people should do, and when the next update comes; the cause is 'under "
+             "investigation'.\n" if holding else "")
     return (f"You draft our public statement, in posture {p} ({POSTURE_TEXT[p]}). Write two "
             "versions that differ in approach (for example apology first vs action first, or "
             "short vs complete), not in wording; name each approach.\n" + shape +
@@ -548,7 +556,13 @@ def draft_system(lang: str, intake: dict, *, tier4: bool) -> str:
             "under investigation'), measures (owner, date, what affected people should do, "
             "the next update time). Write natively in the language, not as a translation; "
             "main clauses first, verbs not nominalisations, one name per thing, no "
-            "superlatives without evidence, no vague time ('as soon as possible').\n"
+            "superlatives without evidence, no vague time ('as soon as possible'), no vague "
+            "quantity ('isolated', 'some units') without its number.\n"
+            "Fast actions, slow conclusions: lead with what we are doing and when; state a "
+            "cause, a scope or 'no defect' only where a confirmed fact supports it; a fix, "
+            "upgrade or inspection offered beside a denial says what the fix is for and what "
+            "is still being checked. Never concede or promise a line in the brief's "
+            "cannot_commit list.\n"
             "Facts: use only the brief's facts and the material. A confirmed fact may be "
             "stated; an alleged or unknown one is never stated as true - say what is being "
             "checked, or leave the placeholder [待查證] (in English [to verify]) where a fact "
@@ -590,7 +604,10 @@ def draft_review_system(lang: str) -> str:
             "version list issues: unsupported_fact (a fact not in the brief, or an alleged or "
             "unknown one stated as true), contradiction (with the brief or an earlier "
             "statement), missing_part, status_overstated (a planned or ongoing action written "
-            "as done), tone, other. Say nothing you cannot point to in the text.\n\n"
+            "as done), early_conclusion (a cause, scope or 'no defect' stated before the "
+            "confirmed facts support it, or a fix offered beside a denial without saying what "
+            "it is for), commitment_crossed (a line in the brief's cannot_commit list conceded "
+            "or promised), tone, other. Say nothing you cannot point to in the text.\n\n"
             + SHARED_RULES.format(lang_name=_lang(lang)) + "\n" + ETHICS_RULES)
 
 

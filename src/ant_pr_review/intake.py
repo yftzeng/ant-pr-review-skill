@@ -71,6 +71,16 @@ def ask_brief(io: IO, t: T) -> dict:
     for f in ("prior", "actions_done", "actions_in_progress", "actions_planned"):
         raw[f] = lines(f"brief.{f}")
     raw["approvers"] = split_list(ask_text(io, t("brief.approvers")))
+    raw["characterised"] = radio(io, t, t("brief.characterised"),
+                                 [("no", t("brief.characterised.no")),
+                                  ("yes", t("brief.characterised.yes"))], default="no") == "yes"
+    from .drafting import short_bound
+    while True:
+        raw["cannot_commit"] = lines("brief.cannot_commit")
+        short = [x for x in raw["cannot_commit"] if short_bound(x)]
+        if not short:
+            break
+        io.say(t("brief.cannot_commit.short", lines="、".join(short)))
     raw["tier4"] = checkbox(io, t, t("brief.tier4"), [(x, t(f"brief.tier4.{x}")) for x in TIER4],
                             [])
     return check_brief(raw)

@@ -612,5 +612,18 @@
   "draft.issue_kind.needs_validation": "需验证的说法",
   "draft.issue_kind.new_figure": "版本与问答中都没有的数字",
   "draft.not_audited": "没有任何审查模型回答",
-  "draft.issue_kind.verdict": "判定"
+  "draft.issue_kind.verdict": "判定",
+  "brief.characterised": "原因与范围是否已确认，足以为事件定性？",
+  "brief.characterised.no": "还没有：只写等候声明",
+  "brief.characterised.yes": "是：写正式说明",
+  "brief.cannot_commit": "声明不可承认或承诺的事：短关键词，例如“召回”（以文字比对，不是法律判断；繁体与简体写法请各列一次），一行一则（/done）：",
+  "draft.holding": "事实尚不足以定性：只写等候声明（已确认的事实、正在做的事、下次更新时间）。",
+  "draft.bounds": "{id} 含有不可承诺的内容",
+  "draft.issue_kind.cannot_commit": "不可承诺的内容",
+  "draft.issue.early_conclusion": "结论快于事实",
+  "draft.issue.commitment_crossed": "越过不可承诺的界线",
+  "draft.w.W9": "模糊数量没有给数字",
+  "brief.cannot_commit.short": "太短，无法安全比对（{lines}）：请给至少两个中文字或三个字母的关键词。",
+  "draft.bounds_short": "含不可承诺内容",
+  "decide.final_issues": "已按你的选择写出 final.md，但有 {n} 项会让它不能直接发布："
 }

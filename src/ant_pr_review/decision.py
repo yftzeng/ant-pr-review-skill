@@ -61,6 +61,18 @@ def write_final(run: Run, choice: str, manual_path: str | None = None) -> str:
     return str(final)
 
 
+def final_issues_for(run: Run) -> list[dict]:
+    """S-drafting-022: a drafting run's final.md gets the export checks; the user's choice
+    stands, the issues are recorded and shown."""
+    from .report import final_issues
+    intake = read_json(run.path("00-intake.json"), default={})
+    d = read_json(run.path("08-drafts/summary.json"), default={})
+    final = run.path("final.md")
+    if intake.get("purpose") != "drafting" or d.get("status") != "done" or not final.exists():
+        return []
+    return final_issues(run, intake, d, final.read_text(encoding="utf-8"))
+
+
 def record_decision(run: Run, *, choice: str, rulings: dict[str, str], final_path: str | None,
                     brand: str) -> dict:
     prev = read_json(run.path("10-decision.json"), default={})
@@ -171,6 +183,14 @@ def run_decision(io: IO | None, run: Run, store: Store, *, models: list[str], la
     final = write_final(run, choice, manual_path)
     dec = record_decision(run, choice=choice, rulings=given, final_path=final or None,
                           brand=brand)
+    issues = final_issues_for(run) if final else []
+    if issues:
+        dec["issues"] = issues
+        write_json(run.path("10-decision.json"), dec)
+        if io is not None:
+            io.say(t("decide.final_issues", n=len(issues)))
+            io.say("\n".join(f"  - {t('draft.issue_kind.' + i['kind'])}: {i['match']}"
+                             for i in issues))
     if io is not None and choice != "hold":
         dec["style_rules"] = propose_style_rules(io, t, store, run, brand, min_repeats)
         write_json(run.path("10-decision.json"), dec)

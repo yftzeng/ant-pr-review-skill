@@ -380,6 +380,8 @@ def drafting_lines(t: T, d: dict) -> list[str]:
                    f"{t('draft.decision', d=t('brief.decision.' + d['decision']))}")
     if d.get("tier4"):
         out.append(f"- ⚠ {t('draft.tier4', flags=sep(t).join(t('brief.tier4.' + x) for x in d['tier4']))}")
+    if d.get("holding") and not d.get("tier4"):
+        out.append(f"- ⚠ {t('draft.holding')}")
     for w in d.get("warnings", []):
         out.append(f"- ⚠ {t('draft.warn.' + w)}")
     if d.get("contradictions"):
@@ -402,6 +404,11 @@ def drafting_lines(t: T, d: dict) -> list[str]:
                        f"`{bar(v['passed'], v['applicable'])}` | {len(v['placeholders'])} | "
                        f"{sep(t).join(sorted({h['id'] for h in v['w']})) or '—'} | "
                        f"{safe('; '.join(v['disqualified'])) or '—'} |")
+    hit = [v for v in vs if v.get("bounds")]
+    if hit:
+        out.append("")
+        out += [f"- ⚠ {t('draft.bounds', id=v['id'])}: "
+                + sep(t).join(f"`{cell(b)}`" for b in v["bounds"]) for v in hit]
     if d.get("recommended"):
         by = d["reason_by"] if d["reason_by"] != "code" else t("draft.by_code")
         out += ["", f"**{t('draft.recommended_line', id=d['recommended'])}** — {safe(d['reason'])} "
@@ -410,7 +417,7 @@ def drafting_lines(t: T, d: dict) -> list[str]:
             out.append(f"- {t('draft.chosen_other', id=d['chosen'])}")
     for v in vs:
         if v.get("w"):
-            out += ["", f"**{v['id']} · W1-W8**", ""]
+            out += ["", f"**{v['id']} · W1-W9**", ""]
             out += [f"- {h['id']} {t('draft.w.' + h['id'])} {h['where']}: {safe(h['hit'])}"
                     for h in v["w"]]
     chosen = next((v for v in vs if v["id"] == d.get("chosen")), None)
@@ -438,7 +445,6 @@ def export_final(run: Run) -> dict:
     clean: a placeholder or internal note; a claim still needing validation; a figure the
     revision added that neither the chosen version nor the brief has. Whenever no clean
     export is written, an earlier one is removed."""
-    from .drafting import _norm, deliverable_issues
     final = run.path("10-final.md")
     intake = read_json(run.path("00-intake.json"), default={})
     d = read_json(run.path("08-drafts/summary.json"), default={})
@@ -448,6 +454,19 @@ def export_final(run: Run) -> dict:
     chosen = f"08-drafts/{d['chosen']}.md"
     src = "09-plans/A.md" if run.path("09-plans/A.md").exists() else chosen
     text = run.path(src).read_text(encoding="utf-8")
+    issues = final_issues(run, intake, d, text)
+    if issues:
+        final.unlink(missing_ok=True)  # not clean: an earlier export goes
+        return {"applies": True, "written": False, "source": src, "issues": issues}
+    write_text_atomic(final, text)
+    return {"applies": True, "written": True, "source": src, "issues": []}
+
+
+def final_issues(run: Run, intake: dict, d: dict, text: str) -> list[dict]:
+    """What keeps a drafting run's final text from being ready to publish (export_final,
+    and decide's final.md, S-drafting-022)."""
+    from .drafting import _norm, bound_hits, deliverable_issues
+    chosen = f"08-drafts/{d['chosen']}.md"
     issues = deliverable_issues(text)
     version = next((v for v in d.get("versions", []) if v.get("id") == d["chosen"]), {})
     body = _norm(text)
@@ -455,6 +474,8 @@ def export_final(run: Run) -> dict:
                for c in version.get("claims", [])
                if c.get("class") == "needs_validation" and _norm(c["text"]) in body]
     brief = intake.get("brief", {})
+    issues += [{"kind": "cannot_commit", "match": b, "line": 0}
+               for b in bound_hits(text, brief.get("cannot_commit", []))]
     known = run.path(chosen).read_text(encoding="utf-8") + json.dumps(brief, ensure_ascii=False)
     have = set(re.findall(r"\d+(?:[.,:/]\d+)*", known))
     for n, line in enumerate(text.splitlines(), 1):
@@ -464,11 +485,7 @@ def export_final(run: Run) -> dict:
         .get("verdict")
     if verdict in ("escalate", "no_go"):  # a lawyer first, or not at all
         issues.insert(0, {"kind": "verdict", "match": verdict, "line": 0})
-    if issues:
-        final.unlink(missing_ok=True)  # not clean: an earlier export goes
-        return {"applies": True, "written": False, "source": src, "issues": issues}
-    write_text_atomic(final, text)
-    return {"applies": True, "written": True, "source": src, "issues": []}
+    return issues
 
 
 def export_lines(t: T, ex: dict) -> list[str]:

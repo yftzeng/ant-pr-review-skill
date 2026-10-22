@@ -93,7 +93,8 @@ def test_purpose_first_and_drafting_asks_the_brief():
                "buyers of the March batch", "2",       # affected, emotion: the second
                "buyers get a replacement", "",         # outcome, decision: default
                "/done", "Sales stopped", "/done", "/done", "/done",  # prior, actions
-               "legal", "",                            # approvers, tier-4 flags: none
+               "legal", "", "/done",                   # approvers, characterised: no, cannot commit
+               "",                                     # tier-4 flags: none
                "/done"]                                # material: none
     from test_context_card import FILL
     io = ScriptedIO(answers + FILL + [""])

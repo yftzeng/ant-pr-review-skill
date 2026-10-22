@@ -39,7 +39,7 @@ PARTS = ["stance", "facts", "cause", "measures", "other"]
 FOUR_PARTS = ["stance", "facts", "cause", "measures"]
 MAX_QUESTIONS = 3
 DRAFT_REVIEW_KINDS = ["unsupported_fact", "contradiction", "missing_part", "status_overstated",
-                      "tone", "other"]
+                      "early_conclusion", "commitment_crossed", "tone", "other"]
 ALIKE = 0.8
 
 
@@ -71,6 +71,9 @@ def check_brief(raw: dict) -> dict:
     bad = [x for x in tier4 if x not in TIER4]
     if bad:
         raise ValueError(f"brief tier4 {bad}: choose from {TIER4}")
+    characterised = raw.get("characterised", raw.get("characterized", False))
+    if not isinstance(characterised, bool):
+        raise ValueError(f"brief characterised {characterised!r}: choose true or false")
     return {"kind": _one_of(raw, "kind", KINDS), "facts": facts,
             "affected": " ".join(str(raw.get("affected", "")).split()),
             "emotion": _one_of(raw, "emotion", EMOTIONS, "none"),
@@ -80,7 +83,30 @@ def check_brief(raw: dict) -> dict:
             "actions": [{"text": x, "status": s} for k, s in ACTION_STATUS.items()
                         for x in _texts(raw.get(k))],
             "approvers": _texts(raw.get("approvers")),
+            "characterised": characterised,
+            "cannot_commit": check_bounds(_texts(raw.get("cannot_commit"))),
             "tier4": list(dict.fromkeys(tier4))}
+
+
+def _bnorm(s: str) -> str:
+    """For cannot-commit matching: width, case, spacing, punctuation and format characters
+    dropped. Simplified and traditional forms stay different: list both."""
+    return re.sub(r"[\W_]+", "", unicodedata.normalize("NFKC", s or "")).casefold()
+
+
+def short_bound(line: str) -> bool:
+    b = _bnorm(line)
+    return len(b) < (2 if _CJK.search(b) else 3)
+
+
+def check_bounds(lines: list[str]) -> list[str]:
+    """Trailing punctuation dropped; a line too short to match only itself is refused."""
+    out = [re.sub(r"[\s\W_]+$", "", x) for x in lines]
+    bad = [x for x in out if short_bound(x)]
+    if bad:
+        raise ValueError(f"brief cannot_commit {bad}: too short to match safely; "
+                         "give a key phrase of two CJK characters or three letters or more")
+    return list(dict.fromkeys(out))
 
 
 def load_brief(path) -> dict:
@@ -134,6 +160,13 @@ def register(claims: list[dict], brief: dict, text: str) -> tuple[list[dict], li
     return out, why
 
 
+def bound_hits(v: dict, bounds: list[str]) -> list[str]:
+    """The lines we cannot commit to that the text contains; a negation still counts,
+    so the user reads the sentence (S-drafting-019)."""
+    body = _bnorm(version_text(v) if isinstance(v, dict) else v)
+    return [b for b in bounds if _bnorm(b) and _bnorm(b) in body]
+
+
 def version_text(v: dict) -> str:
     paras = [p["text"].strip() for p in v.get("paragraphs", []) if p.get("text", "").strip()]
     return (f"# {v['title'].strip()}\n\n" if v.get("title", "").strip() else "") \
@@ -158,6 +191,15 @@ NOMINAL = re.compile(r"進行\S{0,8}?(?:動作|作業)|进行\S{0,8}?(?:动作|�
                      r"|相關單位|相关单位|有關單位|有关单位|相關人員|相关人员"
                      r"|\bconduct(?:ed)? an? (?:review|investigation) of\b"
                      r"|\bthe relevant (?:departments|parties|authorities|units)\b", re.I)
+_COUNTED = (r"(?:車輛|车辆|車|车|產品|产品|批次|用戶|用户|門市|门市|單位|单位|客戶|客户|個案|个案|案例"
+            r"|消費者|消费者|訂單|订单|商品|台|輛|辆|件|位)")
+VAGUE_QTY = re.compile(r"(?:個別|个别|少數|少数|少量|極少數|极少数|部分)" + _COUNTED +
+                       r"|\b(?:some|a few|a small number of|a limited number of|isolated)\s+"
+                       r"(?:units|vehicles|cars|products|batches|customers|users|stores|cases"
+                       r"|orders|items|devices|accounts)\b", re.I)
+_DATE = re.compile(r"\d{1,4}\s*(?:年|月|日|號|号|時|时|:\d)|\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul"
+                   r"|aug|sep|oct|nov|dec)\w*|(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*"
+                   r"\s+\d{1,2}|\b(?:19|20)\d\d\b", re.I)
 SUPERLATIVE = re.compile(r"最好|最佳|最安全|第一品牌|唯一|頂尖|顶尖|業界領先|业界领先|領導品牌|领导品牌|世界級|世界级"
                          r"|\b(?:best|leading|world-class|unparalleled|unmatched|safest|number one)\b"
                          r"|#1", re.I)
@@ -172,7 +214,7 @@ def _long_para(s: str) -> bool:
 
 
 def w_checks(v: dict, posture: str) -> list[dict]:
-    """W1-W8: readability and accountability, never detection evasion."""
+    """W1-W9: readability and accountability, never detection evasion."""
     hits = []
     paras = [p for p in v.get("paragraphs", []) if p.get("text", "").strip()]
     for n, p in enumerate(paras, 1):
@@ -186,6 +228,8 @@ def w_checks(v: dict, posture: str) -> list[dict]:
         for wid, rx in (("W4", OFFICIALESE), ("W5", VAGUE_TIME), ("W6", NOMINAL),
                         ("W8", SUPERLATIVE)):
             hits += [{"id": wid, "where": where, "hit": m.group(0)} for m in rx.finditer(text)]
+        hits += [{"id": "W9", "where": where, "hit": m.group(0)} for s in sents
+                 if not re.search(r"\d", _DATE.sub("", s)) for m in VAGUE_QTY.finditer(s)]
     if posture in ("clarify_apologize", "rebut"):
         have = {p.get("part") for p in paras}
         missing = [x for x in FOUR_PARTS if x not in have]
@@ -233,9 +277,10 @@ def examples_block(ex: list[dict]) -> str:
 # ---- ranking ------------------------------------------------------------------
 
 def rank(versions: list[dict]) -> list[str]:
-    """Disqualified last, then the verdict, the top score and the pass rate (D-0005)."""
+    """Disqualified last, then a cannot-commit hit, the verdict, the top score and the
+    pass rate (D-0005)."""
     order = sorted(enumerate(versions), key=lambda iv: (
-        bool(iv[1]["disqualified"]), VERDICT_ORDER.index(iv[1]["verdict"]), iv[1]["top"],
+        bool(iv[1]["disqualified"]), bool(iv[1].get("bounds")), VERDICT_ORDER.index(iv[1]["verdict"]), iv[1]["top"],
         -iv[1]["rate"], iv[0]))
     return [v["id"] for _, v in order]
 
@@ -299,8 +344,14 @@ def _questions(data: dict) -> list[str]:
     return out[:MAX_QUESTIONS]
 
 
+def holding_only(brief: dict) -> bool:
+    """Facts not yet enough to characterise the event, or a tier-4 flag (S-drafting-018)."""
+    return bool(brief["tier4"]) or not brief.get("characterised", False)
+
+
 def _write(backend, writer, lang, intake, brief, material, answers, extra=""):
-    system = prompts.draft_system(lang, intake, tier4=bool(brief["tier4"]))
+    system = prompts.draft_system(lang, intake, tier4=bool(brief["tier4"]),
+                                  holding=holding_only(brief))
     prompt = prompts.draft_prompt(intake, brief, material, answers,
                                   examples_block(examples_for(posture_of(intake)))) + extra
     return _guarded(backend, writer, task="draft", system=system, prompt=prompt, schema=DRAFT,
@@ -326,7 +377,10 @@ def run_draft(run: Run, backend: Backend, models: list[str], lang: str,
     from . import ethics
     digest = sha256_bytes(json.dumps([intake, matrix, context, material, writer,
                                       EXAMPLES.read_text(encoding="utf-8"),
-                                      ethics.EVASION + ethics.PERSONA], ensure_ascii=False,
+                                      ethics.EVASION + ethics.PERSONA,
+                                      prompts.draft_system(lang, intake, tier4=bool(brief["tier4"]),
+                                                           holding=holding_only(brief)),
+                                      prompts.draft_differ_note()], ensure_ascii=False,
                                      sort_keys=True).encode("utf-8"))
     cached = read_json(run.path(f"{DIR}/writer.json"), default={})
     if cached.get("inputs_sha") == digest:
@@ -382,6 +436,7 @@ def run_draft(run: Run, backend: Backend, models: list[str], lang: str,
         v["claims"], v["disqualified"] = register(v.get("claims", []), brief, text)
         v["placeholders"] = deliverable_issues(text)
         v["w"] = w_checks(v, posture)
+        v["bounds"] = bound_hits(v, brief.get("cannot_commit", []))
     stage = _review_stage(backend, writer, checker, lang, brief, versions, say)
     for v in versions:
         say(f"  … {t('draft.auditing', id=v['id'])}")
@@ -400,6 +455,7 @@ def run_draft(run: Run, backend: Backend, models: list[str], lang: str,
            "order": order, "warnings": warnings, "open_questions": open_q, "ethics": rep,
            "contradictions": contradictions,
            "tier4": brief["tier4"], "decision": brief["decision"], "stage": stage,
+           "holding": holding_only(brief),
            "brief": {s: sum(f["status"] == s for f in brief["facts"]) for s in FACT_STATUS}}
     if best["disqualified"]:
         return _done(run, dict(out, status="stopped", reason=t("draft.all_disqualified")))
@@ -410,7 +466,8 @@ def run_draft(run: Run, backend: Backend, models: list[str], lang: str,
     if interactive and len(eligible) > 1:
         chosen = radio(io, t, t("draft.pick"),
                        [(v["id"], f"{v['id']} {v['approach']} ({t('verdict.' + v['verdict'])}, "
-                         f"{_pct(v)})" + (f" · {t('draft.recommended')}"
+                         f"{_pct(v)})" + (f" · ⚠ {t('draft.bounds_short')}" if v["bounds"] else "")
+                        + (f" · {t('draft.recommended')}"
                                           if v["id"] == best["id"] else ""))
                         for v in eligible], default=best["id"])
     out["chosen"] = chosen

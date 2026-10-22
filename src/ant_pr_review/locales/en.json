@@ -612,5 +612,18 @@
   "draft.issue_kind.needs_validation": "claim needing validation",
   "draft.issue_kind.new_figure": "figure not in the version or the brief",
   "draft.not_audited": "no reviewer answered",
-  "draft.issue_kind.verdict": "verdict"
+  "draft.issue_kind.verdict": "verdict",
+  "brief.characterised": "Are the cause and scope confirmed, so the facts characterise the event?",
+  "brief.characterised.no": "Not yet: holding statements only",
+  "brief.characterised.yes": "Yes: a full statement",
+  "brief.cannot_commit": "What the statement must not concede or promise: short key phrases such as 'recall' (substring match, not a legal check; list simplified and traditional forms separately), one per line (/done):",
+  "draft.holding": "The facts do not yet characterise the event: holding statements only (what is confirmed, what we are doing, the next update).",
+  "draft.bounds": "{id} contains a line we cannot commit to",
+  "draft.issue_kind.cannot_commit": "a line we cannot commit to",
+  "draft.issue.early_conclusion": "conclusion ahead of the facts",
+  "draft.issue.commitment_crossed": "crosses a line we cannot commit to",
+  "draft.w.W9": "vague quantity without a number",
+  "brief.cannot_commit.short": "Too short to match safely ({lines}): give a key phrase of two CJK characters or three letters or more.",
+  "draft.bounds_short": "crosses a cannot-commit line",
+  "decide.final_issues": "final.md is written as you chose, but {n} item(s) would keep it from being ready to publish:"
 }

@@ -250,7 +250,7 @@ DRAFT = obj({
 DRAFT_REVIEW = obj({
     "versions": arr(obj({"version": STR, "issues": arr(obj({
         "kind": enum(["unsupported_fact", "contradiction", "missing_part", "status_overstated",
-                      "tone", "other"]),
+                      "early_conclusion", "commitment_crossed", "tone", "other"]),
         "text": STR}))})),
 })
 

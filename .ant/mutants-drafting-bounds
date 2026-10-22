@@ -1,0 +1,97 @@
+# holding gate, cannot-commit lines, W9, fast actions, decide (S-drafting-017..022)
+@@ src/ant_pr_review/drafting.py
+-     if not isinstance(characterised, bool):
++     if False:
+@@ src/ant_pr_review/drafting.py
+-             "characterised": characterised,
++             "characterised": True,
+@@ src/ant_pr_review/drafting.py
+-     characterised = raw.get("characterised", raw.get("characterized", False))
++     characterised = raw.get("characterised", False)
+@@ src/ant_pr_review/drafting.py
+-             "cannot_commit": check_bounds(_texts(raw.get("cannot_commit"))),
++             "cannot_commit": check_bounds(_texts(raw.get("cannot"))),
+@@ src/ant_pr_review/drafting.py
+-     return [b for b in bounds if _bnorm(b) and _bnorm(b) in body]
++     return [b for b in bounds if _bnorm(b) and b in body]
+@@ src/ant_pr_review/drafting.py
+-     return re.sub(r"[\W_]+", "", unicodedata.normalize("NFKC", s or "")).casefold()
++     return re.sub(r"\s+", "", unicodedata.normalize("NFKC", s or "")).casefold()
+@@ src/ant_pr_review/drafting.py
+-     return len(b) < (2 if _CJK.search(b) else 3)
++     return len(b) < (1 if _CJK.search(b) else 3)
+@@ src/ant_pr_review/drafting.py
+-     out = [re.sub(r"[\s\W_]+$", "", x) for x in lines]
++     out = [x for x in lines]
+@@ src/ant_pr_review/drafting.py
+-     return bool(brief["tier4"]) or not brief.get("characterised", False)
++     return bool(brief["tier4"])
+@@ src/ant_pr_review/drafting.py
+-     return bool(brief["tier4"]) or not brief.get("characterised", False)
++     return not brief.get("characterised", False)
+@@ src/ant_pr_review/drafting.py
+-                  if not re.search(r"\d", _DATE.sub("", s)) for m in VAGUE_QTY.finditer(s)]
++                  if not re.search(r"\d", s) for m in VAGUE_QTY.finditer(s)]
+@@ src/ant_pr_review/drafting.py
+-                  if not re.search(r"\d", _DATE.sub("", s)) for m in VAGUE_QTY.finditer(s)]
++                  for m in VAGUE_QTY.finditer(s)]
+@@ src/ant_pr_review/drafting.py
+- VAGUE_QTY = re.compile(r"(?:個別|个别|少數|少数|少量|極少數|极少数|部分)" + _COUNTED +
++ VAGUE_QTY = re.compile(r"(?:個別|个别|少數|少数|少量|極少數|极少数|部分)" + r"" +
+@@ src/ant_pr_review/drafting.py
+-            "holding": holding_only(brief),
++            "holding": False,
+@@ src/ant_pr_review/drafting.py
+-         v["bounds"] = bound_hits(v, brief.get("cannot_commit", []))
++         v["bounds"] = bound_hits(v, [])
+@@ src/ant_pr_review/drafting.py
+-         bool(iv[1]["disqualified"]), bool(iv[1].get("bounds")), VERDICT_ORDER.index(iv[1]["verdict"]), iv[1]["top"],
++         bool(iv[1]["disqualified"]), VERDICT_ORDER.index(iv[1]["verdict"]), iv[1]["top"],
+@@ src/ant_pr_review/drafting.py
+-                                       prompts.draft_system(lang, intake, tier4=bool(brief["tier4"]),
++                                       (lambda *a, **k: "")(lang, intake, tier4=bool(brief["tier4"]),
+@@ src/ant_pr_review/drafting.py
+-                          f"{_pct(v)})" + (f" · ⚠ {t('draft.bounds_short')}" if v["bounds"] else "")
++                          f"{_pct(v)})" + (f" · ⚠ {t('draft.bounds_short')}" if False else "")
+@@ src/ant_pr_review/drafting.py
+-                       "early_conclusion", "commitment_crossed", "tone", "other"]
++                       "commitment_crossed", "tone", "other"]
+@@ src/ant_pr_review/report.py
+-                for b in bound_hits(text, brief.get("cannot_commit", []))]
++                for b in bound_hits(text, [])]
+@@ src/ant_pr_review/report.py
+-     if d.get("holding") and not d.get("tier4"):
++     if False and not d.get("tier4"):
+@@ src/ant_pr_review/report.py
+-     hit = [v for v in vs if v.get("bounds")]
++     hit = [v for v in vs if False]
+@@ src/ant_pr_review/report.py
+-     issues = final_issues(run, intake, d, text)
++     issues = []
+@@ src/ant_pr_review/intake.py
+-                                   ("yes", t("brief.characterised.yes"))], default="no") == "yes"
++                                   ("yes", t("brief.characterised.yes"))], default="no") == "no"
+@@ src/ant_pr_review/intake.py
+-         short = [x for x in raw["cannot_commit"] if short_bound(x)]
++         short = [x for x in raw["cannot_commit"] if False]
+@@ src/ant_pr_review/prompts.py
+-              "investigation'.\n" if holding else "")
++              "investigation'.\n" if False else "")
+@@ src/ant_pr_review/prompts.py
+-             "cannot_commit list.\n"
++             "list.\n"
+@@ src/ant_pr_review/prompts.py
+-             "as done), early_conclusion (a cause, scope or 'no defect' stated before the "
++             "as done), (a cause, scope or 'no defect' stated before the "
+@@ src/ant_pr_review/prompts.py
+- {keep_out}{role_block(intake)}
++ {role_block(intake)}
+@@ src/ant_pr_review/prompts.py
+-         if intake.get("purpose") == "drafting" else []
++         if intake.get("purpose") != "drafting" else []
+@@ src/ant_pr_review/decision.py
+-     issues = final_issues_for(run) if final else []
++     issues = []
+@@ src/ant_pr_review/decision.py
+-     if intake.get("purpose") != "drafting" or d.get("status") != "done" or not final.exists():
++     if d.get("status") != "done" or not final.exists():

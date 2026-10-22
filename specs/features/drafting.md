@@ -107,6 +107,39 @@ Feature: drafting
   Scenario: the brake-pedal cases are counter-examples for a rebuttal
     When  the writer prompt is built for the posture rebut
     Then  it holds the counter-examples of a safety scare answered with a standards claim and an unexplained upgrade, and of co-owners disowning a test report, both naming no organisation or person and marked unverified
+
+  @S-drafting-017
+  Scenario: the brief asks whether the facts characterise the event and what we cannot commit to
+    When  an interactive brief is answered, and a brief file is loaded
+    Then  after the approvers it asks whether the cause and scope are confirmed (default no) and, one per line, what the statement must not concede or promise; a file may give characterised (true or false, default false; the spelling characterized is read too) and cannot_commit; a characterised value that is not true or false, or a cannot-commit line shorter than two CJK characters or three letters once punctuation is dropped, is refused (interactively it is asked again)
+
+  @S-drafting-018
+  Scenario: facts not enough to characterise the event give holding statements only
+    Given a brief that is not characterised, and one that is characterised with no tier-4 flag
+    When  the draft phase runs
+    Then  the first writer is told to write holding statements only and the report says the facts do not yet characterise the event; the second writer is told to write a full statement; a tier-4 flag gives holding statements either way
+
+  @S-drafting-019
+  Scenario: a line we cannot commit to is found in code and blocks the export
+    Given cannot_commit "召回" and a version and a final text that contain it
+    When  the versions are checked and the report is written
+    Then  the version lists the hit, the report shows it, and no ready-to-publish file is written for that reason, whether the final text is the revision A.md or the chosen version; a final text without it is not blocked for it; matching ignores case, width, spacing and punctuation ("full-refund" finds "full refund"); a negated mention still counts; a version with a hit ranks after every version without one and is marked in the pick; the plan A writer is told the lines
+
+  @S-drafting-020
+  Scenario: a vague quantity without a number is a readability hit
+    Given a paragraph saying "個別車輛" with no number in that sentence, one saying "個別車輛（3 輛）", one saying "some units failed on 20 October", and "個別通知" or "the server was isolated"
+    When  the versions are checked
+    Then  W9 reports the first and the third (a date is not a count) and not the others
+
+  @S-drafting-021
+  Scenario: the writer and the reviewer are told fast actions, slow conclusions
+    When  the writer and draft review prompts are built
+    Then  the writer is told to lead with actions and their times, to state a cause, a scope or "no defect" only on a confirmed fact, to say what a fix offered beside a denial is for, and to keep the cannot-commit lines out; the reviewer may report early_conclusion and commitment_crossed
+  @S-drafting-022
+  Scenario: decide's final file of a drafting run goes through the same checks
+    Given a drafting run whose revision A.md contains a cannot-commit line
+    When  the user decides plan A
+    Then  final.md is written as chosen, the decision records the issues and the user is told them; an audit run's decision is unchanged
 ```
 
 ## Must NOT
@@ -118,3 +151,5 @@ Feature: drafting
 - 2026-10-22 · +S-drafting-001..015, +N-drafting-001..002 the brief, versions, register, checks, ranking and export (user: 固定問答＋可附素材; 2 版，同姿態不同做法; 擋下匯出，報告照樣產生) · decision: D-0005
 - 2026-10-22 · ~S-drafting-005,008,011 from the tier-3 review: questions cleaned and guarded; the export also blocked by a claim needing validation, a figure not in the version or brief, an escalate or no_go verdict and the guard's marker; an unaudited version disqualified · decision: D-0005
 - 2026-10-22 · +S-drafting-016 two counter-examples from the brake-pedal commentary videos (user: 按你建議) · decision: D-0005
+- 2026-10-22 · +S-drafting-017..021 a characterised-or-holding gate, cannot-commit lines checked in code, W9 vague quantities, fast actions and slow conclusions (from the brake-pedal videos; user: 按你建議) · decision: D-0005
+- 2026-10-22 · ~S-drafting-017,019,020 +S-drafting-022 from the tier-3 review: short lines refused, punctuation ignored, ranking and the plan A writer see the lines, W9 narrowed, decide checks its final file · decision: D-0005
