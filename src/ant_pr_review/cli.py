@@ -53,6 +53,8 @@ def build_parser() -> argparse.ArgumentParser:
     n.add_argument("--context-scan", action="store_true",
                    help="with --yes: run the web context scan without asking")
     n.add_argument("--merger", help="the model that merges jurisdictions (default: first)")
+    n.add_argument("--archive-on-block", action="store_true",
+                   help="when a site refuses us (403 or a bot challenge), read its Wayback copy")
     n.add_argument("--no-render", action="store_true",
                    help="never use the headless browser for JavaScript-rendered pages")
     n.add_argument("--feed-limit", type=int, default=None,
@@ -204,7 +206,9 @@ def make_ctx(args, io: IO, store: Store, cfg: Config, *, models=None, backend=No
                options={"depth": getattr(args, "depth", None), "lenses": lenses or None,
                         "context_scan": getattr(args, "context_scan", False),
                         "merger": merger,
-                        **({"renderer": None} if getattr(args, "no_render", False) else {})})
+                        **({"renderer": None} if getattr(args, "no_render", False) else {}),
+                        **({"archive_on_block": True}
+                           if getattr(args, "archive_on_block", False) else {})})
 
 
 def run_ctx(args, io: IO, store: Store, cfg: Config, run: Run) -> Ctx:

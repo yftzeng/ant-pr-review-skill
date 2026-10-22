@@ -30,7 +30,7 @@ When a URL fails, the CLI falls back in this order:
 3. it tries the page's AMP version, then the newest Wayback Machine copy (the report labels it with its date);
 4. it asks the user to paste the text.
 
-robots.txt, a site-profile block, internal addresses, a login or paywall (also HTTP 401/402) and HTTP 451 never fall back. A bot challenge may use the archive, never the browser. `--no-render` turns the browser off. If a page stays unreadable, offer the user to save it and pass it with `--target <file>`.
+robots.txt, a site-profile block, internal addresses, a login or paywall (also HTTP 401/402) and HTTP 451 never fall back. When a site refuses (HTTP 403 or a bot challenge), the archive copy is used only if the user agrees: the CLI names its date and asks, or the run passes `--archive-on-block`; ask the user before adding that flag. A challenge never uses the browser. `--no-render` turns the browser off. If a page stays unreadable, offer the user to save it and pass it with `--target <file>`.
 
 ## 2. Choose interactive or driven
 

@@ -155,10 +155,10 @@ Feature: source acquisition
     Then  the document holds the AMP text and records via "amp"; without an AMP link the newest archive snapshot is used and records via "archive"
 
   @S-source-acquisition-025
-  Scenario: a failed fetch falls back to the newest archive snapshot, labelled with its date
-    Given a URL that answers 403 and an archive snapshot from 2026-01-02
-    When  the page is fetched
-    Then  the item is ok with via "archive", the snapshot date and the original failure reason, and the report lists the source as an archive copy of that date
+  Scenario: a failed fetch falls back to the newest archive snapshot, labelled with its date, never to the browser for a challenge
+    Given a URL that answers 503, another that serves a bot challenge, and archive snapshots from 2026-01-02
+    When  each is fetched with a browser available, the challenge with the user's consent to the archive
+    Then  both items are ok with via "archive", the snapshot date and the original failure reason, the browser is never called, and the report lists the archive copy and its date
 
   @S-source-acquisition-026
   Scenario: a URL that still fails can be replaced by pasted text
@@ -201,10 +201,10 @@ Feature: source acquisition
     Then  the default backoff is used and the run does not crash
 
   @S-source-acquisition-033
-  Scenario: 401, 402 and 451 never fall back; 403 may use the archive
+  Scenario: 401, 402 and 451 never fall back; 403 uses the archive only with consent
     Given archive snapshots of four URLs answering 401, 402, 451 and 403
-    When  each is fetched
-    Then  the first three fail with their status and no archive request, and the 403 one is read from the archive
+    When  each is fetched without consent, then the 403 one with consent
+    Then  all four fail without fetching a snapshot, and the 403 one is read from the archive once the user agreed
 
   @S-source-acquisition-034
   Scenario: a URL carrying secrets is never sent to the archive
@@ -252,6 +252,17 @@ Feature: source acquisition
     Given Chromium and a page that loads an image redirecting to 127.0.0.1, opens a popup to 127.0.0.1 and redirects another image within the allowed host
     When  the page is rendered
     Then  the article is rendered, nothing reaches 127.0.0.1, and the allowed redirect is followed
+  @S-source-acquisition-042
+  Scenario: a site that refuses (403 or a bot challenge) is not read from the archive by default
+    Given a URL that answers 403 and an archive snapshot from 2026-01-02
+    When  a non-interactive run fetches it, then one with --archive-on-block
+    Then  the first fails with "http_status", marked blocked with archive date 2026-01-02 and a hint naming --archive-on-block and --target <file>; the second reads the archive copy
+
+  @S-source-acquisition-043
+  Scenario: interactively the user is told the site refused and chooses the archive copy
+    Given a URL that serves a bot challenge and an archive snapshot from 2026-01-02
+    When  the sources phase asks what to do and the user picks "use the archive copy"
+    Then  the menu named the date 2026-01-02, and the item is read from the archive with via "archive"
 ```
 
 ## Must NOT
@@ -267,3 +278,4 @@ Feature: source acquisition
 - 2026-10-22 · +S-source-acquisition-020..027 +N-source-acquisition-002 · decision: D-PR-15 -- user: fallback order when a fetch fails or is blocked
 - 2026-10-22 · ~S-source-acquisition-009 a profile user agent must still name ant-pr-review · decision: D-PR-15
 - 2026-10-22 · +S-source-acquisition-028..041 ~S-source-acquisition-021 · decision: D-0001 -- synced with ant-peer-review 3af9252: its page-quality checks, URL redaction and pacing (there S-020..023), and the fixes from the tier-3 review (sonnet, fable) of the same fallback code
+- 2026-10-22 · +S-source-acquisition-042..043 ~S-source-acquisition-025 ~S-source-acquisition-033 · decision: D-0001 -- user: a 403 or a bot challenge is a refusal; the archive only with consent (synced with ant-peer-review 1c00c7d)
