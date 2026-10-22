@@ -1,0 +1,7 @@
+# examples carry no quote (S-drafting-015)
+@@ src/ant_pr_review/drafting.py
+-         lines.append(f"- [{e['kind']}] {e['org']} {e.get('date') or 'undated'}, {e['part']}: "
++         lines.append(f"- [{e['kind']}] {e['org']} {e.get('date') or 'undated'}, {e['part']}: Quote: \"x\" "
+@@ src/ant_pr_review/examples.toml
+- lesson = "A co-owned brand cites a third-party test report: one owner says the other commissioned it, the other says it does not know, and the lab says it vouches only for the samples it was sent. Co-owners disowning each other's evidence read as passing the blame. Agree one voice and who stands behind each piece of evidence before it is published."
++ quote = "x"

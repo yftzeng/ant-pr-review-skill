@@ -1,8 +1,8 @@
 # Drafting examples (D-0005): patterns to follow and counters to avoid, distilled from the
-# user's own case notes (docs/REFERENCES.md #23). Organisations only, never a person;
-# lessons are paraphrased; a quote is at most 40 characters. verified = false: taken
-# from the notes, not checked against the original statements. A date left empty is
-# not in the notes.
+# user's own case notes (docs/REFERENCES.md #23) and the brake-pedal videos (#24).
+# Organisations only, never a person. Lessons are paraphrased and nothing is quoted, so no
+# third-party text is kept here. verified = false: not checked against the original
+# statements. A date left empty is not in the source.
 
 [[example]]
 id = "EX-01"
@@ -12,7 +12,6 @@ kind = "pattern"
 posture = "clarify_apologize"
 part = "stance"
 lesson = "Calls its own fix a bad, self-inflicted decision that broke its own principles, and says it deserves the criticism, with no hedging and no outside cause. A short, unqualified admission works because there is nothing in it for readers to argue with."
-quote = "我們自作自受，也應當接受各界的批判"
 verified = false
 
 [[example]]
@@ -23,7 +22,6 @@ kind = "pattern"
 posture = "clarify_apologize"
 part = "facts"
 lesson = "Opens by restating the reported problems and saying the company's own check found them true, before any context or apology. Confirming the facts first ends the dispute over whether it happened, so the rest of the letter is believed."
-quote = "经公司调查，认为媒体报道中披露的问题属实"
 verified = false
 
 [[example]]
@@ -34,7 +32,6 @@ kind = "pattern"
 posture = "clarify_apologize"
 part = "measures"
 lesson = "A separate notice lists numbered measures: closures, third-party pest control, a chain-wide inspection and an open invitation to inspect. Each has a named owning role and a hotline. It also tells frontline staff that management, not they, carries the responsibility. Measures that each have an owner and a contact can be checked, and protecting junior staff shows the leaders are taking the blame."
-quote = "主要责任由公司董事会承担"
 verified = false
 
 [[example]]
@@ -45,7 +42,6 @@ kind = "pattern"
 posture = "rebut"
 part = "whole"
 lesson = "Answers a patent suit with calm, checkable points: notice not yet received, alleged infringement unclear, the patents' validity open to question, and the company will respond once served. It avoids an absolute claim such as 'everything we make is our own'. A rebuttal that claims no more than it can defend leaves no line that later facts can disprove."
-quote = "小米公司收到訴訟函後會積極應對"
 verified = false
 
 [[example]]
@@ -56,7 +52,6 @@ kind = "pattern"
 posture = "clarify_apologize"
 part = "stance"
 lesson = "The hearing briefing notes frame the failure as a design decision owned at the top, refuse to offer up individual staff, and warn against overclaiming that existing practice already meets the new privacy law. Owning the failure at the top, and not claiming compliance that critics can test, keeps the stance credible under questioning."
-quote = "throw people under the bus"
 verified = false
 
 [[example]]
@@ -67,7 +62,6 @@ kind = "counter"
 posture = "clarify_apologize"
 part = "whole"
 lesson = "It starts well: it admits overstated claims, names what was left out (an open-source base) and promises to label it prominently. Then the letter turns into a product pitch. A sales paragraph inside an apology makes readers doubt the apology."
-quote = "红芯本质不只是一个浏览器"
 verified = false
 
 [[example]]
@@ -78,7 +72,6 @@ kind = "pattern"
 posture = "clarify_apologize"
 part = "whole"
 lesson = "Opens by plainly admitting two specific failings, at once gives a concrete remedy (reversing the refusal and offering support), then adds a goodwill gesture to the wronged party. The order (admit, fix, then make amends) settles the complaint before adding anything extra."
-quote = "欠缺考量"
 verified = false
 
 [[example]]
@@ -89,7 +82,6 @@ kind = "counter"
 posture = "rebut"
 part = "stance"
 lesson = "A corporate statement lists a named competitor's 'copying and smearing' among its hardships. Accusing a rival by name turns a position statement into a public fight and asks for a counter-statement. Defend your own record and leave the rival unnamed."
-quote = ""
 verified = false
 
 [[example]]
@@ -100,7 +92,6 @@ kind = "pattern"
 posture = "clarify_apologize"
 part = "measures"
 lesson = "The progress update gives exact figures: units produced, units sold, the amount donated and to whom, the application window with start and end dates, the delivery month, and a contact mailbox. Exact numbers and dates make the promise easy to check and stop guesses about what happens to the stock."
-quote = "首批產量為 105,022 盒"
 verified = false
 
 [[example]]
@@ -111,7 +102,6 @@ kind = "counter"
 posture = "clarify_apologize"
 part = "whole"
 lesson = "The second apology says 'we were wrong' in its opening lines, then spends most of its length on company history, patents, quality and charity work. Commentators summed it up as 1% apology, 99% self-praise. When the brand's achievements fill the letter, the apology reads as promotion and the crisis gets worse."
-quote = "对不起，我们错了"
 verified = false
 
 [[example]]
@@ -122,7 +112,6 @@ kind = "pattern"
 posture = "clarify_apologize"
 part = "facts"
 lesson = "Says what happened and when it was found, what is affected and what is intact (backups), its position (no negotiation, with the risk this brings), what is still under investigation, and which authorities and specialists are involved. It marks the limits of what it knows, and a follow-up tells a specific affected group what to do and where to write. Separating known, unknown and next steps makes the statement trustworthy without overpromising."
-quote = "to our best knowledge"
 verified = false
 
 [[example]]
@@ -133,7 +122,6 @@ kind = "counter"
 posture = "clarify_apologize"
 part = "stance"
 lesson = "Opens with long praise of the relationship and investment. It then expresses 'regret', says the original intent was legal compliance, and apologizes only for the 'trouble' caused, never for a specific act. An apology for 'trouble caused', together with a statement of intent, can read as evasive to every audience at once. Name what you are apologizing for."
-quote = "带来的困扰，我们深表歉意"
 verified = false
 
 [[example]]
@@ -144,7 +132,6 @@ kind = "counter"
 posture = "clarify_apologize"
 part = "stance"
 lesson = "A statement on a fatal accident ends by saying it had nothing to do with the vehicle, and sales staff gave a cause unofficially. Saying 'not our product' before showing concern for the people reads as cold, and unofficial channels give conflicting accounts. Put the people first, let a plain account of the facts speak for the product, and keep one official voice."
-quote = "與車本身沒有關係"
 verified = false
 
 [[example]]
@@ -155,7 +142,6 @@ kind = "pattern"
 posture = "clarify_apologize"
 part = "whole"
 lesson = "After a major hack, the person who actually held the facts wrote the first public post personally. A live video briefing followed within about an hour, and the company said it could cover the loss itself. Speed, one source that knows the facts, and an early answer to what customers fear most stop rumours that the firm will collapse."
-quote = ""
 verified = false
 
 [[example]]
@@ -166,7 +152,6 @@ kind = "counter"
 posture = "clarify_apologize"
 part = "stance"
 lesson = "The commentary reads the published apology as self-defence aimed at repairing the writer's image rather than seeking forgiveness. It proposes a test: check a draft for hidden resistance, and first name exactly how the audience was hurt. Readers notice defensiveness before they take in the content."
-quote = "內容是否包含無意識的抵抗情緒"
 verified = false
 
 [[example]]
@@ -177,7 +162,6 @@ kind = "counter"
 posture = "rebut"
 part = "whole"
 lesson = "A test video shows a brake part breaking; the same-day statement says the system exceeds the national standard, no failure has occurred in real use and the test was extreme, then offers a free upgrade. A standard is a floor to the public, not an answer to a safety scare, and an upgrade offered next to 'no problem' reads as an admission. Give the risk boundary, evidence others can check and something owners can do."
-quote = "高于国家标准"
 verified = false
 
 [[example]]
@@ -188,5 +172,4 @@ kind = "counter"
 posture = "rebut"
 part = "facts"
 lesson = "A co-owned brand cites a third-party test report: one owner says the other commissioned it, the other says it does not know, and the lab says it vouches only for the samples it was sent. Co-owners disowning each other's evidence read as passing the blame. Agree one voice and who stands behind each piece of evidence before it is published."
-quote = "只对企业送来的样品负责"
 verified = false

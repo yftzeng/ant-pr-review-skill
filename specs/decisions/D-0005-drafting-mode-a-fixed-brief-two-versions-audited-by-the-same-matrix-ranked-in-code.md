@@ -24,7 +24,7 @@
 - **Ranking**: code orders by disqualification, verdict, top score and pass rate. A model writes the reason; a reason without a number is replaced by one written in code. When every version is disqualified the run pauses.
 - **The recommended version** (interactively another may be picked) becomes the run's source, so the full review, plans (diff and revised full text) and the report follow.
 - **Export gate**: the ready-to-publish file `10-final.md` is written only when the final text (plan A's revision, else the chosen version) has no placeholder, no internal note (the ethics guard's marker included), no claim still needing validation and no figure absent from both the chosen version and the brief, and the verdict is neither escalate nor no_go. Otherwise any earlier export is removed; the report is always written and lists what blocks. A version no reviewer answered is disqualified.
-- **Examples**: patterns and counters from the user's notes, organisations only, short quotes, unverified, at most six per posture in the prompt.
+- **Examples**: patterns and counters from the user's notes, organisations only, ~~short quotes~~ paraphrased lessons with no quote of the source (2026-10-22, after the licence check: the sources are not openly licensed), unverified, at most six per posture in the prompt.
 
 ## Why not the alternative
 

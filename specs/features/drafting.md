@@ -101,7 +101,7 @@ Feature: drafting
   Scenario: examples steer the writer by posture
     Given the examples file
     When  the writer prompt is built for the posture clarify_apologize
-    Then  it holds at most six examples of that posture, patterns and counters labelled, each marked unverified, and no example names a person
+    Then  it holds at most six examples of that posture, patterns and counters labelled, each marked unverified, and no example names a person or quotes its source (lessons are paraphrased only)
 
   @S-drafting-016
   Scenario: the brake-pedal cases are counter-examples for a rebuttal
@@ -153,3 +153,4 @@ Feature: drafting
 - 2026-10-22 · +S-drafting-016 two counter-examples from the brake-pedal commentary videos (user: 按你建議) · decision: D-0005
 - 2026-10-22 · +S-drafting-017..021 a characterised-or-holding gate, cannot-commit lines checked in code, W9 vague quantities, fast actions and slow conclusions (from the brake-pedal videos; user: 按你建議) · decision: D-0005
 - 2026-10-22 · ~S-drafting-017,019,020 +S-drafting-022 from the tier-3 review: short lines refused, punctuation ignored, ranking and the plan A writer see the lines, W9 narrowed, decide checks its final file · decision: D-0005
+- 2026-10-22 · ~S-drafting-015 examples carry no quote of their source, only a paraphrased lesson, so the repo holds no third-party text (user: 兩個都做, after the licence check) · decision: D-0005

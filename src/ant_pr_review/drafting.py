@@ -265,12 +265,11 @@ def examples_for(posture: str, limit: int = 6) -> list[dict]:
 def examples_block(ex: list[dict]) -> str:
     if not ex:
         return ""
-    lines = ["Examples (from the user's notes, unverified; learn the move, never copy the "
+    lines = ["Examples (paraphrased from case notes, unverified; learn the move, never copy the "
              "wording; a counter is what to avoid):"]
     for e in ex:
-        q = f' Quote: "{e["quote"]}"' if e.get("quote") else ""
         lines.append(f"- [{e['kind']}] {e['org']} {e.get('date') or 'undated'}, {e['part']}: "
-                     f"{e['lesson']}{q}")
+                     f"{e['lesson']}")
     return "\n".join(lines)
 
 

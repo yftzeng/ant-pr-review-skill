@@ -2,6 +2,7 @@
 (D-0005)."""
 import json
 import re
+from pathlib import Path
 
 import pytest
 
@@ -391,7 +392,11 @@ def test_examples_by_posture_and_ethics():
     assert {e["kind"] for e in ex} == {"pattern", "counter"}
     allx = drafting.examples_for("clarify_apologize", limit=99) + \
         drafting.examples_for("rebut", limit=99)
-    assert all(e["verified"] is False and len(e["quote"]) <= 40 for e in allx)
+    # @S-drafting-015 no third-party text: lessons are paraphrased, nothing is quoted
+    assert all(e["verified"] is False and "quote" not in e for e in allx)
+    raw = (Path(drafting.__file__).parent / "examples.toml").read_text(encoding="utf-8")
+    assert "\nquote" not in raw
+    assert "Quote:" not in drafting.examples_block(allx)
     block = drafting.examples_block(ex)
     assert "unverified" in block.lower() and "counter" in block.lower()
     from ant_pr_review.prompts import draft_system

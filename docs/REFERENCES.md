@@ -4,7 +4,7 @@ The skills reviewed while designing ant-pr-review (analysed 2026-10-22). For eac
 - what we borrowed, and where it lives in this repo (or "planned" when it waits for a later change);
 - what we left out, and why.
 
-Licences differ (see each section; two have none and one is share-alike), so ideas are borrowed and paraphrased; no text is copied. None of the twenty-two has multi-model review, per-jurisdiction calls, a red-line veto, code-computed verdicts or an ethics guard. Those parts are original to this project. The upstream ant-peer-review references are in that repo's `docs/REFERENCES.md`.
+Licences differ (see the licence line below): #7 has none, #9 has no licence file, #8 is copyleft, and #23 and #24 are not openly licensed. So only ideas are borrowed and paraphrased; no code or text is copied and nothing is quoted, which leaves no attribution or copyleft duty. This is a record, not legal advice. None of the twenty-two repos has multi-model review, per-jurisdiction calls, a red-line veto, code-computed verdicts or an ethics guard. Those parts are original to this project. The upstream ant-peer-review references are in that repo's `docs/REFERENCES.md`.
 
 ## Repo list
 
@@ -37,7 +37,7 @@ Licences differ (see each section; two have none and one is share-alike), so ide
 
 Full commits read: coreyhaines31/marketingskills `e85f3cbc2e4a79bf33b2a12e9bdd9087d414735b`; asgard-ai-platform/skills `4e7f4f8e389847757a5a4236c2f1ed9813359179`; dclacher/pr-crisis-analyzer `eeed137fb9cb792432dc67f84b443c69c58fa0af`; metadatastician/sim-public-relations `c4db8ffb9afbbdbe125a1ff91ad2312ceb863189`; tsy-fred/declaration-and-media-skill `a4ea626a81fc90e41072e13f833e0ae6f8da8152`; AshLSnow/pr-crisis `349f34486ca3ce3d80ccc5ab6f81259b748664b0`; ur-grue/autopunk-media-skills `39e119bfef25957223d6c44fccab0329e936d2f6`; ShenyuanNext/wepr-growth-skills `822504b8c72003b7efe84cb5c621bf752a3244fe`; qcmcbw7qm2-svg/ziyu `fa893b32eb2148cb41a09dcfd9255c9ac13ae70e`; HachikoJ/crisis-pr-response `9fabde2f3d4630be5693d582fb138a8bddd07536` (asgard #19-20 at the same `4e7f4f8`; main had not moved).
 
-Licences: #1-6 MIT (root LICENSE at the commit read); #7 none; #8 code MPL-2.0, documents CC-BY-SA-4.0; #9 no licence file (its README says MIT); #10 MIT, concept from a paid column; #11 MIT; #12-18 MIT (an agency's marketing suite, scwepr.com); #19-20 MIT (as #2-6); #21 MIT, no holder named, its knowledge notes paraphrase a published book (田辉《危机公关》); #22 MIT, its casebook summarised from Wikipedia.
+Licences: #1-6 MIT (root LICENSE at the commit read); #7 none; #8 code MPL-2.0, documents CC-BY-SA-4.0, and its LICENSES/ also holds AGPL-3.0-or-later; #9 no licence file (its README says MIT; without the file the grant is unclear); #10 MIT, concept from a paid column; #11 MIT; #12-18 MIT (an agency's marketing suite, scwepr.com); #19-20 MIT (as #2-6); #21 MIT with the copyright holder left blank, its knowledge notes paraphrase a published book (田辉《危机公关》); #22 MIT, its casebook summarised from Wikipedia (CC-BY-SA); #23 the user's private notes, third-party texts, never committed; #24 Bilibili videos, no open licence. Checked against each repo's licence file at the commit read on 2026-10-22.
 
 ## 1. coreyhaines31 public-relations (@e85f3cb)
 
@@ -404,7 +404,7 @@ MIT.
 
 ## 23. The user's own reference notes (local only)
 
-**This material belongs to the user. It stays on the user's machine, is ignored by git (`docs/references/`) and is never committed, published or linked.** It is a personal collection (2006–2026) of book and article excerpts, crisis-handling principles, flow charts and screenshots of third-party apology letters and statements. Read 2026-10-22. Ideas only; the third-party texts keep their owners' rights, and only short attributed quotes may appear in this repo.
+**This material belongs to the user. It stays on the user's machine, is ignored by git (`docs/references/`) and is never committed, published or linked.** It is a personal collection (2006–2026) of book and article excerpts, crisis-handling principles, flow charts and screenshots of third-party apology letters and statements. Read 2026-10-22. Ideas only; the third-party texts keep their owners' rights and none of their wording is kept in this repo.
 
 | Borrowed | Where here |
 |---|---|
@@ -416,7 +416,7 @@ MIT.
 | An implied culprit through arranged facts; people before the product when someone was hurt | checklist JOU-06, SOC-07 (amended) |
 | A speaker's own stake is declared | checklist LEG-03 (amended) |
 | A disclaimer limited to communication risk that does not cleanse black tactics | `report.disclaimer` (S-review-matrix-030) |
-| Dated, attributed case patterns and counter-patterns with short quotes | `examples.toml` (S-drafting-015): organisations only, unverified |
+| Dated case patterns and counter-patterns | `examples.toml` (S-drafting-015): organisations only, paraphrased lessons, no quotes, unverified |
 
 | Left out | Why |
 |---|---|
@@ -435,7 +435,7 @@ MIT.
 - 刹车断裂事件公关漫谈2：品牌回应的困境与策略原理深度解析 (BV1hMpE6FEXG)
 - 刹车断裂事件，公关漫谈3：部门联合调查真上热搜了吗？ (BV1dmJi6yEAi)
 
-A brand professional's personal commentary on one automotive crisis, with the brand left anonymous. The videos were watched 2026-10-22 from local copies, which are not in the repo, and the sponsored segments were skipped. Ideas are paraphrased; the quotes in `examples.toml` are short. The commentator is not named here.
+A brand professional's personal commentary on one automotive crisis, with the brand left anonymous. The videos were watched 2026-10-22 from local copies, which are not in the repo, and the sponsored segments were skipped. The videos carry no open licence (all rights reserved), so only ideas are paraphrased and nothing is quoted. The commentator is not named here.
 
 | Borrowed | Where here |
 |---|---|
