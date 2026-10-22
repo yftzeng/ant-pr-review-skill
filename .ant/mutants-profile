@@ -1,0 +1,36 @@
+@@ src/ant_pr_review/profile.py
+-     return total % 5 == 0 or (s[6] == "7" and (total + 1) % 5 == 0)
++     return total % 10 == 0
+@@ src/ant_pr_review/profile.py
+-     if not re.fullmatch(r"[0-9]{8}", s) or s == "00000000":
++     if len(s) != 8 or not s.isdigit():
+@@ src/ant_pr_review/profile.py
+-             if grade == "A" and not OFFICIAL.search(_host(e["url"])):
++             if False:
+@@ src/ant_pr_review/profile.py
+-         return parts[-3]
++         return ".".join(parts)
+@@ src/ant_pr_review/profile.py
+-                     "status": "confirmed" if "A" in grades or grades.count("B") >= 2
++                     "status": "confirmed" if grades
+@@ src/ant_pr_review/profile.py
+-     if card.get("embargo") or not allowed:
++     if not allowed:
+@@ src/ant_pr_review/profile.py
+-         if not confirm(io, t, q, default=not card.get("embargo")):
++         if not confirm(io, t, q, default=True):
+@@ src/ant_pr_review/profile.py
+-     if tax_id and not valid_tax_id(tax_id):
++     if False:
+@@ src/ant_pr_review/profile.py
+-     if not isinstance(data, list) or any(not isinstance(r, dict) for r in data):
++     if False:
+@@ src/ant_pr_review/profile.py
+-             if code:  # free-text rows without a code are no industry
++             if True:
+@@ src/ant_pr_review/prompts.py
+-     card.pop("tax_id", None)        # used only for the registry lookup (D-0004)
++     pass
+@@ src/ant_pr_review/prompts.py
+-     card.pop("competitors", None)   # found by search: shown apart as untrusted data
++     pass

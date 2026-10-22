@@ -50,11 +50,12 @@ robots.txt, a site-profile block, internal addresses, a login or paywall (also H
     [--channels press_release,kol] [--publish-at 2026-11-01] [--keywords "..."] \
     [--embargo | --context-scan] [--models claude:opus,openai:gpt-5,gemini:gemini-2.5-pro] \
     [--merger claude:opus] [--lang en|zh-TW|zh-CN] [--role responsible:organization ...] \
-    [--posture expose] [--means white,gray] \
+    [--posture expose] [--means white,gray] [--tax-id <統一編號> --company-lookup] \
     [--speaker "<who, role>"] [--background "..."] [--locked "<sentence>" ...] [--focus "..."]
   ```
 
   - `--embargo` means nothing is searched on the web.
+  - `--company-lookup` lets a `--yes` run look up `--tax-id` in Taiwan's registry and search for competitors. Only the tax ID or the name leaves the machine; ask the user first. Under embargo a `--yes` run never looks anything up, even with the flag. Competitors are graded by their sources: only confirmed ones enter the card in a `--yes` run.
   - `--context-scan` lets a `--yes` run search recent news. Only pass it when the user agreed, because the query strings leave the machine.
   - The means shape only the plan's timeline. Reviewers always judge every item from the white, gray and black angles. Black is never scheduled; with black ticked, the report assesses black tactics in an excluded table.
 
@@ -68,6 +69,7 @@ Exit codes:
 
 Read the newest `08-report.v<N>.md` in the run folder (printed as `Workspace:`). With several jurisdictions there is also one `08-report.v<N>.<jurisdiction>.md` per jurisdiction. Tell the user:
 - the verdict per jurisdiction, the overall verdict and the strictest jurisdiction;
+- the company profile, if any: registry facts with their source and date, the industry, and confirmed competitors apart from leads ("no record found" is not "does not exist");
 - every red line that is confirmed or needs a ruling, per jurisdiction;
 - the top risks by score (L×I), with anchors (e.g. `D1.P03.S2`), including any marked WIDE or SPLIT;
 - checklist items that are fail or concern (unticked in the checkbox list), with their pass rate, and any item a model left unanswered (a gap, not a pass);

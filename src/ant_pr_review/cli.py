@@ -50,6 +50,9 @@ def build_parser() -> argparse.ArgumentParser:
     n.add_argument("--depth", choices=DEPTHS)
     n.add_argument("--lenses", help="comma list, default per direction: " + ",".join(LENSES))
     n.add_argument("--org", default="", help="our organisation or brand")
+    n.add_argument("--tax-id", default="", help="our Taiwan tax ID (統一編號) for the registry lookup")
+    n.add_argument("--company-lookup", action="store_true",
+                   help="with --yes: look up the registry and search competitors (D-0004)")
     n.add_argument("--party", action="append", default=[], help="a named party (repeat)")
     n.add_argument("--channels", help="comma list: " + ",".join(CHANNELS) + " or custom:<text>")
     n.add_argument("--stakeholders", help="comma list: " + ",".join(STAKEHOLDERS))
@@ -74,9 +77,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     r = sub.add_parser("resume", parents=[common], help="continue a run")
     r.add_argument("run")
+    r.add_argument("--company-lookup", action="store_true",
+                   help="with --yes: allow the registry lookup and competitor search")
     rr = sub.add_parser("rerun", parents=[common], help="redo a run from a phase")
     rr.add_argument("run")
     rr.add_argument("--from", dest="phase", choices=PHASES, required=True)
+    rr.add_argument("--company-lookup", action="store_true",
+                    help="with --yes: allow the registry lookup and competitor search")
 
     f = sub.add_parser("factcheck", parents=[common], help="retry unfinished fact checks")
     f.add_argument("run")
@@ -216,6 +223,7 @@ def make_ctx(args, io: IO, store: Store, cfg: Config, *, models=None, backend=No
                models=models, lang=lang or cfg.lang, interactive=not args.yes,
                options={"depth": getattr(args, "depth", None), "lenses": lenses or None,
                         "context_scan": getattr(args, "context_scan", False),
+                        "company_lookup": getattr(args, "company_lookup", False),
                         "merger": merger,
                         **({"renderer": None} if getattr(args, "no_render", False) else {}),
                         **({"archive_on_block": True}
@@ -276,7 +284,7 @@ def cmd_new(args, io: IO, store: Store, cfg: Config) -> int:
                 publish_at=args.publish_at, keywords=args.keywords, embargo=args.embargo,
                 posture=args.posture, means=args.means, speaker=args.speaker,
                 background=args.background, locked=args.locked, focus=args.focus,
-                roles=args.role or None)
+                roles=args.role or None, tax_id=args.tax_id)
         except ValueError as e:
             io.say(f"error: {e}")
             return EXIT_USAGE

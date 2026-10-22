@@ -79,6 +79,10 @@ class FakeBackend(Backend):
                 "sources": [{"url": "https://example.org/fake-source",
                              "supporting_excerpt": "fake excerpt"}]}
 
+    def _profile(self, *a):
+        return {"competitors": [{"name": "[fake] Rival Co", "role": "direct", "evidence": [
+            {"url": "https://example.org/fake-source", "kind": "regulator", "excerpt": "fake"}]}]}
+
     def _context(self, *a):
         return {"findings": [{"summary": "fake news item", "url": "https://example.org/fake-source",
                               "date": "2026-10-01", "relevance": "low"}]}

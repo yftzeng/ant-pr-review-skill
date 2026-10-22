@@ -214,6 +214,18 @@ CLASSIFY_MEANS = obj({
     "excluded_flags": arr(obj({"entry": {"type": "integer"}, "problem": STR})),
 })
 
+# D-0004: competitors with the evidence the search returned
+PROFILE_SEARCH = obj({
+    "competitors": arr(obj({
+        "name": STR, "role": enum(["direct", "indirect", "substitute", "benchmark"]),
+        "evidence": arr(obj({"url": STR,
+                             "kind": enum(["registry", "regulator", "exchange_filing",
+                                           "independent", "company_claim", "aggregator",
+                                           "lead"]),
+                             "excerpt": STR})),
+    })),
+})
+
 CONTEXT_SEARCH = obj({
     "findings": arr(obj({"summary": STR, "url": STR, "date": STR,
                          "relevance": enum(["high", "medium", "low"])})),

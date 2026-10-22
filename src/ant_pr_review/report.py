@@ -313,6 +313,43 @@ def stress_lines(t: T, items: list[dict], models: list[str]) -> list[str]:
     return out
 
 
+def profile_lines(t: T, prof: dict) -> list[str]:
+    """D-0004: registry facts with source and date, industry, competitors by grade."""
+    from .profile import ROLES
+    out = []
+    reg = prof.get("registry") or {}
+    if reg.get("status") == "found":
+        f = reg["facts"]
+        out += [f"- {t('profile.name')}: {cell(f['name'])} ({cell(reg['tax_id'])})",
+                f"- {t('profile.state')}: {cell(f['status'])} · {t('profile.set_up')}: "
+                f"{cell(f['set_up'])} · {t('profile.capital')}: {cell(f['capital'])}",
+                f"- {t('profile.registered_with')}: {cell(f['registered_with'])}",
+                f"- {t('profile.industry')}: "
+                + sep(t).join(t("industry." + x) for x in f["industries"]),
+                f"- {t('profile.items')}: "
+                + sep(t).join(cell(i["desc"]) for i in f["business_items"][:8])]
+        out += [f"- {t('report.source')}: {source_urls([s])}" for s in reg["sources"]]
+    elif reg.get("status") == "not_found":
+        out.append(f"- {t('profile.not_found', checked=cell(reg['checked']))}")
+    elif reg.get("status"):
+        out.append(f"- {t('profile.reg.' + reg['status'])}")
+    for status in ("confirmed", "lead"):
+        rows = [c for c in prof.get("competitors", []) if c["status"] == status]
+        if not rows:
+            continue
+        out += ["", f"**{t('profile.' + status + '_title')}**", "",
+                f"| {t('profile.competitor')} | {t('profile.role')} | {t('profile.grade')} | "
+                f"{t('report.sources')} |", "|---|---|---|---|"]
+        out += [f"| {cell(c['name'])} | "
+                f"{t('profile.role.' + c['role']) if c['role'] in ROLES else cell(c['role'])} | "
+                f"{'/'.join(e['grade'] for e in c['evidence'])} | "
+                f"{source_urls(c['evidence'])} |" for c in rows]
+    ticked = (prof.get("card") or {}).get("competitors", [])
+    if ticked:
+        out += ["", f"{t('profile.in_card')}: " + sep(t).join(cell(x) for x in ticked)]
+    return out
+
+
 def stage_lines(t: T, stages: list[dict]) -> list[str]:
     out = [f"| {t('report.stage')} | {t('report.writer')} | {t('report.reviewer')} | "
            f"{t('report.status')} | {t('report.result')} |", "|---|---|---|---|---|"]
@@ -497,6 +534,9 @@ def render(run: Run, syn: dict, *, lang: str, version: int, changelog: list[str]
     L.append(f"- {t('report.depth')}: {t('depth.' + matrix['depth'])} · "
              f"{t('report.units')}: {len(matrix['units'])} × {len(models)}")
     L += ["", f"> {t('report.disclaimer')}", ""]
+    prof = read_json(run.path("01-profile.json"), default={})
+    if prof.get("status") == "done":
+        L += [f"## {t('report.profile')}", ""] + profile_lines(t, prof) + [""]
     L += [f"## {t('report.provenance')}", "",
           f"| {t('report.model')} | {t('report.vendor')} | backend | ID | ok | refused | failed |",
           "|---|---|---|---|---:|---:|---:|"]

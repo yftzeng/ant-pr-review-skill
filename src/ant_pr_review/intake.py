@@ -254,7 +254,7 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
                            posture: str | None = None, means: str | None = None,
                            speaker: str = "", background: str = "",
                            locked: list[str] | None = None, focus: str = "",
-                           roles: list[str] | None = None) -> dict:
+                           roles: list[str] | None = None, tax_id: str = "") -> dict:
     if direction not in DIRECTIONS:
         raise ValueError(f"direction must be one of {DIRECTIONS}")
     posture = posture or DEFAULT_POSTURE
@@ -277,7 +277,8 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
                                           STAKEHOLDERS, "stakeholder"),
             "publish_at": publish_at or "", "keywords": split_list(keywords or ""),
             "embargo": bool(embargo), "speaker": speaker or "", "background": background or "",
-            "locked": [x.strip() for x in (locked or []) if x.strip()], "focus": focus or ""}
+            "locked": [x.strip() for x in (locked or []) if x.strip()], "focus": focus or "",
+            **({"tax_id": tax_id.strip()} if tax_id and tax_id.strip() else {})}
     identities = check_identities(roles or [DEFAULT_IDENTITY])
     from .catalog import POLITICAL_IDENTITIES, state_ruled
     organs = [j for j in card["jurisdictions"] if state_ruled(j)]

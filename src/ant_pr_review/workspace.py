@@ -11,6 +11,7 @@ from .jsonio import read_json, sha256_file, write_bytes_atomic, write_json
 
 PHASES = [
     "intake",
+    "profile",
     "sources",
     "context",
     "matrix",
@@ -29,6 +30,7 @@ PHASES = [
 # every file under it. Changing any of them makes the phase and its successors stale.
 PHASE_INPUTS: dict[str, list[str]] = {
     "intake": [],
+    "profile": [],  # writes the card's industry and competitors; reads nothing it writes
     "sources": ["00-intake.json"],
     "context": ["00-intake.json"],
     "matrix": ["00-intake.json"],

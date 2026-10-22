@@ -64,6 +64,24 @@ def ph_intake(run: Run, ctx: Ctx) -> None:
     write_json(run.path("00-intake.json"), run_intake_interactive(ctx.io, ctx.t, ctx.lang))
 
 
+def ph_profile(run: Run, ctx: Ctx) -> None:
+    """D-0004: registry first, then graded competitors the user ticks; never without
+    consent, and asked again under embargo."""
+    from .profile import build_profile
+    intake = read_json(run.path("00-intake.json"))
+    card = intake["card"]
+    if ctx.interactive and not card.get("tax_id"):
+        card["tax_id"] = ask_text(ctx.io, ctx.t("profile.ask_tax_id")).strip()
+    out = build_profile(card, ctx.crawler or make_crawler(ctx.store), ctx.backend, ctx.models,
+                        ctx.lang, io=ctx.io, interactive=ctx.interactive,
+                        allowed=bool(ctx.options.get("company_lookup")), say=ctx.say)
+    write_json(run.path("01-profile.json"), out)
+    if out["card"]:
+        card.update(out["card"])
+    write_json(run.path("00-intake.json"), intake)
+    ctx.say(ctx.t("profile.status", status=ctx.t("profile." + out["status"])))
+
+
 def ph_sources(run: Run, ctx: Ctx) -> None:
     """D-PR-15: the crawler and its fallbacks run inside run_sources; what still fails can
     be retried, pasted by the user, skipped, or left for later."""
@@ -311,7 +329,7 @@ def ph_decision(run: Run, ctx: Ctx) -> None:
 
 
 PHASE_FUNCS = {
-    "intake": ph_intake, "sources": ph_sources, "context": ph_context, "matrix": ph_matrix,
+    "intake": ph_intake, "profile": ph_profile, "sources": ph_sources, "context": ph_context, "matrix": ph_matrix,
     "review": ph_review, "factcheck": ph_factcheck, "debate": ph_debate,
     "synthesis": ph_synthesis, "jmerge": ph_jmerge, "plans": ph_plans, "reaudit": ph_reaudit,
     "report": ph_report, "decision": ph_decision,

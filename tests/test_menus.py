@@ -165,6 +165,10 @@ def test_real_pty_arrow_keys(tmp_path):
             wait_for(marker)
             time.sleep(0.15)
             os.write(fd, key)
+        for marker, key in (("tax ID", b"\n"), ("Look up", b"n\n")):
+            wait_for(marker)
+            time.sleep(0.15)
+            os.write(fd, key)
         wait_for("Phase sources")
     finally:
         proc.terminate()
