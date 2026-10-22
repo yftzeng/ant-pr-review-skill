@@ -149,7 +149,7 @@ def test_real_pty_arrow_keys(tmp_path):
         os.write(fd, b"\x1b[B")
         time.sleep(0.2)
         os.write(fd, b"\r")
-        for marker in ("Posture", "Means in scope"):
+        for marker in ("Your role", "Who exactly", "Posture", "Means in scope"):
             wait_for(marker)
             time.sleep(0.15)
             os.write(fd, b"\r")
@@ -174,4 +174,5 @@ def test_real_pty_arrow_keys(tmp_path):
     intake = json.loads((run / "00-intake.json").read_text())
     assert intake["direction"] == "operation" and intake["card"]["org"] == "Acme"
     assert intake["card"]["jurisdictions"] == ["tw"]
+    assert intake["roles"]["identities"] == ["responsible:organization"]
     assert intake["posture"] == "clarify_apologize" and intake["means"] == ["white", "gray", "black"]

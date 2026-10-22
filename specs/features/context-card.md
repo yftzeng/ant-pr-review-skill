@@ -73,9 +73,34 @@ Feature: context card
     Given an intake without posture or means, and intakes with the earlier postures clarify, apologize, attack and defend
     When  the matrix is planned and plans run
     Then  they use clarify_apologize and all three means; the earlier postures read as clarify_apologize, clarify_apologize, expose and rebut
+  @S-context-card-014
+  Scenario: the standpoint is a checkbox defaulting to responsible, and identities follow it
+    When  the standpoint menu is confirmed with Enter, and then with affected also ticked
+    Then  only responsible pairs are offered and responsible:organization is ticked; with affected, affected pairs such as affected:victims are offered too; un-ticking every standpoint or identity is refused
+
+  @S-context-card-015
+  Scenario: astroturf is never offered or accepted as our identity
+    When  the identity menu is shown for every standpoint, intake is built from --role related:astroturf, or a stored intake holds astroturf, an unreasonable or a malformed identity
+    Then  no astroturf or state-organ pair is offered and the argument is a ValueError; a stored one is dropped (and reported) when read, falling back to responsible:organization; related:short_activists and responsible:ruling_party are accepted; a party identity is refused (or dropped when read) wherever a chosen jurisdiction's ruling party is a party organ (cn)
+
+  @S-context-card-016
+  Scenario: roles from arguments, and the defaults for an older intake
+    When  intake is built from --role affected:victims --role related:partners, without --role, or from an intake written before roles
+    Then  the standpoints are [affected, related] with those identities; or responsible with responsible:organization; an unreasonable pair such as responsible:bystanders is refused
+
+  @S-context-card-017
+  Scenario: the card's stakeholders use the new party types, and earlier values map onto them
+    When  the card is built from --stakeholders board,media, and an earlier card holds consumers and employees
+    Then  the card holds [board, media], and the earlier card reads as [victims, bystanders, staff], also when the field is edited and in the prompt
 ```
+
+## Must NOT
+- @N-context-card-001 astroturf is offered or accepted as our identity
 
 ## Revisions
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5 and rewritten for PR risk review; ids restart in this repo · decision: D-PR-1
 - 2026-10-22 · +S-context-card-010..013 posture, means and the audit questions · decision: D-0002
 - 2026-10-22 · ~S-context-card-010, 011, 013 postures are clarify_apologize (default), promote, expose, rebut; earlier values map onto them (user: 澄清道歉/廣告造勢/狙擊爆料/回應抹黑,預設澄清道歉) · decision: D-0002
+2026-10-22 · +S-context-card-014..017 standpoint and identity (our role), party types · decision: D-0003
+- 2026-10-22 · ~S-context-card-015, 017 from the tier-3 review (stored identities re-validated; legacy values kept on edit); political parties as identities, state organs never (user: 政治與政黨) · decision: D-0003
+- 2026-10-22 · ~S-context-card-015 party identities refused where the ruling party is a party organ (second tier-3 review) · decision: D-0003

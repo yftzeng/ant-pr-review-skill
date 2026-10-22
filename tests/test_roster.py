@@ -71,14 +71,25 @@ def test_strings_follow_language_and_every_key_exists():
     used = {m.group(1) for f in src.rglob("*.py")
             for m in re.finditer(r"""\bt\(\s*["']([^"'{]+)["']\s*[,)]""", f.read_text())}
     assert used and not used - set(en), used - set(en)
-    from ant_pr_review.catalog import DIMENSIONS, JURISDICTIONS, LENSES, MEANS, POSTURES, RED_LINES
+    from ant_pr_review.catalog import (DIMENSIONS, JURISDICTIONS, LENSES, MEANS, PARTY_GROUPS,
+                                       POSTURES, RED_LINES, STANDPOINTS)
+    from ant_pr_review.report import STRESS
+    from ant_pr_review.schemas import KEYWORD_KINDS
     from ant_pr_review.intake import CARD_FIELDS, CHANNELS, STAKEHOLDERS
     from ant_pr_review.workspace import PHASES
     dynamic = ([f"lens.{x}" for x in LENSES] + [f"dim.{x}" for x in DIMENSIONS]
                + [f"redline.{x}" for x in RED_LINES] + [f"jur.{x}" for x in JURISDICTIONS]
                + [f"phase.{x}" for x in PHASES] + [f"card.{x}.label" for x in CARD_FIELDS]
                + [f"card.channels.{x}" for x in CHANNELS]
-               + [f"card.stakeholders.{x}" for x in STAKEHOLDERS]
+               + [f"party.{x}" for x in STAKEHOLDERS + ["organization"]]
+               + [f"standpoint.{x}" for x in STANDPOINTS]
+               + [f"standpoint.{x}.short" for x in STANDPOINTS]
+               + [f"group.{x}" for x in PARTY_GROUPS]
+               + [f"relevance.{x}" for x in ("none", "low", "high")]
+               + [f"kw.{x}" for x in KEYWORD_KINDS]
+               + [f"side.{x}" for x in ("ruling", "opposition", "party_organ", "state_organ",
+                                        "semi_official", "legislature")]
+               + [f"stress.{d}" for _, d, _ in STRESS]
                + [f"posture.{x}" for x in POSTURES] + [f"means.{x}" for x in MEANS]
                + [f"means.{x}.short" for x in MEANS]
                + [f"reaudit.{x}" for x in ("done", "failed", "unchanged", "not_applicable",

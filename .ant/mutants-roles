@@ -1,0 +1,70 @@
+# D-0003 guards
+@@ src/ant_pr_review/intake.py
+-            or x.split(":", 1)[1] not in VALID_IDENTITIES.get(x.split(":", 1)[0], [])]
++            or False]
+@@ src/ant_pr_review/intake.py
+-     good = list(dict.fromkeys(x for x in ids if ok(x)))
++     good = list(dict.fromkeys(x for x in ids if isinstance(x, str)))
+@@ src/ant_pr_review/intake.py
+-         m = LEGACY_STAKEHOLDERS.get(v, v)
++         m = v
+@@ src/ant_pr_review/intake.py
+-         current = card_stakeholders(card) if field == "stakeholders" else card.get(field, [])
++         current = card.get(field, [])
+@@ src/ant_pr_review/catalog.py
+-             and (not i.get("roles") or ours & set(i["roles"]))]
++             ]
+@@ src/ant_pr_review/catalog.py
+-         if not set(i.get("roles", [])) <= set(PARTY_TYPES) | {"organization"}:
++         if False:
+@@ src/ant_pr_review/catalog.py
+-     base = [p for p in PARTY_TYPES if not (own and p in GENERIC_POLITICS)]
++     base = list(PARTY_TYPES)
+@@ src/ant_pr_review/consensus.py
+-                     "by_model": by_model, "unanswered": unanswered})
++                     "by_model": by_model, "unanswered": []})
+@@ src/ant_pr_review/consensus.py
+-                                      key=lambda v: REL_RANK.get(v, 0), default="none"),
++                                      key=lambda v: -REL_RANK.get(v, 0), default="none"),
+@@ src/ant_pr_review/review.py
+-     if "stakeholders" in unit["lenses"]:
++     if True:
+@@ src/ant_pr_review/review.py
+-             gap, gap_t = missing_items(rec["data"], unit), missing_types(rec["data"], unit)
++             gap, gap_t = missing_items(rec["data"], unit), []
+@@ src/ant_pr_review/timeline.py
+-         if s["paid"] and not s["stop"].strip():
++         if s["paid"] and False:
+@@ src/ant_pr_review/timeline.py
+-             if key(s, True) <= first:
++             if key(s, True) < first:
+@@ src/ant_pr_review/timeline.py
+-     elif public and posture in CRISIS:
++     elif False:
+@@ src/ant_pr_review/timeline.py
+-             if s["audience"] == "staff" and key(s, False) > first_public:
++             if False:
+@@ src/ant_pr_review/plans.py
+-         if _HANDLE.search(term):
++         if term.startswith("@"):
+@@ src/ant_pr_review/report.py
+-             if r["by_model"] and all(a["relevance"] == "none" for a in r["by_model"].values()):
++             if False:
+@@ src/ant_pr_review/intake.py
+-         return _valid_identity(x) and not (organ and x.split(":")[1] in POLITICAL_IDENTITIES)
++         return _valid_identity(x)
+@@ src/ant_pr_review/intake.py
+-     if organs and any(i.split(":")[1] in POLITICAL_IDENTITIES for i in identities):
++     if False:
+@@ src/ant_pr_review/jmerge.py
+-                              for i in o["items"] if i["item"] == "POL-03"
++                              for i in o["items"] if False
+@@ src/ant_pr_review/catalog.py
+-             for year in ((s["year"],) if s.get("year") else (d.year - 1, d.year, d.year + 1)):
++             for year in (d.year - 1, d.year, d.year + 1):
+@@ src/ant_pr_review/report.py
+-     if any(r["by_model"] for j in stk_js for r in syn["jurisdictions"][j].get("stakeholders", [])):
++     if any(syn["jurisdictions"][j].get("stakeholders") for j in stk_js):
+@@ src/ant_pr_review/report.py
+-         if p in GENERIC_POLITICS and pack_parties(scope):
++         if False:

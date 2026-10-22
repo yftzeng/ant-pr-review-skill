@@ -4,6 +4,9 @@ C response kit; re-review by a different model; every plan passes the ethics gua
 the removal disclosed in ethics.json and the report."""
 from __future__ import annotations
 
+import re
+import unicodedata
+
 from . import ethics, prompts, timeline
 from .backends.base import Backend, BackendError
 from .factcheck import read_ledger
@@ -220,13 +223,49 @@ def plan_b(run, backend, writer, lang, direction, risks, article, intake, paras,
     return text, rep, warn
 
 
+_HANDLE = re.compile(r"@|(?:^|[\s/])u/|t\.me/|://|www\.|/user/|\b(?:ID|id)\s*[:：]", re.I)
+
+
+def kit_keywords(d: dict) -> tuple[list[dict], list[str]]:
+    """Typed monitoring terms. A term that looks like an account handle or a link is
+    dropped, and the warning does not repeat it (D-PR-10: we never track people)."""
+    from .schemas import KEYWORD_KINDS
+    kept, dropped = [], 0
+    raw = d.get("monitoring_keywords") or []
+    for k in raw if isinstance(raw, list) else []:
+        if isinstance(k, str):
+            k = {"term": k}
+        if not isinstance(k, dict):
+            continue
+        term = unicodedata.normalize("NFKC", str(k.get("term") or "")).strip()
+        if not term:
+            continue
+        if _HANDLE.search(term):
+            dropped += 1
+            continue
+        plats = k.get("platforms") or []
+        plats = [plats] if isinstance(plats, str) else [str(p) for p in plats if p]
+        kind = k.get("kind") if k.get("kind") in KEYWORD_KINDS else "brand"
+        kept.append({"term": term, "kind": kind, "platforms": plats})
+    warn = [f"{dropped} monitoring keyword(s) dropped: they looked like account handles or "
+            "links"] if dropped else []
+    return kept, warn
+
+
 def render_kit(t: T, d: dict) -> str:
+    from .report import cell
     qa = "\n".join(f"- **{q['question']}**\n  {q['answer']}" for q in d.get("qa", []))
+    kws, _ = kit_keywords(d)
+    by_kind: dict[str, list[str]] = {}
+    for k in kws:
+        by_kind.setdefault(k["kind"], []).append(
+            cell(k["term"]) + (f" ({', '.join(cell(p) for p in k['platforms'])})"
+                               if k["platforms"] else ""))
     esc = "\n".join(f"| {e['trigger']} | {e['action']} | {e['owner']} |"
                     for e in d.get("escalation", []))
     return (f"# {t('plans.c')}\n\n## {t('plans.holding')}\n\n{d.get('holding_statement', '')}\n\n"
             f"## Q&A\n\n{qa}\n\n## {t('plans.monitor')}\n\n"
-            + ", ".join(d.get("monitoring_keywords", []))
+            + "\n".join(f"- {t('kw.' + kind)}: {', '.join(v)}" for kind, v in by_kind.items())
             + f"\n\n## {t('plans.escalation')}\n\n| trigger | action | owner |\n|---|---|---|\n{esc}"
             + f"\n\n## {t('plans.do_not_say')}\n\n"
             + "\n".join(f"- {x}" for x in d.get("do_not_say", [])) + "\n")
@@ -242,6 +281,7 @@ def plan_c(run, backend, writer, lang, risks, article, intake):
         rep["redacted"] = True
     text = render_kit(t, data) if data else ""
     write_text_atomic(run.path(f"{DIR}/C-kit.md"), text)
+    rep["keyword_warnings"] = kit_keywords(data)[1] if data else []
     return text, rep
 
 
@@ -270,6 +310,7 @@ def run_plans(run: Run, backend: Backend, models: list[str], lang: str, *, say=p
     out["plans"].append("B")
     say(f"  … C ({writer})")
     c_text, rep = plan_c(run, backend, writer, lang, risks, article, intake)
+    out["warnings"] += rep.pop("keyword_warnings", [])
     out["ethics"]["C"] = rep
     say(f"  … T ({writer})")
     tl, rep, tl_stages = timeline.plan_t(backend, writer, checker, lang, risks, article, intake,

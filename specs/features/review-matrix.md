@@ -160,6 +160,20 @@ Feature: review matrix
     Given M2's call for global.all failed, so M2 is not among the item's active reviewers
     When  the checklist is rendered for the roster M1, M2
     Then  the item is unticked with "M2 ∅" and "1 unanswered"; an item nobody answered is unticked too
+  @S-review-matrix-027
+  Scenario: every model answers every party type in a stakeholders unit, and a missing type is a gap
+    Given one model answers every party type of tw (the base types plus the pack's political parties) and another leaves out board
+    When  the synthesis runs
+    Then  the tw matrix has a row per type with both models' answers except board, which lists the second model as unanswered; relevance is the highest and L×I the max; a missing type is retried once; an unknown relevance reads as none
+
+  @S-review-matrix-028
+  Scenario: the report shows the stakeholder matrix per jurisdiction, grouped
+    When  the report is written
+    Then  it has a stakeholder section per jurisdiction with the seven groups, rows sorted by relevance, each type's relevance (∅ when nobody answered), max L×I, and each model's reaction, needs and handling; a type every model rated none is one line; with several jurisdictions the consolidated report keeps only high, L×I ≥ 8 or gap rows
+  @S-review-matrix-029
+  Scenario: the report has a stress-test section
+    When  the report is written for an outbound run
+    Then  a stress-test section lists RTM-01..05 and POL-01..03 with their dimension and red-team question once, then per unit the parties tested there (that jurisdiction's parties for the political tests), the pass-rate bar and each model's evidence; the jurisdiction merger sees the panels' POL-03 quotes and names cross-region wording only from them
 ```
 
 ## Must NOT
@@ -171,3 +185,6 @@ Feature: review matrix
 - 2026-10-22 · +S-review-matrix-024..025 pass-rate bars, revision and timeline in the report · decision: D-0002
 - 2026-10-22 · ~S-review-matrix-024 the checklist is a checkbox list with every reviewer's verdict (user: 報告裡的勾選清單) · decision: D-0002
 - 2026-10-22 · +S-review-matrix-026, ~S-review-matrix-025 (missing plan files do not stop the report), from the tier-3 review · decision: D-0002
+2026-10-22 · +S-review-matrix-027..028 the stakeholder matrix · decision: D-0003
+2026-10-22 · ~S-review-matrix-027, 028 from the tier-3 review and the political parties; +S-review-matrix-029 stress tests · decision: D-0003
+- 2026-10-22 · ~S-review-matrix-029 second tier-3 review: per-unit parties, question once, merger evidence · decision: D-0003

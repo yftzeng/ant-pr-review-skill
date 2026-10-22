@@ -3,8 +3,8 @@
 code = "tw"
 name = "Taiwan"
 verified = false
-regulators = ["Fair Trade Commission (公平交易委員會)", "National Communications Commission (NCC)", "Food and Drug Administration, MOHW (衛福部食藥署)", "Financial Supervisory Commission (金管會)", "Central Election Commission (中選會)", "Personal data protection authority (個人資料保護主管機關)"]
-platforms = ["PTT", "Dcard", "Facebook", "Instagram", "Threads", "LINE", "YouTube", "Mobile01"]
+regulators = ["Fair Trade Commission (公平交易委員會)", "National Communications Commission (NCC)", "Food and Drug Administration, MOHW (衛福部食藥署)", "Financial Supervisory Commission (金管會)", "Central Election Commission (中選會)", "Personal data protection authority (個人資料保護主管機關)", "Ministry of Digital Affairs (數位發展部)", "Ministry of Labor (勞動部)", "Prosecutors and the Investigation Bureau (檢調)"]
+platforms = ["PTT", "Dcard", "Facebook", "Instagram", "Threads", "LINE", "LINE TODAY", "YouTube", "Mobile01", "巴哈姆特", "Yahoo 新聞", "靠北 Facebook groups"]
 
 [[law]]
 ref = "Criminal Code art. 310-311 (刑法 誹謗)"
@@ -69,3 +69,36 @@ note = "Tiananmen anniversary"
 [[sensitive_date]]
 md = "09-21"
 note = "921 earthquake anniversary"
+
+[[sensitive_date]]
+md = "11-28"
+year = 2026
+note = "2026 local elections (九合一選舉); campaign and poll rules apply in the run-up"
+
+# Political parties (D-0003). Sides change with elections: check as_of; unverified.
+[[party]]
+key = "tw_dpp"
+name = "民主進步黨"
+name_hans = "民主进步党"
+name_en = "Democratic Progressive Party (DPP)"
+side = "ruling"
+note = "holds the presidency and the Executive Yuan; not a majority in the Legislative Yuan"
+as_of = "2026-10"
+
+[[party]]
+key = "tw_kmt"
+name = "中國國民黨"
+name_hans = "中国国民党"
+name_en = "Kuomintang (KMT)"
+side = "opposition"
+note = "largest party in the Legislative Yuan; holds the legislative majority with the TPP"
+as_of = "2026-10"
+
+[[party]]
+key = "tw_tpp"
+name = "台灣民眾黨"
+name_hans = "台湾民众党"
+name_en = "Taiwan People's Party (TPP)"
+side = "opposition"
+note = "third party; its votes decide the legislative majority"
+as_of = "2026-10"

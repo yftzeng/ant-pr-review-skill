@@ -120,7 +120,13 @@ def auto_review(verdicts=None, **kw):
 
     def h(prompt):
         items = re.findall(r"^- ([A-Z]{3}-\d{2}) \[", prompt, re.M)
-        return review_data(items=items, verdicts=verdicts, **kw)
+        data = review_data(items=items, verdicts=verdicts, **kw)
+        if "EVERY party type" in prompt:  # a stakeholders unit (D-0003)
+            data["stakeholders"] = [{"type": p, "relevance": "low", "reaction": "r",
+                                     "needs": "n", "handling": "h", "likelihood": 1,
+                                     "impact": 1}
+                                    for p in re.findall(r"^   - ([a-z_]+): ", prompt, re.M)]
+        return data
     return h
 
 

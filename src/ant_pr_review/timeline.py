@@ -12,12 +12,13 @@ from . import ethics, prompts
 from .backends.base import Backend, BackendError
 from .catalog import MEANS, sensitive_dates_near
 from .i18n import T
-from .intake import means_of
+from .intake import means_of, posture_of
 from .schemas import CLASSIFY_MEANS, TIMELINE
 
 STRICT = {m: n for n, m in enumerate(MEANS)}  # white < gray < black
 TIME_RE = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
 STEP_FIELDS = ("action", "channel", "notes", "trigger", "stop")
+EARLY = {"press", "public"}  # must not come before the first step for affected parties
 EX_FIELDS = ("tactic", "why", "law", "exposure", "watch_for", "lawful_alternative")
 MAX_STEPS = 30
 
@@ -58,6 +59,30 @@ def _t0(publish_at: str) -> date | None:
         return None
 
 
+CRISIS = {"clarify_apologize", "rebut"}  # postures where someone may be affected
+
+
+def _order_warnings(kept: list[dict], posture: str, t: T) -> None:
+    """Affected parties first, staff no later than the public (D-0003). A tie is not
+    'after', and a missing time counts as early for the press and late for the affected."""
+    def key(s, early: bool):
+        return (s["day"], s["time"] or ("00:00" if early else "99:99"))
+    affected = [key(s, False) for s in kept if s["audience"] == "affected"]
+    public = [s for s in kept if s["audience"] in EARLY]
+    if affected:
+        first = min(affected)
+        for s in public:
+            if key(s, True) <= first:
+                s["warnings"].append(t("plans.t.warn_before_affected"))
+    elif public and posture in CRISIS:
+        public[0]["warnings"].append(t("plans.t.warn_no_affected"))
+    if public:
+        first_public = min(key(s, True) for s in public)
+        for s in kept:
+            if s["audience"] == "staff" and key(s, False) > first_public:
+                s["warnings"].append(t("plans.t.warn_staff_late"))
+
+
 def _clean(text, cats: tuple[str, ...] = ("evasion", "persona")) -> str:
     s = str(text or "")
     return ethics.redact(s, ethics.scan_text(s, cats))
@@ -69,7 +94,8 @@ def rel(day: int) -> str:
 
 def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict],
           flags: dict[int, str], means: list[str], publish_at: str,
-          jurisdictions: list[str], withheld: str, unreviewed: str = "not reviewed") -> dict:
+          jurisdictions: list[str], withheld: str, unreviewed: str = "not reviewed",
+          t: T | None = None, posture: str = "clarify_apologize") -> dict:
     """labels: 1-based step number -> {category, reason}, or None when the review did not
     run (every step is then not_reviewed)."""
     kept, dropped, black = [], [], []
@@ -98,6 +124,7 @@ def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict
                             "reason": "outside_means"})
             continue
         kept.append({**{k: str(s.get(k, "")) for k in STEP_FIELDS}, "order": n,
+                     "audience": str(s.get("audience", "")), "paid": bool(s.get("paid")),
                      "day": _day(s.get("day")),
                      "time": s.get("time") if TIME_RE.match(str(s.get("time", ""))) else "",
                      "category": cat, "writer_category": wcat, "reviewer_category": ccat,
@@ -110,6 +137,11 @@ def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict
         s["warnings"] = [f"{d['date']} {d['note']} ({d['jurisdiction']})"
                          for d in sensitive_dates_near(jurisdictions, s["date"], days=1)] \
             if s["date"] else []
+    t = t or T("en")
+    _order_warnings(kept, posture, t)
+    for s in kept:
+        if s["paid"] and not s["stop"].strip():
+            s["warnings"].append(t("plans.t.warn_paid_stop"))
     ex = []
     if "black" in means:
         for n, e in enumerate(excluded, 1):
@@ -232,7 +264,7 @@ def plan_t(backend: Backend, writer: str, checker: str, lang: str, risks: list[d
     card = intake.get("card", {})
     out = build(steps, labels, excluded, flags, means, card.get("publish_at", ""),
                 card.get("jurisdictions", []), t("plans.x.withheld"),
-                t("plans.x.unreviewed"))
+                t("plans.x.unreviewed"), t, posture_of(intake))
     stricter = sum(1 for s in out["steps"] if s["category"] != s["writer_category"])
     black = sum(1 for n in range(1, len(steps) + 1)
                 if (labels or {}).get(n, {}).get("category") == "black")

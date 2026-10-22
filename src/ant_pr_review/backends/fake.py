@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import re
 
-from ..catalog import RED_LINES
+from ..catalog import RED_LINES, all_party_types
 from .base import Backend, Result
 
 
@@ -67,6 +67,11 @@ class FakeBackend(Backend):
             "red_lines": [{"key": k, "flag": False, "severity": "none", "anchors": [],
                            "comment": ""} for k in keys],
             "worst_headlines": [f"[fake:{model}] Company under fire"],
+            "stakeholders": [{"type": p, "relevance": "low", "reaction": f"[fake:{model}] watches",
+                              "needs": "facts", "handling": "brief them on the record",
+                              "likelihood": 1, "impact": 2}
+                             for p in re.findall(r"^   - ([a-z_]+): ", prompt, re.M)
+                             if p in all_party_types()],
         }
 
     def _factcheck(self, *a):
@@ -112,7 +117,8 @@ class FakeBackend(Backend):
     def _timeline(self, model, ids, paras, bias, prompt, schema):
         step = lambda day, time, action, cat: {"day": day, "time": time, "action": action,
                                                "category": cat, "channel": "website",
-                                               "notes": "[fake]", "trigger": "", "stop": ""}
+                                               "notes": "[fake]", "trigger": "", "stop": "",
+                                               "audience": "public", "paid": False}
         return {"steps": [step(0, "09:00", "[fake] Publish the statement", "white"),
                           step(1, "10:00", "[fake] Disclosed briefing for one outlet", "gray")],
                 "excluded": [{"tactic": "[fake] undisclosed paid posts", "why": "deceives readers",
@@ -142,7 +148,7 @@ class FakeBackend(Backend):
     def _kit(self, *a):
         return {"holding_statement": "[fake] We are aware and will update.",
                 "qa": [{"question": "What happened?", "answer": "[fake] Only provable facts."}],
-                "monitoring_keywords": ["fake"],
+                "monitoring_keywords": [{"term": "fake", "kind": "brand", "platforms": ["PTT"]}],
                 "escalation": [{"trigger": "media call", "action": "route to PR lead",
                                 "owner": "PR lead"}], "do_not_say": ["no comment"]}
 

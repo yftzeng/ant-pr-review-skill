@@ -388,3 +388,296 @@ directions = ["outbound", "operation", "inbound"]
 postures = ["rebut"]
 dimension = "legal"
 text = "Answering a smear: is the hostile content preserved (URL, time, capture) before any takedown request, and do the legal steps (notice, platform report, complaint, lawsuit) fit this jurisdiction's defamation and platform rules without silencing lawful criticism (a SLAPP risk)?"
+
+# ---- borrowed items (D-0003; sources in docs/REFERENCES.md) ----
+
+[[item]]
+id = "JOU-06"
+lens = "journalist"
+directions = ["outbound", "inbound"]
+dimension = "provability"
+text = "Cause and scope: does it state a cause, a scope or a reassurance ('no sensitive data', 'only a few users', 'isolated', 'resolved') that is not yet confirmed, and does it separate what is confirmed from what is still under investigation?"
+
+[[item]]
+id = "JOU-07"
+lens = "journalist"
+directions = ["outbound", "operation"]
+dimension = "backlash"
+text = "Across every version for each channel, language and audience (release, posts, staff note, customer email, Q&A): are the facts, numbers and commitments the same, so that no two can be put side by side as contradictory?"
+
+[[item]]
+id = "JOU-08"
+lens = "journalist"
+directions = ["outbound", "inbound"]
+postures = ["clarify_apologize", "rebut"]
+dimension = "timing"
+text = "Next update: does a holding or incident statement name a time and channel for the next update that we can keep, without promising a fix time we cannot guarantee?"
+
+[[item]]
+id = "JOU-09"
+lens = "journalist"
+directions = ["outbound", "inbound"]
+postures = ["clarify_apologize", "rebut"]
+dimension = "backlash"
+text = "Posture fit (situational crisis communication: victim, accidental or preventable): on what is known now, which is this for us, and do similar past incidents or a poor prior reputation make rebutting or clarifying read as denial? If an allegation has a factual basis, why is the answer not an apology?"
+
+[[item]]
+id = "SOC-07"
+lens = "social"
+directions = ["outbound"]
+dimension = "stakeholder"
+text = "If anyone may be harmed or affected (safety, money, data), does it tell them early whether they are affected and what to do now (stop using, refund, reset, contact), before explanation or defence?"
+
+[[item]]
+id = "SOC-08"
+lens = "social"
+directions = ["outbound", "operation", "inbound"]
+dimension = "backlash"
+text = "Removal: does the content or plan delete, hide or silently edit our posts or others' comments, or ask users to take posts down? Is each removal limited to unlawful or dangerous content and acknowledged publicly with its reason?"
+
+[[item]]
+id = "INT-04"
+lens = "internal"
+directions = ["outbound"]
+dimension = "stakeholder"
+text = "Staff: do employees hear this before or with the public, know where to route press and customer questions, and know not to post about it on personal accounts without disclosing that they work here?"
+
+[[item]]
+id = "RSP-04"
+lens = "response"
+directions = ["inbound"]
+dimension = "legal"
+text = "Before any reply, takedown request, hiding or deletion: is the hostile content preserved (URL, time, capture) for counsel and platform notices? Preserve content only; never collect data about the people behind accounts."
+
+[[item]]
+id = "APO-03"
+lens = "journalist"
+directions = ["outbound", "inbound"]
+postures = ["clarify_apologize"]
+dimension = "provability"
+text = "Apology commitments: is each corrective action specific and checkable, with an owner role, a deadline and a published follow-up date, and is the remedy given without making affected people come forward to claim it? (na if nothing calls for an apology)"
+
+[[item]]
+id = "EXP-04"
+lens = "target"
+directions = ["outbound", "operation"]
+postures = ["expose"]
+dimension = "ethics"
+text = "Could the point be made against a practice, rule or system instead of the named party, and does naming the party add anything we can prove?"
+
+# ---- the stakeholder map (D-0003): one item per group, per jurisdiction ----
+
+[[item]]
+id = "STK-01"
+lens = "stakeholders"
+directions = ["outbound", "operation", "inbound"]
+dimension = "stakeholder"
+text = "Governance (executives, board, rank-and-file staff, whistleblowers): how does each face and handle this, are their duties and statements aligned, and is anyone left to speak for the company without a mandate?"
+
+[[item]]
+id = "STK-02"
+lens = "stakeholders"
+directions = ["outbound", "operation", "inbound"]
+dimension = "stakeholder"
+text = "Business chain and consumers (people affected, the watching public, loyal fans, distributors and suppliers, contract partners, advertisers and endorsers): how does each react, what do they need from us, and who could walk away or turn against us?"
+
+[[item]]
+id = "STK-03"
+lens = "stakeholders"
+directions = ["outbound", "operation", "inbound"]
+dimension = "stakeholder"
+text = "Capital markets (angel, VC and PE investors; institutions, retail investors and analysts; lending banks and creditors): how does each read this, does it trigger disclosure, covenant or confidence questions, and are they told in the right order?"
+
+[[item]]
+id = "STK-04"
+lens = "stakeholders"
+directions = ["outbound", "operation", "inbound"]
+dimension = "stakeholder"
+text = "Authorities and adversaries in law (regulators and law enforcement in this jurisdiction; opposing counsel, potential class or civic groups): what would prompt each to act, and what will they ask us to show?"
+
+[[item]]
+id = "STK-05"
+lens = "stakeholders"
+directions = ["outbound", "operation", "inbound"]
+dimension = "stakeholder"
+text = "Opinion (media and journalists; industry influencers and commentators; forum opinion leaders and core community members in this jurisdiction): which outlets, platforms and communities amplify or debunk this, what angle will each take, and what do they need from us on the record? Describe roles and communities, never named private accounts."
+
+[[item]]
+id = "STK-06"
+lens = "stakeholders"
+directions = ["outbound", "operation", "inbound"]
+dimension = "stakeholder"
+text = "Rivals (competitors, professional short sellers and debunking outfits, flank sockpuppet networks): how could each exploit or distort this, and what lawful, on-the-record answer do we have? Assess only; never suggest countering with sockpuppets."
+
+[[item]]
+id = "STK-07"
+lens = "stakeholders"
+directions = ["outbound", "operation", "inbound"]
+dimension = "stakeholder"
+text = "Politics (the ruling and opposition parties, and the party and state organs listed for this jurisdiction): how could each use this (hearings, legislation, statements, rallying, state media lines), and does our content take a political side?"
+
+# ---- stress tests (D-0003; user, 2026-10-22): asked before a statement is final ----
+
+[[item]]
+id = "RTM-01"
+lens = "stakeholders"
+directions = ["outbound", "inbound"]
+dimension = "legal"
+text = "Legal floor (opposing counsel, regulators): does any sentence amount to an admission of fault or liability in court, or admit a violation? Quote it."
+
+[[item]]
+id = "RTM-02"
+lens = "stakeholders"
+directions = ["outbound", "inbound"]
+dimension = "backlash"
+text = "Public emotion (people affected, community members): does it read as a sincere admission or as an arrogant word game? Quote the sentence that decides it."
+
+[[item]]
+id = "RTM-03"
+lens = "stakeholders"
+directions = ["outbound", "inbound"]
+dimension = "stakeholder"
+text = "Internal front (rank-and-file staff, the executives involved): would staff be angry enough to post an insider rebuttal on an anonymous forum, or the individual at the centre (as a role, not a person) post something uncontrolled? Quote the trigger."
+
+[[item]]
+id = "RTM-04"
+lens = "stakeholders"
+directions = ["outbound", "inbound"]
+dimension = "stakeholder"
+text = "Business lifeline (investors, key distributors): before the market opens tomorrow, does this statement stop institutions selling and distributors pulling the product? Quote what reassures or alarms them."
+
+[[item]]
+id = "RTM-05"
+lens = "stakeholders"
+directions = ["outbound", "inbound"]
+dimension = "backlash"
+text = "Opinion ammunition (beat reporters, competitors and their amplifiers): is there a sentence a rival can screenshot as a mocking meme or a headline? Quote it."
+
+[[item]]
+id = "POL-01"
+lens = "stakeholders"
+directions = ["outbound", "inbound"]
+dimension = "backlash"
+text = "Political ammunition: is there a sentence the opposition or a hostile faction could put on a slide at a legislative hearing tomorrow as proof of government failure or collusion between government and business? Quote it."
+
+[[item]]
+id = "POL-02"
+lens = "stakeholders"
+directions = ["outbound", "inbound"]
+dimension = "backlash"
+text = "Polarised trap: answering a group one party backs, is the wording so accommodating that the other side labels us and calls a nationwide political boycott? Quote the wording."
+
+[[item]]
+id = "POL-03"
+lens = "stakeholders"
+directions = ["outbound", "inbound"]
+dimension = "backlash"
+text = "Sovereign red line: for a company operating across regions, would the version for this jurisdiction, set side by side with versions for others (Taiwan, the US and Europe, mainland China), get us called two-faced? Name the terms that differ."
+
+# ---- role items (D-0003): asked only when one of our identities has the party type ----
+
+[[item]]
+id = "ROL-01"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["board"]
+dimension = "legal"
+text = "As the board: is the decision and its disclosure within the board's duties and recorded, is an independent committee needed where executives are conflicted, and does the communication match what the board approved?"
+
+[[item]]
+id = "ROL-02"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["executives"]
+dimension = "legal"
+text = "As executives: what personal liability or securities exposure do the named executives carry, do their statements match the company's, and do they stay off personal accounts on this?"
+
+[[item]]
+id = "ROL-03"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["whistleblower"]
+dimension = "legal"
+text = "As a whistleblower: are the lawful channels (internal hotline, regulator, prosecutor) used first, is the whistleblower's identity protected, and does any disclosure stay within what this jurisdiction's whistleblower protection covers (no trade secrets or personal data beyond it)?"
+
+[[item]]
+id = "ROL-04"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["short_activists"]
+dimension = "legal"
+red_line = "market_manipulation"
+text = "As a short seller or debunking outfit: is our position disclosed, is every claim sourced and stated as fact or opinion, and is the timing lawful (no trading on material non-public information, no short-and-distort)?"
+
+[[item]]
+id = "ROL-05"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["partners"]
+dimension = "legal"
+text = "As a contract partner, advertiser or endorser: does our contract (morality clause, exclusivity, approval rights, termination) allow or require this statement, and are we jointly liable under this jurisdiction's endorsement and advertising rules?"
+
+[[item]]
+id = "ROL-06"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["channel"]
+dimension = "legal"
+text = "As a distributor, dealer or supplier: what notice, recall and cooperation duties do our contracts and this jurisdiction impose, and does the statement shift blame up or down the chain without evidence?"
+
+[[item]]
+id = "ROL-07"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["victims"]
+dimension = "legal"
+text = "As an affected person: does the statement describe the harm without defaming anyone, is evidence preserved, and are the lawful remedies used (consumer body, regulator complaint, small claims, collective action)?"
+
+[[item]]
+id = "ROL-08"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["staff"]
+dimension = "legal"
+text = "As employees: do confidentiality duties, employment law and the company's social media policy allow this, and is it clearly said in a personal or an official capacity?"
+
+[[item]]
+id = "ROL-09"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["regulators"]
+dimension = "legal"
+text = "As an authority: does the communication respect administrative neutrality, due process for the parties and the rules on disclosing information about an ongoing case?"
+
+[[item]]
+id = "ROL-10"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["media", "kol", "community_leaders"]
+dimension = "disclosure"
+text = "As media, a KOL or a community leader: are sponsorships and relationships with the parties disclosed, is the right of reply offered, and does a correction policy apply if this proves wrong?"
+
+[[item]]
+id = "ROL-12"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["ruling_party", "opposition_party"]
+dimension = "legal"
+red_line = "election_law"
+text = "As a political party: do election, lobbying and political-advertising rules apply (disclosure of the sponsor, blackout periods, foreign funding), and is every claim about opponents provable? No disinformation, no undisclosed paid amplification."
+
+[[item]]
+id = "ROL-13"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["implicated_individual"]
+dimension = "legal"
+text = "As the individual at the centre: does a public statement prejudice our defence or an investigation, is it coordinated with counsel and the employer's statement, and does it avoid defaming anyone or disclosing others' personal data?"
+
+[[item]]
+id = "ROL-11"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+roles = ["private_investors", "public_investors", "lenders"]
+dimension = "legal"
+text = "As an investor or creditor: are our holdings or exposure disclosed where required, do insider-trading and fair-disclosure rules limit what we may say or trade, and do covenants or confidentiality agreements apply?"

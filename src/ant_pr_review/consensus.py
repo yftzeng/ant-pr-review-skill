@@ -82,6 +82,32 @@ def tally_items(unit: dict, recs: dict[str, dict], active: list[str],
     return out
 
 
+REL_RANK = {"none": 0, "low": 1, "high": 2}
+
+
+def tally_stakeholders(unit: dict, recs: dict[str, dict], active: list[str]) -> list[dict]:
+    """D-0003: every party type, each model's answer; a missing type is a gap."""
+    from .catalog import party_info, party_types_for
+    if "stakeholders" not in unit["lenses"]:
+        return []
+    out = []
+    for p in party_types_for(unit["scope"]):
+        by_model, unanswered = {}, []
+        for m in active:
+            got = [r for r in recs[m]["data"].get("stakeholders", []) if r.get("type") == p]
+            if got:
+                by_model[m] = got[0]
+            else:
+                unanswered.append(m)
+        out.append({"type": p, "group": party_info(p)["group"], "unit": unit["id"],
+                    "relevance": max((a.get("relevance", "none") for a in by_model.values()),
+                                     key=lambda v: REL_RANK.get(v, 0), default="none"),
+                    "score": max((int(a.get("likelihood") or 0) * int(a.get("impact") or 0)
+                                  for a in by_model.values()), default=0),
+                    "by_model": by_model, "unanswered": unanswered})
+    return out
+
+
 def merge_risks(unit: dict, recs: dict[str, dict], active: list[str],
                 resp: list[tuple[str, dict]], ref_to_claim: dict[str, dict]) -> list[dict]:
     risks = {f"{slug(m)}:{r['id']}": dict(r, model=m)
@@ -238,6 +264,7 @@ def synthesize(*, matrix: dict, reviews: dict[str, dict], debates: dict[str, dic
             "risks": merge_risks(unit, recs, active, resp, ref_to_claim),
             "red": {k: red_line_flags(recs, active, resp, k) for k in RED_LINES},
             "headlines": [h for m in active for h in recs[m]["data"].get("worst_headlines", [])],
+            "stakeholders": tally_stakeholders(unit, recs, active),
         }
 
     # stable ids across the whole run, highest score first
@@ -270,10 +297,13 @@ def synthesize(*, matrix: dict, reviews: dict[str, dict], debates: dict[str, dic
                     "unanswered": [{"item": i["item"], "unit": i["unit"], "models": i["unanswered"]}
                                    for i in items if i["unanswered"]],
                     "headlines": [h for pu in units for h in pu["headlines"]],
+                    "stakeholders": [r for pu in units for r in pu["stakeholders"]],
                     "counsel_questions": counsel_questions(risks, thresholds)
                     if v["verdict"] == "escalate" else []}
     if any(o["unanswered"] for o in out_j.values()):
         warnings.append("unanswered_items")
+    if any(r["unanswered"] for o in out_j.values() for r in o.get("stakeholders", [])):
+        warnings.append("unanswered_party_types")
     worst = max((o["verdict"] for o in out_j.values()), key=VERDICT_ORDER.index)
     return {"provenance": provenance, "warnings": warnings, "direction": matrix["direction"],
             "jurisdictions": out_j,

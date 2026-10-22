@@ -9,7 +9,7 @@ from .contextscan import base_context, build_queries, run_queries
 from .decision import run_decision
 from .factcheck import build_ledger, pick_checker, read_ledger, run_checks, write_ledger
 from .i18n import T
-from .intake import posture_of, run_intake_interactive
+from .intake import posture_of, roles_of, run_intake_interactive
 from .jmerge import run_jmerge
 from .jsonio import read_json, write_json
 from .plans import run_plans
@@ -188,7 +188,8 @@ def ph_matrix(run: Run, ctx: Ctx) -> None:
             lenses = checkbox(ctx.io, t, t("matrix.lenses"),
                               [(ln, t(f"lens.{ln}")) for ln in LENSES], default,
                               min_selected=1) if ctx.interactive else default
-        units = plan_units(direction, lenses, js, depth, posture_of(intake))
+        units = plan_units(direction, lenses, js, depth, posture_of(intake),
+                           roles_of(intake)["identities"])
         if not units:
             raise Stop("no checklist item applies to these lenses and direction")
         ctx.say(info(t("matrix.summary", units=len(units), models=len(ctx.models),
@@ -199,8 +200,12 @@ def ph_matrix(run: Run, ctx: Ctx) -> None:
             break
         depth, lenses = None, None
     merger = ctx.options.get("merger") or ctx.models[0]
+    roles = roles_of(intake)
+    if roles.get("dropped"):
+        ctx.say(f"  ⚠ {t('intake.identity_dropped', ids=', '.join(roles['dropped']))}")
     write_json(run.path("03-matrix.json"), {"direction": direction, "depth": depth,
                                             "posture": posture_of(intake),
+                                            "identities": roles["identities"],
                                             "lenses": lenses, "jurisdictions": js,
                                             "units": units, "models": ctx.models,
                                             "merger": merger})

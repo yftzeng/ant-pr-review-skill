@@ -25,6 +25,11 @@ def summary_for(syn: dict, j: str) -> dict:
                       for r in o["risks"][:15] if r["scope"] == j],
             "failed_items": [{"item": i["item"], "verdict": i["verdict"], "label": i["label"]}
                              for i in o["items"] if i["verdict"] in ("concern", "fail")
+                             and i["unit"].split(".")[0] == j],
+            # POL-03 (sovereign red line): the panels' own quotes, so the merger never guesses
+            "cross_region": [{"item": i["item"],
+                              "evidence": [str(e)[:300] for e in i.get("evidence", {}).values()]}
+                             for i in o["items"] if i["item"] == "POL-03"
                              and i["unit"].split(".")[0] == j]}
 
 

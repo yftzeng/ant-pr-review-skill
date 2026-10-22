@@ -86,7 +86,8 @@ def test_posture_radio_and_means_checkbox_defaults():
     assert ask_means(ScriptedIO([""]), t) == ["white", "gray", "black"]
     io = ScriptedIO(["1 2 3", "", "1", ""])
     assert ask_means(io, t) == ["white"] and "Choose at least 1" in io.text
-    it = run_intake_interactive(ScriptedIO(["", "2", "", "some text", "/done"] + FILL + [""]),
+    it = run_intake_interactive(ScriptedIO(["", "", "", "2", "", "some text", "/done"]
+                                           + FILL + [""]),
                                 t, "en")
     assert it["posture"] == "promote" and it["means"] == ["white", "gray", "black"]
 

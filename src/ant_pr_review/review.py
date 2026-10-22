@@ -85,6 +85,18 @@ def clean_review(data: dict, unit: dict) -> dict:
         if not r["id"] or r["id"] in ids:
             r["id"] = f"R{n}x"
         ids.add(r["id"])
+    from .catalog import party_types_for
+    seen_p, rows = set(), []
+    if "stakeholders" in unit["lenses"]:
+        allowed_p = set(party_types_for(unit["scope"]))
+        for r in data.get("stakeholders", []) or []:
+            if r.get("type") in allowed_p and r["type"] not in seen_p:
+                seen_p.add(r["type"])
+                rows.append(dict(r, likelihood=_clamp(r.get("likelihood")),
+                                 impact=_clamp(r.get("impact")),
+                                 relevance=r.get("relevance") if r.get("relevance")
+                                 in ("none", "low", "high") else "none"))
+    data["stakeholders"] = rows
     keys = set(red_lines_for(unit["items"]))
     data["red_lines"] = [rl for rl in data.get("red_lines", []) if rl["key"] in keys]
     return data
@@ -93,6 +105,14 @@ def clean_review(data: dict, unit: dict) -> dict:
 def missing_items(data: dict, unit: dict) -> list[str]:
     got = {c["item"] for c in data.get("checklist", [])}
     return [i for i in unit["items"] if i not in got]
+
+
+def missing_types(data: dict, unit: dict) -> list[str]:
+    from .catalog import party_types_for
+    if "stakeholders" not in unit["lenses"]:
+        return []
+    got = {r["type"] for r in data.get("stakeholders", [])}
+    return [p for p in party_types_for(unit["scope"]) if p not in got]
 
 
 def _parallel(jobs: list, fn) -> list:
@@ -122,16 +142,21 @@ def run_round1(run: Run, backend: Backend, models: list[str], lang: str, *,
         rec = _record(m, unit["id"], backend, lambda: call(prompt))
         if rec["status"] == OK:
             rec["data"] = clean_review(rec["data"], unit)
-            gap = missing_items(rec["data"], unit)
-            if gap:  # one targeted retry (D-PR-3)
+            gap, gap_t = missing_items(rec["data"], unit), missing_types(rec["data"], unit)
+            if gap or gap_t:  # one targeted retry (D-PR-3), for items and party types
                 again = _record(m, unit["id"], backend,
-                                lambda: call(prompt + prompts.missing_items_prompt(gap)))
+                                lambda: call(prompt + prompts.missing_items_prompt(gap, gap_t)))
                 if again["status"] == OK:
                     again["data"] = clean_review(again["data"], unit)
-                    if len(missing_items(again["data"], unit)) < len(gap):
+                    # better only if neither checklist nor stakeholder answers got worse
+                    if len(missing_items(again["data"], unit)) <= len(gap) and \
+                            len(missing_types(again["data"], unit)) <= len(gap_t) and \
+                            (len(missing_items(again["data"], unit)) < len(gap) or
+                             len(missing_types(again["data"], unit)) < len(gap_t)):
                         rec = again
-                rec["retried_for"] = gap
+                rec["retried_for"] = gap + gap_t
             rec["unanswered"] = missing_items(rec["data"], unit)
+            rec["unanswered_types"] = missing_types(rec["data"], unit)
         write_json(run.path(f"04-reviews/{unit['id']}/{slug(m)}.json"), rec)
         gap_note = f" · {len(rec.get('unanswered', []))} unanswered" if rec.get("unanswered") else ""
         say(f"  {'✓' if rec['status'] == OK else '✗'} {unit['id']} · {m}: {rec['status']}"

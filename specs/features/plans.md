@@ -171,6 +171,16 @@ Feature: plans
     Given the publish date "next Friday"
     When  plans run
     Then  T.md names it as unreadable, so no dates or sensitive-date warnings are given
+  @S-plans-029
+  Scenario: press before the affected parties, and a paid step without a stop condition, are warned
+    Given steps "tell affected customers" (affected) at T0 10:00, a press release (press) at T0 09:00, and a paid boost (paid, no stop)
+    When  plans run
+    Then  the press step warns that it comes before the affected parties and the paid step warns that it has no stop condition; a tie or a missing time counts as early; in a crisis posture a plan with no affected step warns; staff after the public warns
+
+  @S-plans-030
+  Scenario: plan C monitoring keywords are typed terms
+    When  plan C returns keywords with a kind and platforms
+    Then  C-kit.md lists them by kind; a keyword that looks like an account handle or a link (@, ＠, u/, t.me/, URLs) is dropped and counted without repeating it; malformed entries are skipped or normalised
 ```
 
 ## Must NOT
@@ -183,3 +193,5 @@ Feature: plans
 - 2026-10-22 · +S-plans-021..023 every stage reviewed by another model (user: 每個階段的產出都要另一個 model 審) · decision: D-0002
 - 2026-10-22 · +S-plans-024..028, ~S-plans-018 (a lock not found is warned), ~S-plans-019 (the re-audit restarts when the intake, matrix or context change), from the tier-3 review · decision: D-0002
 - 2026-10-22 · ~S-plans-014, 016, 017, 018, 021, 024 from the second tier-3 review (fable): a guard-flagged step is never scheduled, misnumbered labels void the review, sentence-boundary locks, ±1 day warnings · decision: D-0002
+2026-10-22 · +S-plans-029..030 timeline audience rules, typed monitoring keywords · decision: D-0003
+- 2026-10-22 · ~S-plans-029, 030 from the tier-3 review · decision: D-0003

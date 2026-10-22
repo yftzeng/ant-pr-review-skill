@@ -42,14 +42,15 @@ robots.txt, a site-profile block, internal addresses, a login or paywall (also H
   - depth (quick or full) and lenses;
   - the context-scan queries;
   - the final decision.
-- **Driven by you:** first ask with AskUserQuestion for the direction (outbound / operation / inbound), the posture (clarify_apologize, the default / promote / expose / rebut), the means for the plan (white / gray / black, default all), the targets, the jurisdictions, the depth, whether the material is still embargoed, and the named parties. Then run the command below in the background, because a run takes minutes:
+- **Driven by you:** first ask with AskUserQuestion for the direction (outbound / operation / inbound), our role (standpoint: responsible by default, affected, related; then identities such as responsible:organization, affected:victims, related:partners — astroturf and Chinese party or state organs are never a role; a ruling or opposition party can be), the posture (clarify_apologize, the default / promote / expose / rebut), the means for the plan (white / gray / black, default all), the targets, the jurisdictions, the depth, whether the material is still embargoed, and the named parties. Then run the command below in the background, because a run takes minutes:
 
   ```
   ant-pr-review new --yes --direction outbound --target <url-or-path-or-text> [--target ...] \
     --jurisdictions tw,us --depth quick|full [--party "<name>" ...] [--org <name>] \
     [--channels press_release,kol] [--publish-at 2026-11-01] [--keywords "..."] \
     [--embargo | --context-scan] [--models claude:opus,openai:gpt-5,gemini:gemini-2.5-pro] \
-    [--merger claude:opus] [--lang en|zh-TW|zh-CN] [--posture expose] [--means white,gray] \
+    [--merger claude:opus] [--lang en|zh-TW|zh-CN] [--role responsible:organization ...] \
+    [--posture expose] [--means white,gray] \
     [--speaker "<who, role>"] [--background "..."] [--locked "<sentence>" ...] [--focus "..."]
   ```
 
@@ -71,7 +72,9 @@ Read the newest `08-report.v<N>.md` in the run folder (printed as `Workspace:`).
 - the top risks by score (L×I), with anchors (e.g. `D1.P03.S2`), including any marked WIDE or SPLIT;
 - checklist items that are fail or concern (unticked in the checkbox list), with their pass rate, and any item a model left unanswered (a gap, not a pass);
 - for outbound: the re-audit's before → after pass rate (provisional), and any locked sentence a change was dropped for;
-- the timeline of means (white and gray steps, in order), steps a reviewer relabelled stricter, and steps not scheduled;
+- the timeline of means (white and gray steps, in order), steps a reviewer relabelled stricter, steps not scheduled, and warnings (press before the affected parties, paid steps without a stop condition);
+- the stress tests (RTM-01..05 legal floor, public emotion, internal front, business lifeline, opinion ammunition; POL-01..03 political ammunition, polarised trap, sovereign red line) that fail or concern, with the sentence each model quoted;
+- the stakeholder map: the parties with high relevance or the largest L×I per jurisdiction (political parties and organs included), and any party type a model left unanswered;
 - any stage the report shows as "not reviewed";
 - for Escalate: the questions for counsel;
 - the single-vendor warning, if the report carries it;

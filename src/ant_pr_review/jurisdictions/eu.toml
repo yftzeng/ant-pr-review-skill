@@ -33,3 +33,22 @@ summary = "Transparency and targeting rules for political advertising."
 [[law]]
 ref = "Member-state defamation and insult law"
 summary = "Varies by member state; criminal defamation exists in several."
+
+# Politics (D-0003). The EU has no single ruling party; unverified, check as_of.
+[[party]]
+key = "eu_governments"
+name = "成員國執政黨"
+name_hans = "成员国执政党"
+name_en = "Governing parties of the member states concerned"
+side = "ruling"
+note = "many EU matters are decided or enforced by national governments"
+as_of = "2026-10"
+
+[[party]]
+key = "eu_parliament_groups"
+name = "歐洲議會黨團"
+name_hans = "欧洲议会党团"
+name_en = "European Parliament political groups (EPP, S&D, PfE, ECR, Renew, Greens/EFA, The Left, ESN)"
+side = "legislature"
+note = "the groups formed after the 2024 elections; hearings, resolutions and questions to the Commission"
+as_of = "2026-10"

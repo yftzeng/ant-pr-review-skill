@@ -36,8 +36,8 @@ def test_full_depth_units():
     units = plan_units("outbound", DEFAULT_LENSES["outbound"], ["tw", "us"], "full")
     ids = [u["id"] for u in units]
     assert ids == ["global.journalist", "global.target", "global.internal",
-                   "tw.legal", "tw.social", "tw.regulator", "us.legal", "us.social",
-                   "us.regulator"]
+                   "tw.legal", "tw.social", "tw.regulator", "tw.stakeholders", "us.legal",
+                   "us.social", "us.regulator", "us.stakeholders"]
 
 
 # @S-checklist-005

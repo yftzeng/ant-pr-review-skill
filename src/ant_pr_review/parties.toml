@@ -1,0 +1,165 @@
+# The stakeholder map (D-0003). Groups and types are in display order. `concerns` and
+# `viewpoint` paraphrase the user's role definitions (2026-10-22) and steer each
+# reviewer's answer for that party. Political parties of a jurisdiction come from its
+# pack; ruling_party and opposition_party stand in where a pack lists none.
+
+[[party]]
+key = "executives"
+group = "governance"
+text = "senior executives"
+concerns = "personal liability, keeping their position, consistency between what they said and what the company says"
+viewpoint = "Does this statement leave me exposed, or contradict what I said before?"
+
+[[party]]
+key = "board"
+group = "governance"
+text = "the board of directors and the controlling shareholders"
+concerns = "control of the company, directors' liability, the company's survival, whether to cut loose the executives involved"
+viewpoint = "Does this statement push liability up to the board, or promise compensation beyond what the company can bear?"
+
+[[party]]
+key = "staff"
+group = "governance"
+text = "rank-and-file employees"
+concerns = "being made the scapegoat, a hypocritical culture, their pay and bonus"
+viewpoint = "Will this anger staff enough to post an insider rebuttal on Dcard, Blind or Threads?"
+
+[[party]]
+key = "whistleblower"
+group = "governance"
+text = "an internal whistleblower"
+concerns = "retaliation, legal protection, whether the company tells the truth"
+viewpoint = "Does the statement contradict what I know, so that I go public or to a regulator?"
+
+[[party]]
+key = "implicated_individual"
+group = "governance"
+text = "the individual at the centre of the matter"
+concerns = "personal reputation, the end of a career, criminal exposure"
+viewpoint = "Feeling abandoned by the company, would this person post something uncontrolled that breaks the line?"
+
+[[party]]
+key = "victims"
+group = "commerce"
+text = "people harmed or affected"
+concerns = "a concrete remedy, refund and exchange terms, a real apology; they hate officialese and 'handled according to law'"
+viewpoint = "Does this tell me what I get and when, or does it brush me off?"
+
+[[party]]
+key = "bystanders"
+group = "commerce"
+text = "the watching public"
+concerns = "whether the brand is arrogant or its values are off; moved by emotional words and memes"
+viewpoint = "Does this read as arrogant at a glance?"
+
+[[party]]
+key = "fans"
+group = "commerce"
+text = "loyal fans of the brand"
+concerns = "arguments to defend the brand with; a weak or contradictory statement makes them feel betrayed and turn against it"
+viewpoint = "Can I defend the brand with this, or does it make me look foolish?"
+
+[[party]]
+key = "channel"
+group = "commerce"
+text = "distributors, dealers and the supply chain up and down"
+concerns = "returns, inventory write-downs, getting paid on time, protests at stores"
+viewpoint = "Do we pull the product as a precaution, and can my store staff use this statement to answer customers?"
+
+[[party]]
+key = "partners"
+group = "commerce"
+text = "contract partners, advertisers and brand endorsers"
+concerns = "damage to their own reputation, termination clauses, penalties"
+viewpoint = "If this does not calm the public, we announce that we end the partnership, and others follow."
+
+[[party]]
+key = "private_investors"
+group = "capital"
+text = "private-market investors (angel, VC, PE)"
+concerns = "valuation, a down round, ratchet and redemption clauses, a delayed exit"
+viewpoint = "Does the statement show mature governance and defend the business model?"
+
+[[party]]
+key = "public_investors"
+group = "capital"
+text = "public-market investors (institutions, retail, analysts)"
+concerns = "earnings revisions, short attacks, material-information disclosure rules, stop-loss levels"
+viewpoint = "What does this cost this year's earnings, and does it meet the exchange's disclosure rules or mislead the market?"
+
+[[party]]
+key = "lenders"
+group = "capital"
+text = "lending banks and commercial creditors"
+concerns = "cash flow, financial covenants, collateral value"
+viewpoint = "Is the company financially resilient enough, or do we call the facility or raise the rate?"
+
+[[party]]
+key = "regulators"
+group = "authority"
+text = "regulators and law enforcement"
+concerns = "statutory reporting duties, public anger turning into political pressure, whether to open an investigation"
+viewpoint = "Does the text admit a violation, and does it account to the public, or must we step in with penalties?"
+
+[[party]]
+key = "opposing_counsel"
+group = "authority"
+text = "opposing counsel, potential litigant groups and civic groups"
+concerns = "admissions of liability in the text that can be used as evidence"
+viewpoint = "Which promise or description turns a moral responsibility into legal liability?"
+
+[[party]]
+key = "ruling_party"
+group = "politics"
+text = "the governing party or parties"
+concerns = "government competence, policy exposure, public anger reaching the government"
+viewpoint = "Do we distance ourselves, regulate, or defend?"
+
+[[party]]
+key = "opposition_party"
+group = "politics"
+text = "the opposition party or parties"
+concerns = "material against the government or its allies, hearings, legislation"
+viewpoint = "Can a line from this go on a slide at a legislative hearing as proof of failure or collusion?"
+
+[[party]]
+key = "media"
+group = "opinion"
+text = "beat reporters and investigative media"
+concerns = "the news angle, fact-checking, timeliness, the most clickable headline, contradictions"
+viewpoint = "Which sentence dodges, is there a clear owner and timeline, and does paragraph 3 make a clean negative headline?"
+
+[[party]]
+key = "kol"
+group = "opinion"
+text = "industry influencers, KOLs and commentators"
+concerns = "traffic, an angle that fits their persona, a viral video or thread"
+viewpoint = "Is there a laugh, a lecturing or condescending tone, I can make a satirical short of?"
+
+[[party]]
+key = "community_leaders"
+group = "opinion"
+text = "forum opinion leaders and core community members (PTT, Dcard, Threads, Reddit moderators)"
+concerns = "plain, sincere language; they hate hollow politeness, deleted comments and suing users"
+viewpoint = "Full of legal jargon, it becomes the summary 'we did nothing wrong, it is all the customers' fault'."
+
+[[party]]
+key = "competitors"
+group = "rivals"
+text = "direct competitors and substitutes from other categories"
+concerns = "our weakest point; switching offers to take our customers; casting doubt on the whole category"
+viewpoint = "Where is the defence weakest, and how do we win the customers who leave?"
+
+[[party]]
+key = "short_activists"
+group = "rivals"
+text = "professional short sellers and debunking outfits"
+concerns = "contradictions between the statement, past financial reports and public filings"
+viewpoint = "Which claim breaks against the record, as the basis for the next allegation?"
+
+[[party]]
+key = "astroturf"
+group = "rivals"
+text = "flank sockpuppet networks (assessed as a threat, never our role)"
+concerns = "amplifying our weak points by flooding"
+viewpoint = "Which sentence can be flooded and turned into a meme?"

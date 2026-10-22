@@ -23,6 +23,43 @@ POSTURE_TEXT = {
 # The first postures (before 2026-10-22) map onto the current ones.
 LEGACY_POSTURES = {"clarify": "clarify_apologize", "apologize": "clarify_apologize",
                    "attack": "expose", "defend": "rebut"}
+# D-0003: who we are in the event, and every party that reacts to it.
+STANDPOINTS = ["responsible", "affected", "related"]
+DEFAULT_STANDPOINTS = ["responsible"]
+def _load_parties() -> list[dict]:
+    return tomllib.loads((PKG / "parties.toml").read_text(encoding="utf-8"))["party"]
+
+
+PARTIES = _load_parties()
+PARTY_GROUPS: dict[str, list[str]] = {}
+for _p in PARTIES:
+    PARTY_GROUPS.setdefault(_p["group"], []).append(_p["key"])
+PARTY_TYPES = [p["key"] for p in PARTIES]  # the base types; packs add their parties
+PARTY_TEXT = {p["key"]: p["text"] for p in PARTIES}
+GENERIC_POLITICS = ["ruling_party", "opposition_party"]
+# A reasonable identity is a standpoint paired with a party type; astroturf never is.
+# State and party organs of a pack are never an identity (D-0003).
+VALID_IDENTITIES: dict[str, list[str]] = {
+    "responsible": ["organization", "executives", "board", "staff", "implicated_individual",
+                    "channel", "partners", "private_investors", "regulators", "ruling_party",
+                    "opposition_party", "media", "kol", "community_leaders", "short_activists"],
+    "affected": ["organization", "executives", "staff", "whistleblower",
+                 "implicated_individual", "victims", "fans", "channel", "partners",
+                 "private_investors", "public_investors", "lenders", "ruling_party",
+                 "opposition_party", "media", "kol"],
+    "related": ["organization", "executives", "board", "staff", "whistleblower", "channel",
+                "partners", "private_investors", "public_investors", "lenders", "regulators",
+                "opposing_counsel", "ruling_party", "opposition_party", "media", "kol",
+                "community_leaders", "competitors", "short_activists"],
+}
+DEFAULT_IDENTITY = "responsible:organization"
+
+
+def identity_options(standpoints: list[str]) -> list[str]:
+    return [f"{sp}:{p}" for sp in STANDPOINTS if sp in standpoints
+            for p in VALID_IDENTITIES[sp]]
+
+
 MEANS = ["white", "gray", "black"]
 MEANS_TEXT = {
     "white": "transparent, attributable and provable",
@@ -49,12 +86,16 @@ LENSES: dict[str, tuple[str, str]] = {
     "threat": ("global", "a threat analyst breaking hostile content into allegations; you "
                          "never identify the people behind accounts"),
     "response": ("global", "a crisis-response adviser comparing response options"),
+    "stakeholders": ("j", "the stakeholder map of this jurisdiction: how each party (inside "
+                          "the company, the business chain, capital markets, authorities, "
+                          "opinion, rivals) faces and handles this"),
 }
 
 DEFAULT_LENSES = {
-    "outbound": ["legal", "journalist", "social", "target", "regulator", "internal"],
-    "operation": ["legal", "journalist", "social", "regulator", "whistleblower"],
-    "inbound": ["threat", "legal", "social", "response"],
+    "outbound": ["legal", "journalist", "social", "target", "regulator", "internal",
+                 "stakeholders"],
+    "operation": ["legal", "journalist", "social", "regulator", "whistleblower", "stakeholders"],
+    "inbound": ["threat", "legal", "social", "response", "stakeholders"],
 }
 
 DIMENSIONS = ["legal", "provability", "disclosure", "attribution", "backlash", "platform",
@@ -110,6 +151,8 @@ def validate_items(items: list[dict]) -> list[dict]:
             raise ValueError(f"{i['id']}: unknown direction in {i['directions']}")
         if not set(i.get("postures", POSTURES)) <= set(POSTURES):
             raise ValueError(f"{i['id']}: unknown posture in {i['postures']}")
+        if not set(i.get("roles", [])) <= set(PARTY_TYPES) | {"organization"}:
+            raise ValueError(f"{i['id']}: unknown party type in {i['roles']}")
     return items
 
 
@@ -120,10 +163,14 @@ def pack(code: str) -> dict:
     return tomllib.loads((PKG / "jurisdictions" / f"{code}.toml").read_text(encoding="utf-8"))
 
 
-def items_for(direction: str, lenses: list[str], posture: str = DEFAULT_POSTURE) -> list[dict]:
-    """An item without `postures` is asked under every posture."""
+def items_for(direction: str, lenses: list[str], posture: str = DEFAULT_POSTURE,
+              identities: list[str] | None = None) -> list[dict]:
+    """An item without `postures` is asked under every posture; an item with `roles` only
+    when one of our identities has that party type (any standpoint)."""
+    ours = {x.split(":", 1)[1] for x in (identities or [DEFAULT_IDENTITY])}
     return [i for i in checklist() if direction in i["directions"] and i["lens"] in lenses
-            and posture in i.get("postures", POSTURES)]
+            and posture in i.get("postures", POSTURES)
+            and (not i.get("roles") or ours & set(i["roles"]))]
 
 
 def unit_id(scope: str, lens: str) -> str:
@@ -132,7 +179,8 @@ def unit_id(scope: str, lens: str) -> str:
 
 
 def plan_units(direction: str, lenses: list[str], jurisdictions: list[str],
-               depth: str, posture: str = DEFAULT_POSTURE) -> list[dict]:
+               depth: str, posture: str = DEFAULT_POSTURE,
+               identities: list[str] | None = None) -> list[dict]:
     """The matrix rows. Each unit: id, scope ('global' or a jurisdiction), lenses, items.
     A jurisdiction-scoped lens never shares a call with another jurisdiction (D-PR-5)."""
     if depth not in DEPTHS:
@@ -149,7 +197,7 @@ def plan_units(direction: str, lenses: list[str], jurisdictions: list[str],
     units = []
 
     def add(scope: str, group: list[str], name: str) -> None:
-        items = [i["id"] for i in items_for(direction, group, posture)]
+        items = [i["id"] for i in items_for(direction, group, posture, identities)]
         if items:
             units.append({"id": unit_id(scope, name), "scope": scope, "lenses": group,
                           "items": items})
@@ -165,6 +213,52 @@ def plan_units(direction: str, lenses: list[str], jurisdictions: list[str],
             for ln in scoped:
                 add(j, [ln], ln)
     return units
+
+
+def pack_parties(code: str) -> list[dict]:
+    return list(pack(code).get("party", [])) if code in JURISDICTIONS else []
+
+
+def all_party_types() -> list[str]:
+    """Every type any unit may ask about: the base types and every pack's parties."""
+    return PARTY_TYPES + [p["key"] for j in JURISDICTIONS for p in pack_parties(j)]
+
+
+def party_types_for(scope: str) -> list[str]:
+    """The rows of a stakeholders unit: the base types, with the generic political rows
+    replaced by the pack's own parties when it lists any."""
+    own = [p["key"] for p in pack_parties(scope)]
+    base = [p for p in PARTY_TYPES if not (own and p in GENERIC_POLITICS)]
+    i = base.index("media") if "media" in base else len(base)  # politics sits before opinion
+    return base[:i] + own + base[i:] if own else base
+
+
+POLITICAL_IDENTITIES = {"ruling_party", "opposition_party"}
+SIDE_OF = {"ruling_party": ("ruling",), "opposition_party": ("opposition", "legislature")}
+
+
+def state_ruled(code: str) -> bool:
+    """A jurisdiction whose ruling party is a party or state organ: there a political
+    identity would make us that organ, which is never our role (D-0003)."""
+    return any(p["side"] == "party_organ" for p in pack_parties(code))
+
+
+def parties_on_side(code: str, generic: str) -> list[dict]:
+    return [p for p in pack_parties(code) if p["side"] in SIDE_OF.get(generic, ())]
+
+
+def party_info(key: str) -> dict:
+    """The base entry, or a pack party as {key, group: politics, text, side, note, ...}."""
+    for p in PARTIES:
+        if p["key"] == key:
+            return p
+    for j in JURISDICTIONS:
+        for p in pack_parties(j):
+            if p["key"] == key:
+                return {**p, "group": "politics", "text": f"{p['name_en']} ({p['name']}), "
+                        f"{p['side']}: {p['note']}, as of {p['as_of']}",
+                        "concerns": "", "viewpoint": ""}
+    return {"key": key, "group": "", "text": key, "concerns": "", "viewpoint": ""}
 
 
 def item_index() -> dict[str, dict]:
@@ -192,7 +286,7 @@ def sensitive_dates_near(jurisdictions: list[str], publish_at: str, days: int = 
     for j in jurisdictions:
         for s in pack(j).get("sensitive_date", []):
             m, dd = (int(x) for x in s["md"].split("-"))
-            for year in (d.year - 1, d.year, d.year + 1):
+            for year in ((s["year"],) if s.get("year") else (d.year - 1, d.year, d.year + 1)):
                 try:
                     cand = date(year, m, dd)
                 except ValueError:

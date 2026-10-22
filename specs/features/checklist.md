@@ -25,7 +25,7 @@ Feature: checklist
   @S-checklist-004
   Scenario: full depth is one unit per lens, per jurisdiction for scoped lenses
     When  the outbound matrix is planned for tw and us at depth full
-    Then  there is one global unit per global lens and one unit per scoped lens and jurisdiction, 9 in all
+    Then  there is one global unit per global lens and one unit per scoped lens and jurisdiction, 11 in all
 
   @S-checklist-005
   Scenario: a jurisdiction unit never covers two jurisdictions
@@ -40,7 +40,7 @@ Feature: checklist
   @S-checklist-007
   Scenario: sensitive dates near the publish date are found without the web
     When  the publish date is 2027-02-27 for tw and 2027-06-05 for cn
-    Then  228 Peace Memorial Day and the June 4 anniversary are reported
+    Then  228 Peace Memorial Day and the June 4 anniversary are reported; a date with a year (the 2026 local elections) is reported only in that year
 
   @S-checklist-008
   Scenario: posture items are asked only under their posture
@@ -56,6 +56,24 @@ Feature: checklist
     Given an intake whose ticked means are only white
     When  the review prompt is built
     Then  it asks every item from the white, gray and black angles and does not name the ticked means; only the timeline prompt does
+  @S-checklist-011
+  Scenario: the stakeholders lens asks one item per group in every jurisdiction
+    When  any direction's default matrix is planned for tw and us at quick and full depth
+    Then  STK-01..07 are asked in the tw and us units and never in a global unit
+
+  @S-checklist-012
+  Scenario: role items are asked only for a matching identity
+    When  the matrix is planned for identities [responsible:board] and for [related:short_activists]
+    Then  the first holds ROL-01 and no ROL-04; the second holds ROL-04 and no ROL-01; an item for an unknown party type is refused
+
+  @S-checklist-013
+  Scenario: the borrowed items are in the checklist and credited
+    When  the checklist loads
+    Then  JOU-06..09, SOC-07, SOC-08, INT-04, RSP-04, APO-03 and EXP-04 exist with their source in docs/REFERENCES.md
+  @S-checklist-014
+  Scenario: the role stress tests and the political stress tests are asked per jurisdiction
+    When  the outbound and inbound matrices are planned for tw and cn
+    Then  RTM-01..05 and POL-01..03 are in the tw and cn units, not in global units, and not in an operation matrix
 ```
 
 ## Revisions
@@ -63,3 +81,7 @@ Feature: checklist
 - 2026-10-22 · +S-checklist-008..009 posture items (CLR, APO, ATK, DEF) · decision: D-0002
 - 2026-10-22 · +S-checklist-010 means shape only the report's means, never the checklist (user: 不會影響檢查項，只會影響最後報告的手段) · decision: D-0002
 - 2026-10-22 · ~S-checklist-008 posture items CLR+APO (clarify_apologize), PRO (promote), EXP (expose), RBT (rebut) · decision: D-0002
+2026-10-22 · +S-checklist-011..013 stakeholders lens, role items, borrowed items · decision: D-0003
+- 2026-10-22 · ~S-checklist-004 11 units with the stakeholders lens · decision: D-0003
+2026-10-22 · ~S-checklist-011 STK-07 politics; +S-checklist-014 role and political stress tests (user: 角色壓力測試檢核矩陣, Political Red-Teaming) · decision: D-0003
+- 2026-10-22 · ~S-checklist-007 dated sensitive dates (elections) · decision: D-0003

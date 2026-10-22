@@ -40,3 +40,28 @@ summary = "Personal information use and disclosure."
 [[sensitive_date]]
 md = "09-11"
 note = "September 11 anniversary"
+
+[[sensitive_date]]
+md = "11-03"
+year = 2026
+note = "2026 midterm elections"
+
+# Political parties (D-0003). Sides change with elections (midterms November 2026):
+# check as_of; unverified.
+[[party]]
+key = "us_gop"
+name = "共和黨"
+name_hans = "共和党"
+name_en = "Republican Party"
+side = "ruling"
+note = "holds the presidency and majorities in both chambers of the 119th Congress; check after the 2026-11-03 midterms (the 120th Congress sits from 2027-01-03)"
+as_of = "2026-10"
+
+[[party]]
+key = "us_dem"
+name = "民主黨"
+name_hans = "民主党"
+name_en = "Democratic Party"
+side = "opposition"
+note = "minority in both chambers of the 119th Congress"
+as_of = "2026-10"

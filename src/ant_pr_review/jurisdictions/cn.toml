@@ -53,3 +53,58 @@ note = "Mukden Incident anniversary"
 [[sensitive_date]]
 md = "12-13"
 note = "Nanjing Massacre memorial day"
+
+# Party and state organs (D-0003). Assessed as stakeholders only, never as our role.
+[[party]]
+key = "cn_ccp_committees"
+name = "中共各級黨委"
+name_hans = "中共各级党委"
+name_en = "CCP committees at every level"
+side = "party_organ"
+note = "the ruling party; local committees act on companies and events in their area"
+as_of = "2026-10"
+
+[[party]]
+key = "cn_propaganda"
+name = "中宣部"
+name_hans = "中宣部"
+name_en = "Central Propaganda Department"
+side = "party_organ"
+note = "sets the media line; state media follow it"
+as_of = "2026-10"
+
+[[party]]
+key = "cn_cac"
+name = "網信辦"
+name_hans = "网信办"
+name_en = "Cyberspace Administration of China"
+side = "state_organ"
+note = "state regulator for internet content and platforms; also the office of the party's Central Cyberspace Affairs Commission"
+as_of = "2026-10"
+
+[[party]]
+key = "cn_samr"
+name = "國家市場監督管理總局（及地方市場監督管理局）"
+name_hans = "国家市场监督管理总局（及地方市场监督管理局）"
+name_en = "State Administration for Market Regulation (and local bureaus)"
+side = "state_organ"
+note = "government regulator for competition, advertising, product quality and consumer protection"
+as_of = "2026-10"
+
+[[party]]
+key = "cn_tao"
+name = "國台辦"
+name_hans = "国台办"
+name_en = "Taiwan Affairs Office"
+side = "party_organ"
+note = "the party's Taiwan Work Office, also the State Council's Taiwan Affairs Office; comments on Taiwanese companies and people"
+as_of = "2026-10"
+
+[[party]]
+key = "cn_arats"
+name = "海協會"
+name_hans = "海协会"
+name_en = "Association for Relations Across the Taiwan Straits (ARATS)"
+side = "semi_official"
+note = "semi-official body for cross-strait contacts"
+as_of = "2026-10"

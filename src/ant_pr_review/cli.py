@@ -39,6 +39,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     n = sub.add_parser("new", parents=[common], help="start a new run (default command)")
     n.add_argument("--direction", choices=DIRECTIONS)
+    n.add_argument("--role", action="append", default=[],
+                   help="our identity <standpoint>:<party>, e.g. responsible:organization, "
+                        "affected:victims (repeat; default responsible:organization)")
     n.add_argument("--posture", choices=POSTURES, help="default clarify_apologize")
     n.add_argument("--means", help="comma list of white,gray,black (default all; black is "
                                    "assessed, never scheduled)")
@@ -272,7 +275,8 @@ def cmd_new(args, io: IO, store: Store, cfg: Config) -> int:
                 channels=args.channels, stakeholders=args.stakeholders,
                 publish_at=args.publish_at, keywords=args.keywords, embargo=args.embargo,
                 posture=args.posture, means=args.means, speaker=args.speaker,
-                background=args.background, locked=args.locked, focus=args.focus)
+                background=args.background, locked=args.locked, focus=args.focus,
+                roles=args.role or None)
         except ValueError as e:
             io.say(f"error: {e}")
             return EXIT_USAGE

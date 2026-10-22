@@ -79,7 +79,7 @@ RL_SEVERITY = ["none", "low", "medium", "high"]
 
 
 def review_schema() -> dict:
-    from .catalog import DIMENSIONS, RED_LINES, VERDICTS
+    from .catalog import DIMENSIONS, RED_LINES, VERDICTS, all_party_types
     risk = obj({
         "id": STR,                   # reviewer-local, e.g. "R3"
         "anchor": STR,               # "D1.P03.S2" or "absence: <where> - expected <item>; checked: ..."
@@ -103,6 +103,11 @@ def review_schema() -> dict:
         "red_lines": arr(obj({"key": enum(RED_LINES), "flag": BOOL, "severity": enum(RL_SEVERITY),
                               "anchors": arr(STR), "comment": STR})),
         "worst_headlines": arr(STR),
+        # D-0003: every party type in a stakeholders unit, [] elsewhere
+        "stakeholders": arr(obj({"type": enum(all_party_types()),
+                                 "relevance": enum(["none", "low", "high"]), "reaction": STR,
+                                 "needs": STR, "handling": STR, "likelihood": INT,
+                                 "impact": INT})),
     })
 
 
@@ -169,10 +174,14 @@ RESPONSE_OPTIONS = obj({
     "statement_draft": STR,
 })
 
+KEYWORD_KINDS = ["brand", "variant", "product", "officer", "issue", "competitor", "exclusion"]
+RELEVANCE = ["none", "low", "high"]
+
 KIT = obj({
     "holding_statement": STR,
     "qa": arr(obj({"question": STR, "answer": STR})),
-    "monitoring_keywords": arr(STR),
+    "monitoring_keywords": arr(obj({"term": STR, "kind": enum(KEYWORD_KINDS),
+                                     "platforms": arr(STR)})),
     "escalation": arr(obj({"trigger": STR, "action": STR, "owner": STR})),
     "do_not_say": arr(STR),
 })
@@ -185,12 +194,15 @@ REREVIEW = obj({
     })),
 })
 
+AUDIENCES = ["affected", "staff", "partners", "investors", "regulators", "press", "public"]
+
 # D-0002: the timeline of means and its independent labelling. `day` is relative to the
 # publish day (T0); `time` is HH:MM local to the first jurisdiction.
 TIMELINE = obj({
     "steps": arr(obj({"day": {"type": "integer"}, "time": STR, "action": STR,
                       "category": enum(["white", "gray", "black"]), "channel": STR, "notes": STR,
-                      "trigger": STR, "stop": STR})),
+                      "trigger": STR, "stop": STR, "audience": enum(AUDIENCES),
+                      "paid": BOOL})),
     "excluded": arr(obj({"tactic": STR, "why": STR, "law": STR, "exposure": STR, "watch_for": STR,
                          "lawful_alternative": STR})),
 })

@@ -214,6 +214,105 @@ def compare_lines(t: T, before: list[dict], after: list[dict]) -> list[str]:
     return out
 
 
+def sep(t: T) -> str:
+    return "、" if t.lang.startswith("zh") else ", "
+
+
+def party_label(t: T, key: str) -> str:
+    """A base type from the locale; a pack party by its name in the interface language."""
+    from .catalog import PARTY_TYPES, party_info
+    if key in PARTY_TYPES:
+        return t("party." + key)
+    i = party_info(key)
+    name = i.get("name_en") if t.lang == "en" else (
+        i.get("name_hans") or i.get("name") if t.lang == "zh-CN" else i.get("name"))
+    return cell(f"{name or key} ({t('side.' + i['side'])})" if i.get("side") else name or key)
+
+
+def stakeholder_lines(t: T, rows: list[dict], models: list[str]) -> list[str]:
+    """D-0003: grouped and sorted by relevance, then L×I. A party no model answered shows
+    ∅, never "none"; a party every model rated none is one short line."""
+    from .catalog import PARTY_GROUPS
+    from .consensus import REL_RANK
+    by = {r["type"]: r for r in rows}
+    out: list[str] = []
+    for g in PARTY_GROUPS:
+        present = sorted((r["type"] for r in rows if r.get("group") == g),
+                         key=lambda p: (-REL_RANK.get(by[p]["relevance"], 0), -by[p]["score"]))
+        if not present:
+            continue
+        out += ["", f"**{t('group.' + g)}**", "",
+                f"| {t('report.party')} | {t('report.relevance')} | L×I | {t('report.model')} | "
+                f"{t('report.reaction')} | {t('report.needs')} | {t('report.handling')} |",
+                "|---|---|---:|---|---|---|---|"]
+        for p in present:
+            r = by[p]
+            gaps = [m for m in models if m not in r["by_model"]]
+            rel = t("relevance." + r["relevance"]) if r["by_model"] else UNANSWERED
+            name = party_label(t, p)
+            if r["by_model"] and all(a["relevance"] == "none" for a in r["by_model"].values()):
+                out.append(f"| {name} | {rel} | {r['score']} | "
+                           + ", ".join(list(r["by_model"]) + [f"{m} {UNANSWERED}" for m in gaps])
+                           + " | | | |")
+                continue
+            head = f"| {name} | {rel} | {r['score']} |"
+            for n, m in enumerate(models):
+                a = r["by_model"].get(m)
+                lead = head if n == 0 else "| | | |"
+                if a is None:
+                    out.append(f"{lead} {m} {UNANSWERED} | | | |")
+                else:
+                    out.append(f"{lead} {m} ({t('relevance.' + a['relevance'])}) | "
+                               f"{safe(a.get('reaction'))} | {safe(a.get('needs'))} | "
+                               f"{safe(a.get('handling'))} |")
+    return out
+
+
+STRESS = [("RTM-01", "legal", "opposing_counsel,regulators"),
+          ("RTM-02", "emotion", "victims,community_leaders"),
+          ("RTM-03", "internal", "staff,implicated_individual"),
+          ("RTM-04", "business", "public_investors,channel"),
+          ("RTM-05", "ammunition", "media,competitors"),
+          ("POL-01", "pol_ammunition", "opposition_party"),
+          ("POL-02", "pol_polarised", "ruling_party,opposition_party"),
+          ("POL-03", "pol_sovereign", "bystanders,regulators")]
+
+
+def _stress_parties(t: T, parties: str, scope: str) -> str:
+    """The parties a stress test speaks for, in this unit's jurisdiction: a generic political
+    key becomes that pack's parties on that side, or nothing when it has none."""
+    from .catalog import GENERIC_POLITICS, pack_parties, parties_on_side
+    out = []
+    for p in parties.split(","):
+        if p in GENERIC_POLITICS and pack_parties(scope):
+            out += [party_label(t, x["key"]) for x in parties_on_side(scope, p)]
+        else:
+            out.append(t("party." + p))
+    return sep(t).join(out) or "—"
+
+
+def stress_lines(t: T, items: list[dict], models: list[str]) -> list[str]:
+    """D-0003: the role and political stress tests. Each red-team question once, then one
+    line per unit with the parties it speaks for there, the bar and each model's evidence
+    (the quoted sentence)."""
+    idx = item_index()
+    by: dict[str, list[dict]] = {}
+    for i in items:
+        by.setdefault(i["item"], []).append(i)
+    out = []
+    for key, dim, parties in STRESS:
+        if key not in by:
+            continue
+        out += ["", f"**{key} {t('stress.' + dim)}**", "", f"> {cell(idx[key]['text'])}", ""]
+        for i in by[key]:
+            scope = i["unit"].split(".")[0]
+            out.append(f"- `{i['unit']}` `{bar(*_counts([i]))}` — "
+                       f"{_stress_parties(t, parties, scope)}")
+            out += [f"  - {m} {MARK.get(i['by_model'].get(m, ''), UNANSWERED)}: "
+                    f"{safe(i.get('evidence', {}).get(m, ''))}" for m in models]
+    return out
+
+
 def stage_lines(t: T, stages: list[dict]) -> list[str]:
     out = [f"| {t('report.stage')} | {t('report.writer')} | {t('report.reviewer')} | "
            f"{t('report.status')} | {t('report.result')} |", "|---|---|---|---|---|"]
@@ -377,6 +476,12 @@ def render(run: Run, syn: dict, *, lang: str, version: int, changelog: list[str]
     L = [f"# {t('report.title')} — {cell(_title(run))} · {label} (v{version})", ""]
     L.append(f"- {t('report.run')}: `{run.id}`  ·  {datetime.now():%Y-%m-%d %H:%M}")
     L.append(f"- {t('report.direction')}: {t('intake.direction.' + intake['direction'])}")
+    from .intake import identity_label, means_of, posture_of, roles_of
+    L.append(f"- {t('report.role')}: "
+             + sep(t).join(identity_label(t, i) for i in roles_of(intake)["identities"]))
+    L.append(f"- {t('report.posture')}: {t('posture.' + posture_of(intake))} · "
+             f"{t('report.means')}: "
+             + sep(t).join(t('means.' + m + '.short') for m in means_of(intake)))
     card = intake.get("card", {})
     L += [f"- {t('card.' + f + '.label')}: {cell(card_line(t, f, card))}" for f in CARD_FIELDS]
     manifest = read_json(run.path("01-sources/manifest.json"), default={"items": []})
@@ -439,6 +544,28 @@ def render(run: Run, syn: dict, *, lang: str, version: int, changelog: list[str]
         if len(js) > 1:
             L += ["", f"### {t('report.per_jurisdiction')}", ""]
             L += [f"- {t('jur.' + j)}: `08-report.v{version}.{j}.md`" for j in js]
+    stress = [i for i in v["items"] if i["item"] in dict((k, 1) for k, _, _ in STRESS)]
+    if stress:
+        L += ["", f"## {t('report.stress')}", "", t("report.stress_note")]
+        L += stress_lines(t, stress, models)
+    stk_js = [scope] if scope is not None else js
+    # a run whose reviews predate the stakeholder map has rows but no answers: no section
+    if any(r["by_model"] for j in stk_js for r in syn["jurisdictions"][j].get("stakeholders", [])):
+        all_rows = [r for j in stk_js for r in syn["jurisdictions"][j].get("stakeholders", [])]
+        gaps = any(r["unanswered"] for r in all_rows)
+        L += ["", f"## {t('report.stakeholders')}", "",
+              t("report.stakeholders_note_gaps" if gaps else "report.stakeholders_note")]
+        for j in stk_js:
+            rows = syn["jurisdictions"][j].get("stakeholders", [])
+            if scope is None and len(js) > 1:
+                # the consolidated report keeps what matters; the full map is per jurisdiction
+                rows = [r for r in rows if r["relevance"] == "high" or r["score"] >= 8
+                        or r["unanswered"]]
+                L += ["", f"### {t('jur.' + j)}", "",
+                      t("report.stakeholders_top", file=f"08-report.v{version}.{j}.md")]
+            else:
+                L += ["", f"### {t('jur.' + j)}"]
+            L += stakeholder_lines(t, rows, models) if rows else ["", t("report.none")]
     L += _plans_sections(t, run, scope)
     if context:
         L += ["", f"## {t('report.context')}", "",

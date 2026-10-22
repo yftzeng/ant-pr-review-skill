@@ -8,13 +8,18 @@ from .i18n import T
 from .ui import (IO, END_TOKENS, ask_text, checkbox, collect_lines, confirm, dim, prompt, question,
                  radio, section)
 
-from .catalog import (DEFAULT_JURISDICTIONS, DEFAULT_POSTURE, DIRECTIONS, JURISDICTIONS,
-                      LEGACY_POSTURES, MEANS, POSTURES)
+from .catalog import (DEFAULT_IDENTITY, DEFAULT_JURISDICTIONS, DEFAULT_POSTURE,
+                      DEFAULT_STANDPOINTS, DIRECTIONS, JURISDICTIONS, LEGACY_POSTURES, MEANS,
+                      PARTY_TYPES, POSTURES, STANDPOINTS, VALID_IDENTITIES, identity_options)
 
 CHANNELS = ["press_release", "own_social", "kol", "forums", "ads", "media_interview",
             "internal_memo"]
-STAKEHOLDERS = ["consumers", "employees", "investors", "regulators", "partners", "competitors",
-                "media", "communities"]
+STAKEHOLDERS = PARTY_TYPES  # D-0003: the card's stakeholders use the party types
+LEGACY_STAKEHOLDERS = {"consumers": ["victims", "bystanders"], "employees": "staff",
+                       "investors": ["private_investors", "public_investors"],
+                       "regulators": "regulators", "partners": "partners",
+                       "competitors": "competitors", "media": "media",
+                       "communities": "community_leaders"}
 CARD_FIELDS = ["org", "parties", "jurisdictions", "channels", "stakeholders", "publish_at",
                "keywords", "embargo", "speaker", "background", "locked", "focus"]
 URL_RE = re.compile(r"^https?://\S+$", re.I)
@@ -43,6 +48,71 @@ def ask_posture(io: IO, t: T) -> str:
 def ask_means(io: IO, t: T) -> list[str]:
     return checkbox(io, t, t("intake.means"), [(m, t(f"means.{m}")) for m in MEANS], MEANS,
                     min_selected=1)
+
+
+def ask_standpoints(io: IO, t: T) -> list[str]:
+    return checkbox(io, t, t("intake.standpoint"), [(s, t(f"standpoint.{s}")) for s in STANDPOINTS],
+                    DEFAULT_STANDPOINTS, min_selected=1)
+
+
+def identity_label(t: T, identity: str) -> str:
+    sp, p = identity.split(":", 1)
+    return f"{t('standpoint.' + sp + '.short')} - {t('party.' + p)}"
+
+
+def ask_identities(io: IO, t: T, standpoints: list[str]) -> list[str]:
+    opts = [(o, identity_label(t, o)) for o in identity_options(standpoints)]
+    return checkbox(io, t, t("intake.identity"), opts,
+                    [f"{sp}:organization" for sp in standpoints], min_selected=1)
+
+
+def check_identities(identities: list[str]) -> list[str]:
+    bad = [x for x in identities if ":" not in x
+           or x.split(":", 1)[1] not in VALID_IDENTITIES.get(x.split(":", 1)[0], [])]
+    if bad:
+        raise ValueError(f"not a reasonable identity: {bad}; astroturf is never our role; "
+                         f"choose from {identity_options(STANDPOINTS)}")
+    return list(dict.fromkeys(identities))
+
+
+def _valid_identity(x) -> bool:
+    if not isinstance(x, str) or x.count(":") != 1:
+        return False
+    sp, p = x.split(":")
+    return p in VALID_IDENTITIES.get(sp, [])
+
+
+def roles_of(intake: dict) -> dict:
+    """Our role as stored, re-validated every time it is read (N-context-card-001): an
+    unreasonable or malformed identity, astroturf above all, is dropped and reported;
+    nothing left, or an intake written before D-0003, reads as responsible:organization."""
+    raw = (intake.get("roles") or {}) if isinstance(intake.get("roles"), dict) else {}
+    ids = raw.get("identities")
+    ids = [ids] if isinstance(ids, str) else (ids if isinstance(ids, list) else [])
+    from .catalog import POLITICAL_IDENTITIES, state_ruled
+    js = (intake.get("card") or {}).get("jurisdictions") or []
+    organ = any(state_ruled(j) for j in js if isinstance(j, str))
+
+    def ok(x) -> bool:
+        return _valid_identity(x) and not (organ and x.split(":")[1] in POLITICAL_IDENTITIES)
+    good = list(dict.fromkeys(x for x in ids if ok(x)))
+    dropped = [str(x)[:60] for x in ids if not ok(x)]
+    good = good or [DEFAULT_IDENTITY]
+    return {"standpoints": [s for s in STANDPOINTS if any(i.startswith(s + ":") for i in good)],
+            "identities": good, **({"dropped": dropped} if dropped else {})}
+
+
+def card_stakeholders(card: dict) -> list[str]:
+    """The card's stakeholders, with the earlier values mapped onto the party types."""
+    return map_stakeholders(card.get("stakeholders", []))
+
+
+def map_stakeholders(values: list[str]) -> list[str]:
+    out: list[str] = []
+    for v in values:
+        m = LEGACY_STAKEHOLDERS.get(v, v)
+        out += m if isinstance(m, list) else [m]
+    return list(dict.fromkeys(out))
 
 
 def posture_of(intake: dict) -> str:
@@ -97,6 +167,8 @@ def value_label(t: T, field: str, value: str) -> str:
         return value[len("custom:"):]
     if field == "jurisdictions":
         return t(f"jur.{value}")
+    if field == "stakeholders":
+        return t(f"party.{value}")
     return t(f"card.{field}.{value}")
 
 
@@ -106,6 +178,8 @@ def card_line(t: T, field: str, card: dict) -> str:
         return t("ui.yes") if v else t("ui.no")
     if field == "locked" and v:
         return " / ".join(v)
+    if field == "stakeholders":
+        v = card_stakeholders(card)
     if isinstance(v, list):
         if not v:
             return t("intake.skipped")
@@ -121,14 +195,15 @@ def _ask_choice_field(io: IO, t: T, field: str, current: list[str]) -> list[str]
         return checkbox(io, t, t("card.jurisdictions"), opts, current or DEFAULT_JURISDICTIONS,
                         min_selected=1)
     base = CHANNELS if field == "channels" else STAKEHOLDERS
-    opts = [(o, t(f"card.{field}.{o}")) for o in base]
+    opts = [(o, value_label(t, field, o)) for o in base]
     opts += [(c, c[len("custom:"):]) for c in current if c.startswith("custom:")]
     return checkbox(io, t, t(f"card.{field}"), opts, current, allow_custom=True)
 
 
 def ask_field(io: IO, t: T, field: str, card: dict, direction: str) -> None:
     if field in ("jurisdictions", "channels", "stakeholders"):
-        card[field] = _ask_choice_field(io, t, field, card.get(field, []))
+        current = card_stakeholders(card) if field == "stakeholders" else card.get(field, [])
+        card[field] = _ask_choice_field(io, t, field, current)
     elif field in ("parties", "keywords"):
         card[field] = split_list(ask_text(io, t(f"card.{field}")))
     elif field == "locked":  # whole sentences, one per line: commas stay inside
@@ -178,7 +253,8 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
                            keywords: str | None = None, embargo: bool = False,
                            posture: str | None = None, means: str | None = None,
                            speaker: str = "", background: str = "",
-                           locked: list[str] | None = None, focus: str = "") -> dict:
+                           locked: list[str] | None = None, focus: str = "",
+                           roles: list[str] | None = None) -> dict:
     if direction not in DIRECTIONS:
         raise ValueError(f"direction must be one of {DIRECTIONS}")
     posture = posture or DEFAULT_POSTURE
@@ -197,20 +273,30 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
     card = {"org": org or "", "parties": [p for x in (parties or []) for p in split_list(x)],
             "jurisdictions": list(dict.fromkeys(jur)),
             "channels": parse_choices(channels, CHANNELS, "channel"),
-            "stakeholders": parse_choices(stakeholders, STAKEHOLDERS, "stakeholder"),
+            "stakeholders": parse_choices(",".join(map_stakeholders(split_list(stakeholders or ""))),
+                                          STAKEHOLDERS, "stakeholder"),
             "publish_at": publish_at or "", "keywords": split_list(keywords or ""),
             "embargo": bool(embargo), "speaker": speaker or "", "background": background or "",
             "locked": [x.strip() for x in (locked or []) if x.strip()], "focus": focus or ""}
-    return {"direction": direction, "posture": posture,
+    identities = check_identities(roles or [DEFAULT_IDENTITY])
+    from .catalog import POLITICAL_IDENTITIES, state_ruled
+    organs = [j for j in card["jurisdictions"] if state_ruled(j)]
+    if organs and any(i.split(":")[1] in POLITICAL_IDENTITIES for i in identities):
+        raise ValueError(f"a party identity is not available with jurisdiction(s) {organs}: "
+                         "there the ruling party is a party or state organ, never our role")
+    return {"direction": direction,
+            "roles": roles_of({"roles": {"identities": identities}}), "posture": posture,
             "means": [m for m in MEANS if m in chosen],
             "targets": [classify_target(x) for x in targets], "card": card, "lang": lang}
 
 
 def run_intake_interactive(io: IO, t: T, lang: str) -> dict:
     direction = ask_direction(io, t)
+    standpoints = ask_standpoints(io, t)
+    identities = ask_identities(io, t, standpoints)
     posture = ask_posture(io, t)
     means = ask_means(io, t)
     targets = collect_targets(io, t)
     card = ask_card(io, t, direction)
-    return {"direction": direction, "posture": posture, "means": means, "targets": targets,
-            "card": card, "lang": lang}
+    return {"direction": direction, "roles": roles_of({"roles": {"identities": identities}}),
+            "posture": posture, "means": means, "targets": targets, "card": card, "lang": lang}

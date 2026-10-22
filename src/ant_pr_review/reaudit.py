@@ -9,7 +9,7 @@ import shutil
 from .backends.base import Backend
 from .catalog import plan_units
 from .consensus import synthesize
-from .intake import posture_of
+from .intake import posture_of, roles_of
 from .jsonio import read_json, sha256_bytes, write_json
 from .review import load_records, run_round1
 from .sources.acquire import run_sources
@@ -46,7 +46,8 @@ def run_reaudit(run: Run, backend: Backend, models: list[str], lang: str,
     if not sub.path("01-sources/segments.json").exists():
         run_sources(sub, crawler=None)
     write_json(sub.path("02-context.json"), context)
-    units = plan_units("outbound", m["lenses"], m["jurisdictions"], "quick", posture_of(intake))
+    units = plan_units("outbound", m["lenses"], m["jurisdictions"], "quick", posture_of(intake),
+                       roles_of(intake)["identities"])
     matrix = dict(m, depth="quick", units=units)
     write_json(sub.path("03-matrix.json"), matrix)
     run_round1(sub, backend, models, lang, say=say)
