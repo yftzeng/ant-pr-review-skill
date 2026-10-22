@@ -145,7 +145,8 @@ def test_interactive_feed_one_run_per_ticked_article(feed_env):
     store, url = feed_env
     io = ScriptedIO(["", "1", "", "", "", "", url, "/done",   # purpose, direction, standpoint, identity, posture, means, target
                      "", "", "", "", "", "", "", "",                    # card: org .. embargo
-                     "", "", "/done", "", "",                           # speaker .. focus, confirm
+                     "", "", "/done", "", "", "",                       # speaker .. focus, signals, characterised
+                     "",                                                # confirm
 
                      "1 3", "",                                          # tick articles 1 and 3
                      ])

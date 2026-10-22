@@ -25,7 +25,7 @@ Q = lambda *_: None
 # speaker, background, locked (lines, then /done), focus
 FILL = ["Acme", "Beta Corp", "", "1", "", "", "2027-01-05", "phones", "",
         "PR lead", "Recall last week", "我們很抱歉，造成不便。", "Second, with a comma.", "/done",
-        "tone"]
+        "tone", "", ""]  # ... signals, characterised
 TEXT = "# 標題\n\n我們的產品很棒棒，大家都喜翻。\n\nA公司的手機曾經爆炸。 Second sentence."
 RISK = {"id": "R01", "anchor": "D1.P03.S1", "dimension": "provability", "scope": "tw",
         "scenario": "s", "standard": "std", "mitigation": "m", "score": 12}

@@ -191,7 +191,72 @@ def checklist_lines(t: T, items: list[dict], models: list[str]) -> list[str]:
         by_scope.setdefault(i["unit"].split(".")[0], []).append(i)
     out += [f"- {t('lens.' + ln)} ({ln}): `{bar(*_counts(g))}`" for ln, g in by_lens.items()]
     out += [f"- {t('report.scope')} {sc}: `{bar(*_counts(g))}`" for sc, g in by_scope.items()]
+    out += [f"- {axis_line(t, ax, g)}" for ax, g in axis_groups(items).items()]
     out += ["", f"**{t('report.overall_rate')}**: `{bar(*_counts(items))}`"]
+    return out
+
+
+def axis_groups(items: list[dict]) -> dict[str, list[dict]]:
+    """S-review-matrix-032: the checklist answers grouped by the three control axes."""
+    from .catalog import AXES
+    return {ax: [i for i in items if i["item"] in ids] for ax, ids in AXES.items()}
+
+
+def axis_line(t: T, ax: str, items: list[dict]) -> str:
+    """The axis bar with how many of its items this run asked: one answered item must
+    not read as a whole axis passed."""
+    from .catalog import AXES
+    asked = len({i["item"] for i in items})  # already grouped by axis_groups
+    return (f"{t('axis.' + ax)}: `{bar(*_counts(items))}` "
+            f"({t('report.event.asked', n=asked, m=len(AXES[ax]))})")
+
+
+def event_lines(t: T, run: Run, intake: dict, syn: dict, v: dict) -> list[str]:
+    """D-0006: grade, risk outlook, recommended action and activation, computed in code."""
+    from .decision import available_plans
+    from .grading import assess
+    a = assess(intake, syn)
+    def name(x: str) -> str:
+        kind, _, key = x.partition(":")
+        return {"red_line": lambda: t("redline." + key),
+                "tier4": lambda: t("brief.tier4." + key)}.get(kind, lambda: t("signal." + x))()
+    sig = lambda xs: sep(t).join(name(x) for x in xs)
+    if a["grade"]:
+        why = (t("report.event.bottom", what=sig(a["override"])) if a["override"]
+               else t("report.event.higher", what=sig(a["basis"])))
+        out = [f"- **{t('report.event.grade')}**: {t('grade.' + a['grade'])} · "
+               f"{t('report.event.owner')}: {t('owner.' + a['owner'])} · {why}"]
+    else:
+        out = [f"- **{t('report.event.grade')}**: {t('grade.none')}"]
+        if a["latent"]:
+            out.append(f"- ⚠ {t('report.event.latent', what=sig(a['latent']))}")
+    c = syn["consolidated"]
+    top = max(v["risks"], key=lambda r: r["score"], default=None)
+    conf = sum(x["status"] == "confirmed" for o in syn["jurisdictions"].values()
+               for x in o["red_lines"].values())
+    pend = sum(x["status"] == "needs_ruling" for o in syn["jurisdictions"].values()
+               for x in o["red_lines"].values())
+    outlook = [f"{t('report.verdict')} {_verdict(t, c)}",
+               t("report.event.red", confirmed=conf, pending=pend)]
+    if top:
+        outlook.insert(1, f"{t('report.top_score')} {top['score']} ({top['id']} {safe(top['label'][:60])})")
+    if v["headlines"]:
+        outlook.append(f"{t('report.headlines')}: {safe(v['headlines'][0])}")
+    out.append(f"- **{t('report.event.outlook')}**: " + " · ".join(outlook))
+    plans = available_plans(run)
+    act = (t("report.event.hold") if c["verdict"] == "no_go" else
+           sep(t).join(t(f"decide.plan.{p}") for p in plans) or t("report.event.no_plans"))
+    axes = " · ".join(axis_line(t, ax, g) for ax, g in axis_groups(v["items"]).items())
+    out.append(f"- **{t('report.event.action')}**: {act} · {axes}")
+    kit = run.path("09-plans/C-kit.md")
+    no_kit = a["activation"] in ("activate", "standby") and not (
+        kit.exists() and kit.read_text(encoding="utf-8").strip())
+    out.append(f"- **{t('report.event.activation')}**: {t('activation.' + a['activation'])}"
+               + (f" ({t('report.event.no_kit')})" if no_kit else ""))
+    out.append(f"- **{t('report.event.facts')}**: "
+               + (t("report.event.characterised") if a["characterised"]
+                  else t("report.event.not_characterised")))
+    out.append(f"- {t('report.event.regrade', run=run.id)}")
     return out
 
 
@@ -648,7 +713,8 @@ def render(run: Run, syn: dict, *, lang: str, version: int, changelog: list[str]
              f"{t('report.means')}: "
              + sep(t).join(t('means.' + m + '.short') for m in means_of(intake)))
     card = intake.get("card", {})
-    L += [f"- {t('card.' + f + '.label')}: {cell(card_line(t, f, card))}" for f in CARD_FIELDS]
+    L += [f"- {t('card.' + f + '.label')}: {cell(card_line(t, f, card))}" for f in CARD_FIELDS
+          if not (f == "characterised" and purpose_of(intake) == "drafting")]  # the brief's
     manifest = read_json(run.path("01-sources/manifest.json"), default={"items": []})
     for it in manifest["items"]:
         if it.get("status") != "ok" or it.get("kind") == "text" and not it.get("via"):
@@ -662,6 +728,9 @@ def render(run: Run, syn: dict, *, lang: str, version: int, changelog: list[str]
     L.append(f"- {t('report.depth')}: {t('depth.' + matrix['depth'])} · "
              f"{t('report.units')}: {len(matrix['units'])} × {len(models)}")
     L += ["", f"> {t('report.disclaimer')}", ""]
+    if scope is None:
+        L += [f"## {t('report.event')}", ""] + event_lines(t, run, intake, syn,
+                                                          _consolidated_views(syn)) + [""]
     prof = read_json(run.path("01-profile.json"), default={})
     if prof.get("status") == "done":
         L += [f"## {t('report.profile')}", ""] + profile_lines(t, prof) + [""]

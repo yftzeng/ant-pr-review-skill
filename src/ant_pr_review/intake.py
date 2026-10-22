@@ -10,7 +10,7 @@ from .ui import (IO, END_TOKENS, ask_text, checkbox, collect_lines, confirm, dim
 
 from .catalog import (DEFAULT_IDENTITY, DEFAULT_JURISDICTIONS, DEFAULT_POSTURE,
                       DEFAULT_STANDPOINTS, DIRECTIONS, JURISDICTIONS, LEGACY_POSTURES, MEANS,
-                      PARTY_TYPES, POSTURES, STANDPOINTS, VALID_IDENTITIES, identity_options)
+                      PARTY_TYPES, POSTURES, SIGNALS, STANDPOINTS, VALID_IDENTITIES, identity_options)
 
 CHANNELS = ["press_release", "own_social", "kol", "forums", "ads", "media_interview",
             "internal_memo"]
@@ -21,7 +21,8 @@ LEGACY_STAKEHOLDERS = {"consumers": ["victims", "bystanders"], "employees": "sta
                        "competitors": "competitors", "media": "media",
                        "communities": "community_leaders"}
 CARD_FIELDS = ["org", "parties", "jurisdictions", "channels", "stakeholders", "publish_at",
-               "keywords", "embargo", "speaker", "background", "locked", "focus"]
+               "keywords", "embargo", "speaker", "background", "locked", "focus", "signals",
+               "characterised"]
 URL_RE = re.compile(r"^https?://\S+$", re.I)
 
 
@@ -221,12 +222,14 @@ def value_label(t: T, field: str, value: str) -> str:
         return t(f"jur.{value}")
     if field == "stakeholders":
         return t(f"party.{value}")
+    if field == "signals":
+        return f"{t('signal.' + value)} ({SIGNALS[value]})"
     return t(f"card.{field}.{value}")
 
 
 def card_line(t: T, field: str, card: dict) -> str:
     v = card.get(field)
-    if field == "embargo":
+    if field in ("embargo", "characterised"):
         return t("ui.yes") if v else t("ui.no")
     if field == "locked" and v:
         return " / ".join(v)
@@ -235,7 +238,7 @@ def card_line(t: T, field: str, card: dict) -> str:
     if isinstance(v, list):
         if not v:
             return t("intake.skipped")
-        if field in ("jurisdictions", "channels", "stakeholders"):
+        if field in ("jurisdictions", "channels", "stakeholders", "signals"):
             return "、".join(value_label(t, field, x) for x in v)
         return "、".join(v)
     return v or t("intake.skipped")
@@ -261,6 +264,13 @@ def ask_field(io: IO, t: T, field: str, card: dict, direction: str) -> None:
     elif field == "locked":  # whole sentences, one per line: commas stay inside
         io.say(question(t("card.locked")))
         card[field] = collect_lines(io, t, prompt(""), lambda s: dim("  ✓"))
+    elif field == "signals":
+        card[field] = checkbox(io, t, t("card.signals"),
+                               [(x, value_label(t, field, x)) for x in SIGNALS],
+                               [x for x in card.get("signals", []) if x in SIGNALS])
+    elif field == "characterised":
+        card[field] = confirm(io, t, t("card.characterised"),
+                              default=bool(card.get("characterised", False)))
     elif field == "embargo":
         card[field] = confirm(io, t, t("card.embargo"),
                               default=card.get("embargo", direction == "outbound"))
@@ -268,22 +278,32 @@ def ask_field(io: IO, t: T, field: str, card: dict, direction: str) -> None:
         card[field] = ask_text(io, t(f"card.{field}")).strip()
 
 
-def ask_card(io: IO, t: T, direction: str, initial: dict | None = None) -> dict:
+def ask_card(io: IO, t: T, direction: str, initial: dict | None = None,
+             skip: tuple[str, ...] = ()) -> dict:
     card = dict(initial or {})
+    fields = [f for f in CARD_FIELDS if f not in skip]
     if not initial:
-        for f in CARD_FIELDS:
+        for f in fields:
             ask_field(io, t, f, card, direction)
     while True:
         io.say(section(t("intake.card")))
-        for f in CARD_FIELDS:
+        for f in fields:
             io.say(f"  {t('card.' + f + '.label')}: {card_line(t, f, card)}")
         choices = [("confirm", t("intake.card.confirm"))]
         choices += [(f"edit:{f}", t("intake.card.edit", layer=t("card." + f + ".label")))
-                    for f in CARD_FIELDS]
+                    for f in fields]
         act = radio(io, t, t("run.resume_choice"), choices, default="confirm")
         if act == "confirm":
             return card
         ask_field(io, t, act.split(":", 1)[1], card, direction)
+
+
+def parse_signals(values: str | None) -> list[str]:
+    out = split_list((values or "").replace("+", ","))
+    bad = [x for x in out if x not in SIGNALS]
+    if bad:
+        raise ValueError(f"unknown signal(s) {bad}; choose from {list(SIGNALS)}")
+    return list(dict.fromkeys(out))
 
 
 def parse_choices(values: str | None, allowed: list[str], what: str) -> list[str]:
@@ -307,7 +327,8 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
                            speaker: str = "", background: str = "",
                            locked: list[str] | None = None, focus: str = "",
                            roles: list[str] | None = None, tax_id: str = "",
-                           purpose: str = "audit", brief: dict | None = None) -> dict:
+                           purpose: str = "audit", brief: dict | None = None,
+                           signals: str | None = None, characterised: bool = False) -> dict:
     if direction not in DIRECTIONS:
         raise ValueError(f"direction must be one of {DIRECTIONS}")
     if purpose not in PURPOSES:
@@ -317,6 +338,8 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
             raise ValueError("drafting writes our own statement: the direction is outbound")
         if brief is None:
             raise ValueError("drafting needs a brief (--brief <file.json|file.toml>)")
+        if characterised:
+            raise ValueError("drafting takes characterised from its brief, not --characterised")
         from .drafting import check_brief
         brief = check_brief(brief)
     posture = posture or DEFAULT_POSTURE
@@ -340,6 +363,7 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
             "publish_at": publish_at or "", "keywords": split_list(keywords or ""),
             "embargo": bool(embargo), "speaker": speaker or "", "background": background or "",
             "locked": [x.strip() for x in (locked or []) if x.strip()], "focus": focus or "",
+            "signals": parse_signals(signals), "characterised": bool(characterised),
             **({"tax_id": tax_id.strip()} if tax_id and tax_id.strip() else {})}
     identities = check_identities(roles or [DEFAULT_IDENTITY])
     from .catalog import POLITICAL_IDENTITIES, state_ruled
@@ -372,7 +396,8 @@ def run_intake_interactive(io: IO, t: T, lang: str) -> dict:
         targets: list[dict] = []
     else:
         targets = collect_targets(io, t)
-    card = ask_card(io, t, direction)
+    # D-0006: drafting asks whether the facts characterise the event in its brief
+    card = ask_card(io, t, direction, skip=("characterised",) if purpose == "drafting" else ())
     return {"direction": direction, "roles": roles_of({"roles": {"identities": identities}}),
             "posture": posture, "means": means, "targets": targets, "card": card, "lang": lang,
             **extra}

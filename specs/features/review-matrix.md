@@ -178,6 +178,16 @@ Feature: review matrix
   Scenario: the report's disclaimer limits it to communication risk
     When  the report is written in en, zh-TW and zh-CN
     Then  the disclaimer says it assesses communication risk only, finds nothing on facts or liability, is not professional advice, and makes no tactic acceptable
+  @S-review-matrix-031
+  Scenario: the report opens with an event assessment
+    Given signals platform_trending and multi_media, then also scattered_reviews, then major_safety, then a confirmed red line, then none
+    When  the report is written
+    Then  the first two give grade II handled by group executives with plan C activated and the signals named as the basis; adding a lower signal keeps II; major_safety or a confirmed red line gives grade I with the bottom line named; none says ungraded and leaves activation to the user; a confirmed red line in an outbound text with no signal ticked does not grade an event that has not happened: the section says publishing it would make it grade I; activation that names plan C says when no kit was written; the section also gives the verdict, top risk, red-line counts and worst headline, the recommended plan, whether the facts characterise the event (for drafting from the brief, never characterised under a tier-4 flag, and the card header does not show its own line), and how to regrade (rerun --from report after editing the card's signals)
+
+  @S-review-matrix-032
+  Scenario: the checklist is also subtotalled by the three control axes
+    When  the report is written
+    Then  the subtotals include predictability, explicability and influence, each with its pass-rate bar over its items and how many of its items this run asked, and the event assessment shows the three
 ```
 
 ## Must NOT
@@ -194,3 +204,5 @@ Feature: review matrix
 - 2026-10-22 · ~S-review-matrix-029 second tier-3 review: per-unit parties, question once, merger evidence · decision: D-0003
 - 2026-10-22 · ~S-review-matrix-028 reactions labelled model-simulated (borrowed) · decision: D-0003
 - 2026-10-22 · +S-review-matrix-030 disclaimer from the user's notes · decision: D-0003
+- 2026-10-22 · +S-review-matrix-031..032 the event assessment and the control-axis subtotals (user: 開工) · decision: D-0006
+- 2026-10-22 · ~S-review-matrix-031..032 from the tier-3 review: a latent red line in an unpublished text, a missing kit, drafting's characterised, axis coverage, the regrade path · decision: D-0006

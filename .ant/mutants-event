@@ -1,0 +1,106 @@
+# event assessment (D-0006)
+@@ src/ant_pr_review/grading.py
+-     return bool((intake.get("card") or {}).get("characterised", False))
++     return bool((intake.get("card") or {}).get("x", True))
+@@ src/ant_pr_review/grading.py
+-     override = [s for s in signals if s in BOTTOM_LINES]
++     override = [s for s in signals if False]
+@@ src/ant_pr_review/grading.py
+-                      if x in TIER4_BOTTOM]
++                      ]
+@@ src/ant_pr_review/grading.py
+-                  for k, v in (o.get("red_lines") or {}).items() if v.get("status") == "confirmed"}
++                  for k, v in (o.get("red_lines") or {}).items() if v.get("status") != "clear"}
+@@ src/ant_pr_review/grading.py
+-     grade = "I" if override else min(graded, key=GRADES.index) if graded else None
++     grade = "I" if override else max(graded, key=GRADES.index) if graded else None
+@@ src/ant_pr_review/grading.py
+-     grade = "I" if override else min(graded, key=GRADES.index) if graded else None
++     grade = min(graded, key=GRADES.index) if graded else None
+@@ src/ant_pr_review/grading.py
+-     basis = [s for s in signals if SIGNALS[s] == grade and s not in BOTTOM_LINES]
++     basis = [s for s in signals if SIGNALS[s] == grade]
+@@ src/ant_pr_review/grading.py
+-             "signals": signals, "activation": ACTIVATION.get(grade, "manual"),
++             "signals": signals, "activation": ACTIVATION.get(grade, "observe"),
+@@ src/ant_pr_review/catalog.py
+- ACTIVATION = {"I": "activate", "II": "activate", "III": "standby", "IV": "observe"}
++ ACTIVATION = {"I": "activate", "II": "standby", "III": "standby", "IV": "observe"}
+@@ src/ant_pr_review/catalog.py
+- OWNERS = {"I": "top_and_advisers", "II": "executives", "III": "management",
++ OWNERS = {"I": "top_and_advisers", "II": "management", "III": "management",
+@@ src/ant_pr_review/report.py
+-     out += [f"- {axis_line(t, ax, g)}" for ax, g in axis_groups(items).items()]
++     out += [f"- {axis_line(t, ax, g)}" for ax, g in {}.items()]
+@@ src/ant_pr_review/report.py
+-     return {ax: [i for i in items if i["item"] in ids] for ax, ids in AXES.items()}
++     return {ax: [i for i in items ] for ax, ids in AXES.items()}
+@@ src/ant_pr_review/report.py
+-         why = (t("report.event.bottom", what=sig(a["override"])) if a["override"]
++         why = (t("report.event.bottom", what=sig(a["override"])) if False
+@@ src/ant_pr_review/report.py
+-         L += [f"## {t('report.event')}", ""] + event_lines(t, run, intake, syn,
++         L += [f"## {t('report.event')}", ""] + [] or (t, run, intake, syn,
+@@ src/ant_pr_review/intake.py
+-             "signals": parse_signals(signals), "characterised": bool(characterised),
++             "signals": parse_signals(signals), "characterised": False,
+@@ src/ant_pr_review/intake.py
+-     bad = [x for x in out if x not in SIGNALS]
++     bad = [x for x in out if False]
+@@ src/ant_pr_review/intake.py
+-     card = ask_card(io, t, direction, skip=("characterised",) if purpose == "drafting" else ())
++     card = ask_card(io, t, direction, skip=())
+@@ src/ant_pr_review/intake.py
+-         card[field] = confirm(io, t, t("card.characterised"),
++         card[field] = not confirm(io, t, t("card.characterised"),
+@@ src/ant_pr_review/plans.py
+-         data["formal_statement"] = ""
++         pass
+@@ src/ant_pr_review/plans.py
+-               if str(d.get("formal_statement") or "").strip() else
++               if str(d.get("formal_statement") or "").strip() or True else
+@@ src/ant_pr_review/prompts.py
+-               "formal_statement empty. ")
++               "it empty. ")
+@@ src/ant_pr_review/prompts.py
+-             "issue-attention stage (Downs: pre_problem, alarmed, cost, decline, post_problem). "
++             "stage (Downs: pre_problem, alarmed, cost, decline, post_problem). "
+@@ src/ant_pr_review/timeline.py
+-                      "stage": s.get("stage") if s.get("stage") in ATTENTION_STAGES else "",
++                      "stage": s.get("stage") or "",
+@@ src/ant_pr_review/timeline.py
+-                      "silence": bool(s.get("silence")),
++                      "silence": False,
+@@ src/ant_pr_review/timeline.py
+-             stage = (stage + " · " if stage else "") + f"**{t('plans.t.silence')}**"
++             stage = (stage + " · " if stage else "") + f""
+@@ src/ant_pr_review/grading.py
+-         return bool(brief.get("characterised", False)) and not brief.get("tier4")
++         return bool(brief.get("characterised", False))
+@@ src/ant_pr_review/grading.py
+-     latent = red if not signals and intake.get("direction") == "outbound" else []
++     latent = [] if not signals and intake.get("direction") == "outbound" else []
+@@ src/ant_pr_review/grading.py
+-     override += [] if latent else red
++     override += red
+@@ src/ant_pr_review/intake.py
+-             raise ValueError("drafting takes characterised from its brief, not --characterised")
++             print("drafting takes characterised from its brief, not --characterised")
+@@ src/ant_pr_review/report.py
+-     no_kit = a["activation"] in ("activate", "standby") and not (
++     no_kit = a["activation"] in ("activate", "standby") and False and not (
+@@ src/ant_pr_review/report.py
+-           if not (f == "characterised" and purpose_of(intake) == "drafting")]  # the brief's
++           if True or not (f == "characterised" and purpose_of(intake) == "drafting")]  # the brief's
+@@ src/ant_pr_review/plans.py
+-         data["formal_withheld"] = True
++         data["formal_withheld"] = False
+@@ src/ant_pr_review/plans.py
+-         data = kit_shape(data, known)
++         data = data
+@@ src/ant_pr_review/timeline.py
+-         s["silence"] = s is first
++         s["silence"] = s["silence"]
+@@ src/ant_pr_review/timeline.py
+-         if s["silence"] and s["stage"] in ("pre_problem", "alarmed"):
++         if False and s["stage"] in ("pre_problem", "alarmed"):

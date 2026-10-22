@@ -92,6 +92,10 @@ Feature: context card
   Scenario: the card's stakeholders use the new party types, and earlier values map onto them
     When  the card is built from --stakeholders board,media, and an earlier card holds consumers and employees
     Then  the card holds [board, media], and the earlier card reads as [victims, bystanders, staff], also when the field is edited and in the prompt
+  @S-context-card-018
+  Scenario: the card records observed event signals and whether the facts characterise the event
+    When  the card is filled interactively, and from --signals and --characterised
+    Then  signals are a checkbox of the grade I-IV signals and the bottom lines (none by default) and characterised is a yes/no (no by default); an unknown signal is refused with the allowed values named; a drafting run does not ask characterised on the card because its brief does, and --characterised with --brief is refused
 ```
 
 ## Must NOT
@@ -104,3 +108,5 @@ Feature: context card
 2026-10-22 · +S-context-card-014..017 standpoint and identity (our role), party types · decision: D-0003
 - 2026-10-22 · ~S-context-card-015, 017 from the tier-3 review (stored identities re-validated; legacy values kept on edit); political parties as identities, state organs never (user: 政治與政黨) · decision: D-0003
 - 2026-10-22 · ~S-context-card-015 party identities refused where the ruling party is a party organ (second tier-3 review) · decision: D-0003
+- 2026-10-22 · +S-context-card-018 event signals and characterised on the card (user: 開工) · decision: D-0006
+- 2026-10-22 · ~S-context-card-018 --characterised refused for drafting (tier-3 review) · decision: D-0006

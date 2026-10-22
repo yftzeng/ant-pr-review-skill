@@ -281,22 +281,39 @@ def render_kit(t: T, d: dict) -> str:
                                if k["platforms"] else ""))
     esc = "\n".join(f"| {e['trigger']} | {e['action']} | {e['owner']} |"
                     for e in d.get("escalation", []))
+    formal = (f"## {t('plans.formal')}\n\n{d['formal_statement']}\n\n"
+              if str(d.get("formal_statement") or "").strip() else
+              f"## {t('plans.formal')}\n\n{t('plans.formal_withheld')}\n\n"
+              if d.get("formal_withheld") else "")
     return (f"# {t('plans.c')}\n\n## {t('plans.holding')}\n\n{d.get('holding_statement', '')}\n\n"
-            f"## Q&A\n\n{qa}\n\n## {t('plans.monitor')}\n\n"
+            f"{formal}## Q&A\n\n{qa}\n\n## {t('plans.monitor')}\n\n"
             + "\n".join(f"- {t('kw.' + kind)}: {', '.join(v)}" for kind, v in by_kind.items())
             + f"\n\n## {t('plans.escalation')}\n\n| trigger | action | owner |\n|---|---|---|\n{esc}"
             + f"\n\n## {t('plans.do_not_say')}\n\n"
             + "\n".join(f"- {x}" for x in d.get("do_not_say", [])) + "\n")
 
 
+def kit_shape(data: dict, characterised: bool) -> dict:
+    """S-plans-038: a formal statement only when the facts characterise the event."""
+    if not characterised:
+        data["formal_statement"] = ""
+        data["formal_withheld"] = True
+    return data
+
+
 def plan_c(run, backend, writer, lang, risks, article, intake):
+    from .grading import characterised_of
     t = T(lang)
-    data, rep = _guarded(backend, writer, task="kit", system=prompts.kit_system(lang),
+    known = characterised_of(intake)
+    data, rep = _guarded(backend, writer, task="kit",
+                         system=prompts.kit_system(lang, characterised=known),
                          prompt=prompts.plan_prompt(risks, article, intake), schema=KIT,
                          check=_scan_all)
     if rep["final"]:
         data = _redact_all(data, rep["final"])
         rep["redacted"] = True
+    if data:
+        data = kit_shape(data, known)
     text = render_kit(t, data) if data else ""
     write_text_atomic(run.path(f"{DIR}/C-kit.md"), text)
     rep["keyword_warnings"] = kit_keywords(data)[1] if data else []

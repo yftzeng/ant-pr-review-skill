@@ -217,6 +217,17 @@ Feature: plans
   Scenario: the response kit's Q&A answers the question asked
     When  the kit prompt is built
     Then  it asks each answer to restate and answer the question, to say what is unknown and when we will update, to give the reason when we cannot answer, to answer a hypothetical about harm with the safeguards, never to pivot, and lists "no comment" without a reason among the phrases not to say
+  @S-plans-038
+  Scenario: the kit gives a formal statement only when the facts characterise the event
+    Given a card not characterised, and one characterised
+    When  plan C is written
+    Then  the first kit has the holding statement only (a formal statement the model returns is dropped, and the kit says it is withheld until the facts characterise the event) and the writer is told so; the second has the holding statement and a formal statement; a drafting run with a tier-4 flag counts as not characterised
+
+  @S-plans-039
+  Scenario: timeline steps carry the attention stage and one silence point
+    Given a timeline whose steps have stages and one step marked silence
+    When  T.md is rendered
+    Then  each step shows its issue-attention stage, only the first silence step is kept as the silence point and one at the pre-problem or alarmed stage carries a warning, the writer is told to mark where public statements stop while the work goes on, and a step without a stage renders a blank
 ```
 
 ## Must NOT
@@ -235,3 +246,5 @@ Feature: plans
 - 2026-10-22 · +S-plans-034..035 protection-list diff, AI-detection and independent-voice evasion (borrowed from wepr; ethics guard D-PR-7) · decision: D-0003
 - 2026-10-22 · +S-plans-036 poll blackout (borrowed from med-political) · decision: D-0003
 - 2026-10-22 · +S-plans-037 plan C Q&A rules from the user's notes · decision: D-0003
+- 2026-10-22 · +S-plans-038..039 the kit's formal statement only when characterised; attention stages and a silence point (user: 開工) · decision: D-0006
+- 2026-10-22 · ~S-plans-038..039 from the tier-3 review: a withheld formal statement says so, tier-4 drafting is not characterised, one silence point with a warning when early · decision: D-0006

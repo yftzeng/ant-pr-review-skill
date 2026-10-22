@@ -387,8 +387,15 @@ def plan_b_system(lang: str, direction: str) -> str:
             + SHARED_RULES.format(lang_name=_lang(lang)) + "\n" + ETHICS_RULES)
 
 
-def kit_system(lang: str) -> str:
-    return ("You prepare a response kit in case the material, or the issue, draws attention: a "
+def kit_system(lang: str, characterised: bool = False) -> str:
+    formal = ("The facts characterise the event (cause and scope confirmed): also write a "
+              "formal statement - what happened, the cause, the scope, what we are doing with "
+              "owners and dates, what affected people should do, and the next update. "
+              if characterised else
+              "The facts do not yet characterise the event: write the holding statement only "
+              "(what is confirmed, what we are doing now, the next update) and leave "
+              "formal_statement empty. ")
+    return (formal + "You prepare a response kit in case the material, or the issue, draws attention: a "
             "holding statement using only provable facts, likely questions with answers, "
             "keywords to monitor (each a term with its kind - brand, variant (misspellings, "
             "homophones, traditional/simplified forms), product, officer (our own public "
@@ -442,7 +449,11 @@ def timeline_system(lang: str, means: list[str]) -> str:
             "crisis nothing promotional comes before the affected are helped; a filing to the "
             "exchange or regulator (audience exchange) comes before any media step; an embargo "
             "binds only recipients who agreed to it explicitly; mark a step that publishes an "
-            "election poll (poll), which a blackout window stops. "
+            "election poll (poll), which a blackout window stops. Give each step its "
+            "issue-attention stage (Downs: pre_problem, alarmed, cost, decline, post_problem). "
+            "Mark at most one step silence: where public statements stop while operations, "
+            "the owners' or customers' channel and the promised updates go on; its trigger "
+            "says when (the statement and evidence are out, attention is declining). "
             + ("Use only the means in scope. " if set(means) & {"white", "gray"} else
                "No white or gray means are in scope: Schedule no steps; leave steps empty. ")
             + black + "\n\n"

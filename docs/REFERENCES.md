@@ -440,13 +440,13 @@ A brand professional's personal commentary on one automotive crisis, with the br
 | Borrowed | Where here |
 |---|---|
 | A denial next to an unexplained free upgrade reads as an admission | checklist JOU-16 |
-| Control is lost on three axes: predictability, explicability and influence. Internal checks are a black box; invite replication by a third party or the original tester. Fast actions, slow conclusions | checklist JOU-17; planned: the report grouped by the three axes |
+| Control is lost on three axes: predictability, explicability and influence. Internal checks are a black box; invite replication by a third party or the original tester. Fast actions, slow conclusions | checklist JOU-17; the checklist subtotals and the event assessment by the three axes (S-review-matrix-032) |
 | A defensive or compliance frame fits only with evidence others can check, a victim or rumour crisis and no safety at stake (Coombs's continuum, SCCT, Benoit) | checklist JOU-09 (amended) |
 | Two PR systems behind one co-owned brand; a cited test that nobody stands behind | checklist JOU-18 |
 | Executives' defiant asides after an investigation is announced | checklist STK-01 (amended) |
 | The same-day statement and the disowned test report | `examples.toml` EX-16, EX-17 (organisations not named, unverified) |
-| Crisis grades I–IV, "the higher grade wins", red lines escalate at once, regrading on a schedule; "are the facts enough to characterise it?" sends a holding statement | drafting: the brief asks `characterised` (holding statements only until it is) and `cannot_commit`, matched in code and blocking the export (S-drafting-017..019); W9 vague quantities; fast actions, slow conclusions in the writer and reviewer prompts (S-drafting-020..021). Planned: an event grade in the report |
-| The issue-attention cycle; silence after the statement and evidence while the work goes on | planned: the timeline trigger kinds |
+| Crisis grades I–IV, "the higher grade wins", red lines escalate at once, regrading on a schedule; "are the facts enough to characterise it?" sends a holding statement | drafting: the brief asks `characterised` (holding statements only until it is) and `cannot_commit`, matched in code and blocking the export (S-drafting-017..019); W9 vague quantities; fast actions, slow conclusions in the writer and reviewer prompts (S-drafting-020..021). The report's event assessment: grade I–IV from the card's signals, the higher grade wins, bottom lines and confirmed red lines give grade I, who handles it, and whether plan C is activated (D-0006); the kit's formal statement only when the facts characterise the event (S-plans-038) |
+| The issue-attention cycle; silence after the statement and evidence while the work goes on | timeline steps carry their attention stage and one silence point (S-plans-039) |
 
 | Left out | Why |
 |---|---|

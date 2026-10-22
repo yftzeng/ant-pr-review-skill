@@ -294,3 +294,24 @@ def sensitive_dates_near(jurisdictions: list[str], publish_at: str, days: int = 
                 if abs((cand - d).days) <= days:
                     out.append({"jurisdiction": j, "date": cand.isoformat(), "note": s["note"]})
     return out
+
+# ---- the event assessment (D-0006) ----
+# Observed signals, ticked by the user, by the grade they point to; the bottom lines make
+# it grade I whatever else is ticked.
+SIGNALS = {"national_trending": "I", "state_media": "I", "boycott": "I", "survival": "I",
+           "platform_trending": "II", "multi_media": "II", "values_questioned": "II",
+           "rumours": "II", "business_hit": "II",
+           "social_spread": "III", "self_media": "III", "complaints_surge": "III",
+           "local_reputation": "III",
+           "small_spread": "IV", "scattered_reviews": "IV",
+           "major_safety": "I", "major_illegal": "I", "minors": "I"}
+BOTTOM_LINES = ["major_safety", "major_illegal", "minors"]
+GRADES = ["I", "II", "III", "IV"]
+OWNERS = {"I": "top_and_advisers", "II": "executives", "III": "management",
+          "IV": "business_unit"}
+ACTIVATION = {"I": "activate", "II": "activate", "III": "standby", "IV": "observe"}
+# The three things people lose in a crisis and ask back (control: predictability,
+# explicability, influence); each axis subtotals the items that answer it.
+AXES = {"predictability": ["SOC-07", "JOU-06", "JOU-08", "JOU-16", "INT-07"],
+        "explicability": ["JOU-17", "JOU-09", "LEG-14", "SOC-11", "CLR-01", "JOU-07"],
+        "influence": ["APO-03", "APO-01", "INT-06", "JOU-15", "RSP-03"]}

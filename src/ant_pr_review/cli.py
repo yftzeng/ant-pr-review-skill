@@ -8,7 +8,7 @@ import sys
 
 from . import __version__
 from .backends.base import get_backend
-from .catalog import DEPTHS, DIRECTIONS, LENSES, POSTURES
+from .catalog import DEPTHS, DIRECTIONS, LENSES, POSTURES, SIGNALS
 from .decision import run_decision
 from .i18n import T
 from .intake import CHANNELS, STAKEHOLDERS, build_intake_from_args, run_intake_interactive, split_list
@@ -68,6 +68,10 @@ def build_parser() -> argparse.ArgumentParser:
                    help="a sentence plan A must not change (repeat)")
     n.add_argument("--focus", default="", help="what to look at most closely")
     n.add_argument("--embargo", action="store_true", help="no web calls at all (D-PR-9)")
+    n.add_argument("--signals", help="observed event signals, comma list (D-0006): "
+                   + ",".join(SIGNALS))
+    n.add_argument("--characterised", action="store_true",
+                   help="the cause and scope are confirmed (an audit; drafting uses its brief)")
     n.add_argument("--context-scan", action="store_true",
                    help="with --yes: run the web context scan without asking")
     n.add_argument("--merger", help="the model that merges jurisdictions (default: first)")
@@ -300,7 +304,7 @@ def cmd_new(args, io: IO, store: Store, cfg: Config) -> int:
                 background=args.background, locked=args.locked, focus=args.focus,
                 roles=args.role or None, tax_id=args.tax_id,
                 purpose="drafting" if args.brief and args.purpose == "audit" else args.purpose,
-                brief=brief)
+                brief=brief, signals=args.signals, characterised=args.characterised)
         except ValueError as e:
             io.say(f"error: {e}")
             return EXIT_USAGE

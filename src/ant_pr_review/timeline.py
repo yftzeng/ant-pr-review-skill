@@ -11,6 +11,7 @@ from datetime import date, timedelta
 from . import ethics, prompts
 from .backends.base import Backend, BackendError
 from .catalog import MEANS, sensitive_dates_near
+from .schemas import ATTENTION_STAGES
 from .i18n import T
 from .intake import means_of, posture_of
 from .schemas import CLASSIFY_MEANS, TIMELINE
@@ -148,11 +149,16 @@ def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict
         kept.append({**{k: str(s.get(k, "")) for k in STEP_FIELDS}, "order": n,
                      "audience": str(s.get("audience", "")), "paid": bool(s.get("paid")),
                      "promotional": bool(s.get("promotional")), "poll": bool(s.get("poll")),
+                     "stage": s.get("stage") if s.get("stage") in ATTENTION_STAGES else "",
+                     "silence": bool(s.get("silence")),
                      "day": _day(s.get("day")),
                      "time": s.get("time") if TIME_RE.match(str(s.get("time", ""))) else "",
                      "category": cat, "writer_category": wcat, "reviewer_category": ccat,
                      "reviewer_reason": _clean(lab.get("reason", ""))})
     kept.sort(key=lambda s: (s["day"], s["time"] or "99:99", s["order"]))
+    first = next((s for s in kept if s["silence"]), None)
+    for s in kept:  # one silence point: the first
+        s["silence"] = s is first
     t0 = _t0(publish_at)
     if t0:  # a poll inside a jurisdiction's publication blackout is not scheduled
         blocked = []
@@ -175,6 +181,8 @@ def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict
     for s in kept:
         if s["paid"] and not s["stop"].strip():
             s["warnings"].append(t("plans.t.warn_paid_stop"))
+        if s["silence"] and s["stage"] in ("pre_problem", "alarmed"):
+            s["warnings"].append(t("plans.t.warn_early_silence"))
     ex = []
     if "black" in means:
         for n, e in enumerate(excluded, 1):
@@ -215,18 +223,22 @@ def render(t: T, d: dict) -> str:
     L += [f"## {t('plans.t.table')}", "",
           f"| # | {t('plans.t.rel')} | {t('plans.t.when')} | {t('plans.t.action')} | "
           f"{t('plans.t.category')} | {t('plans.t.channel')} | {t('plans.t.notes')} | "
-          f"{t('plans.t.trigger')} | ⚠ |", "|---:|---|---|---|---|---|---|---|---|"]
+          f"{t('plans.t.trigger')} | {t('plans.t.stage')} | ⚠ |",
+          "|---:|---|---|---|---|---|---|---|---|---|"]
     for s in d["steps"]:
         when = " ".join(x for x in (s["date"], s["time"]) if x) or "—"
         cat = t("means." + s["category"] + ".short")
         if s["category"] != s["writer_category"]:
             cat += f" ({t('plans.t.relabelled')})"
         trig = " / ".join(x for x in (s["trigger"], s["stop"]) if x)
+        stage = t("stage." + s["stage"]) if s.get("stage") else ""
+        if s.get("silence"):
+            stage = (stage + " · " if stage else "") + f"**{t('plans.t.silence')}**"
         L.append(f"| {s['n']} | {rel(s['day'])} | {when} | {_c(s['action'])} | {cat} | "
-                 f"{_c(s['channel'])} | {_c(s['notes'])} | {_c(trig)} | "
+                 f"{_c(s['channel'])} | {_c(s['notes'])} | {_c(trig)} | {stage} | "
                  f"{_c('; '.join(s['warnings']))} |")
     if not d["steps"]:
-        L.append(f"| — | | | {t('report.none')} | | | | | |")
+        L.append(f"| — | | | {t('report.none')} | | | | | | |")
     if d["dropped"]:
         L += ["", f"## {t('plans.t.dropped')}", ""]
         L += [f"- {_c(x['action'])}"

@@ -164,6 +164,7 @@ def test_real_pty_arrow_keys(tmp_path):
                             ("Topic keywords", b"\n"), ("embargoed", b"\n"),
                             ("Who publishes", b"\n"), ("Known disputes", b"\n"),
                             ("must not change", b"/done\n"), ("look at most closely", b"\n"),
+                            ("What has been observed", b"\r"), ("characterise the event", b"\n"),
                             ("Context card", b"\r")):
             wait_for(marker)
             time.sleep(0.15)

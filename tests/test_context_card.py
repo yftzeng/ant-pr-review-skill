@@ -7,7 +7,7 @@ from ant_pr_review.ui import ScriptedIO
 t = T("en")
 # org, parties, jurisdictions, channels, stakeholders, publish_at, keywords, embargo,
 # speaker, background, locked (lines, then /done), focus
-FILL = ["Acme", "Beta Corp、Gamma", "", "1", "", "", "2027-01-05", "phones", "", "", "", "/done", ""]
+FILL = ["Acme", "Beta Corp、Gamma", "", "1", "", "", "2027-01-05", "phones", "", "", "", "/done", "", "", ""]  # ... signals, characterised
 
 
 # @S-context-card-001

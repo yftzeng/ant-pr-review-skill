@@ -179,6 +179,7 @@ RELEVANCE = ["none", "low", "high"]
 
 KIT = obj({
     "holding_statement": STR,
+    "formal_statement": STR,
     "qa": arr(obj({"question": STR, "answer": STR})),
     "monitoring_keywords": arr(obj({"term": STR, "kind": enum(KEYWORD_KINDS),
                                      "platforms": arr(STR)})),
@@ -194,6 +195,7 @@ REREVIEW = obj({
     })),
 })
 
+ATTENTION_STAGES = ["pre_problem", "alarmed", "cost", "decline", "post_problem"]  # Downs
 AUDIENCES = ["affected", "staff", "partners", "investors", "regulators", "exchange", "press",
              "public"]
 
@@ -203,7 +205,8 @@ TIMELINE = obj({
     "steps": arr(obj({"day": {"type": "integer"}, "time": STR, "action": STR,
                       "category": enum(["white", "gray", "black"]), "channel": STR, "notes": STR,
                       "trigger": STR, "stop": STR, "audience": enum(AUDIENCES),
-                      "paid": BOOL, "promotional": BOOL, "poll": BOOL})),
+                      "paid": BOOL, "promotional": BOOL, "poll": BOOL,
+                      "stage": enum(ATTENTION_STAGES), "silence": BOOL})),
     "excluded": arr(obj({"tactic": STR, "why": STR, "law": STR, "exposure": STR, "watch_for": STR,
                          "lawful_alternative": STR})),
 })
