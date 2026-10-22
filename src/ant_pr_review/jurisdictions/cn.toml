@@ -1,0 +1,55 @@
+# Starting point for reviewers, not legal advice. verified = false (D-PR-8).
+# Article numbers changed in recent revisions; the fact-check must confirm each.
+code = "cn"
+name = "China (mainland)"
+verified = false
+regulators = ["Cyberspace Administration of China (国家网信办)", "State Administration for Market Regulation (市场监管总局)", "China Securities Regulatory Commission (证监会)", "Public security organs (公安机关)"]
+platforms = ["Weibo (微博)", "WeChat (微信)", "Douyin (抖音)", "Xiaohongshu (小红书)", "Zhihu (知乎)", "Bilibili (B站)"]
+
+[[law]]
+ref = "Civil Code, personality rights: reputation (民法典 名誉权)"
+summary = "Infringing reputation by insult or defamation; fabricated facts."
+
+[[law]]
+ref = "Criminal Law: defamation (刑法 诽谤罪); damaging business credibility and product reputation (损害商业信誉、商品声誉罪); fabricating or spreading false information (编造、故意传播虚假信息罪)"
+summary = "Criminal liability for defamation, commercial disparagement and spreading false information online."
+
+[[law]]
+ref = "Anti-Unfair Competition Law: commercial disparagement (反不正当竞争法 商业诋毁)"
+summary = "Fabricating or spreading false or misleading information that damages a competitor's reputation."
+
+[[law]]
+ref = "Advertising Law (广告法): false advertising; identifiability of ads; absolute terms"
+summary = "Ads must be identifiable as ads; absolute terms such as 'best' and 'No. 1' are restricted; health and medical claims are restricted."
+
+[[law]]
+ref = "Personal Information Protection Law (个人信息保护法)"
+summary = "Processing and disclosure of personal information."
+
+[[law]]
+ref = "Provisions on the Governance of the Online Information Content Ecosystem (网络信息内容生态治理规定)"
+summary = "Prohibits fake accounts, traffic manipulation and spreading rumours online."
+
+[[law]]
+ref = "Public Security Administration Punishments Law: spreading rumours (治安管理处罚法 散布谣言)"
+summary = "Administrative penalties for spreading rumours that disturb public order."
+
+[[law]]
+ref = "Securities Law: fabricating and spreading false information (证券法)"
+summary = "Prohibits false information that disrupts the securities market."
+
+[[sensitive_date]]
+md = "06-04"
+note = "Tiananmen anniversary"
+
+[[sensitive_date]]
+md = "07-07"
+note = "Marco Polo Bridge Incident anniversary"
+
+[[sensitive_date]]
+md = "09-18"
+note = "Mukden Incident anniversary"
+
+[[sensitive_date]]
+md = "12-13"
+note = "Nanjing Massacre memorial day"

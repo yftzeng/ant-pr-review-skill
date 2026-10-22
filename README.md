@@ -1,0 +1,41 @@
+# ant-pr-review
+
+Multi-model, multi-vendor **public-relations risk review**, shipped as a Claude skill (`SKILL.md`) plus a standalone Python CLI. [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md)
+
+It reviews three kinds of material:
+- **outbound**: content you plan to publish (press release, statement, post, ad, KOL script);
+- **operation**: a dissemination or influence plan;
+- **inbound**: hostile content aimed at you (allegation, smear, review wave).
+
+For each, it shows the white-PR and black-PR risks per jurisdiction: Taiwan, United States, European Union, China.
+
+- **A checklist every model answers.** 41 fixed items across 9 stakeholder lenses: legal, hostile journalist, online communities, named party, regulators and platforms, insiders, whistleblower, threat analyst, response adviser. An unanswered item is a gap, never a pass.
+- **Many vendors.** Claude (opus / sonnet / fable via `claude -p`), OpenAI, Gemini, Grok and OpenRouter, picked with an arrow-key checkbox. A single-vendor roster is allowed but highlighted, because same-vendor models share blind spots.
+- **One jurisdiction per call.** Each jurisdiction is reviewed by its own calls. With several jurisdictions, an independent merger compares the results, asks each jurisdiction's reviewers questions, and writes a consolidated report plus one report per jurisdiction.
+- **Two depths.** `quick` makes one call per model plus one per jurisdiction; `full` makes one call per lens and jurisdiction (about 4× the calls).
+- **Verdicts by code.** A risk register (likelihood × impact), red-line vetoes (fabrication about a named party, sockpuppets and undisclosed endorsement, doxxing, election law, market manipulation, health claims, hate) and Go / Conditional / Escalate / No-Go.
+- **Plans A/B/C behind an ethics guard.** A is the smallest safe edit (char-level diff), B the lawful alternative, C the response kit. The guard removes advice to hide attribution, persona comments and laundered allegations, and says what it removed.
+- **Embargo mode.** Nothing reaches the web for unreleased material. Context-scan queries are shown and need your consent.
+
+Not legal advice. The law packs in `src/ant_pr_review/jurisdictions/` are unverified starting lists. Every law citation a model relies on is fact-checked.
+
+## Install
+
+```
+uv tool install .        # or: pipx install .
+ant-pr-review            # interactive
+```
+
+JavaScript-rendered pages: `uv tool install '.[render]'` and `playwright install chromium`. A failed fetch falls back to retries with backoff, then the headless browser, then the AMP version, then a dated Wayback Machine copy, and finally asks you to paste the text. The crawler never disguises itself as a browser.
+
+Python 3.11+. You need the `claude` CLI for Claude models, and keys for the other vendors: `OPENAI_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`, `OPENROUTER_API_KEY`. No runtime dependencies.
+
+## Non-interactive
+
+```
+ant-pr-review new --yes --direction outbound --jurisdictions tw,us --depth full \
+  --party "Competitor A" --embargo --target ./release.md
+ant-pr-review decide <run> --yes --choice A
+```
+
+Try it offline with `--backend fake`. Design: `docs/DESIGN.md`. Evaluation of the ant-peer-review fork: `docs/EVALUATION.md`.

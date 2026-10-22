@@ -1,0 +1,42 @@
+# Starting point for reviewers, not legal advice. verified = false (D-PR-8).
+code = "us"
+name = "United States"
+verified = false
+regulators = ["Federal Trade Commission (FTC)", "Securities and Exchange Commission (SEC)", "Food and Drug Administration (FDA)", "Federal Election Commission (FEC)", "State attorneys general"]
+platforms = ["X", "Reddit", "Facebook", "Instagram", "TikTok", "YouTube", "Threads", "LinkedIn"]
+
+[[law]]
+ref = "State defamation law; New York Times v. Sullivan (actual malice for public figures)"
+summary = "False statements of fact injuring reputation; truth is a defense; opinion is protected; anti-SLAPP statutes in many states."
+
+[[law]]
+ref = "Lanham Act §43(a), 15 U.S.C. §1125(a)"
+summary = "False or misleading commercial statements about one's own or another's goods (false advertising, commercial disparagement)."
+
+[[law]]
+ref = "FTC Act §5, 15 U.S.C. §45; FTC Endorsement Guides, 16 CFR Part 255"
+summary = "Unfair or deceptive practices; material connections of endorsers must be disclosed."
+
+[[law]]
+ref = "FTC rule on consumer reviews and testimonials, 16 CFR Part 465"
+summary = "Fake or bought reviews, insider reviews without disclosure, review suppression."
+
+[[law]]
+ref = "Securities Exchange Act §10(b) and Rule 10b-5; Regulation FD"
+summary = "Material misstatements affecting securities; selective disclosure."
+
+[[law]]
+ref = "Federal Food, Drug, and Cosmetic Act; FTC health claims substantiation"
+summary = "Unapproved drug claims; health claims need competent and reliable scientific evidence."
+
+[[law]]
+ref = "Federal Election Campaign Act disclaimers, 52 U.S.C. §30120"
+summary = "Paid political communications must state who paid."
+
+[[law]]
+ref = "State privacy laws (e.g. California CCPA/CPRA)"
+summary = "Personal information use and disclosure."
+
+[[sensitive_date]]
+md = "09-11"
+note = "September 11 anniversary"

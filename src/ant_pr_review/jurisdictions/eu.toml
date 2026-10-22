@@ -1,0 +1,35 @@
+# Starting point for reviewers, not legal advice. verified = false (D-PR-8).
+# Member-state law (defamation in particular) varies; name the member state when it matters.
+code = "eu"
+name = "European Union"
+verified = false
+regulators = ["National consumer protection authorities (CPC network)", "Data protection authorities (GDPR)", "Digital Services Coordinators (DSA)", "National securities regulators / ESMA"]
+platforms = ["Facebook", "Instagram", "X", "TikTok", "YouTube", "LinkedIn", "Reddit"]
+
+[[law]]
+ref = "Unfair Commercial Practices Directive 2005/29/EC, Annex I (as amended by Directive (EU) 2019/2161)"
+summary = "Blacklisted practices include undisclosed advertorials and fake or unverified consumer reviews and endorsements."
+
+[[law]]
+ref = "Misleading and Comparative Advertising Directive 2006/114/EC"
+summary = "Conditions for lawful comparative advertising; no discrediting competitors."
+
+[[law]]
+ref = "General Data Protection Regulation (EU) 2016/679"
+summary = "Lawful basis for processing; special-category data; data subject rights."
+
+[[law]]
+ref = "Digital Services Act (EU) 2022/2065"
+summary = "Platform duties on illegal content, ad transparency and systemic risks such as manipulation."
+
+[[law]]
+ref = "Market Abuse Regulation (EU) 596/2014"
+summary = "Market manipulation includes disseminating false or misleading information."
+
+[[law]]
+ref = "Regulation (EU) 2024/900 on political advertising"
+summary = "Transparency and targeting rules for political advertising."
+
+[[law]]
+ref = "Member-state defamation and insult law"
+summary = "Varies by member state; criminal defamation exists in several."

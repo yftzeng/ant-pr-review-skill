@@ -1,0 +1,298 @@
+# The risk checklist. Every model answers every item of its unit (D-PR-3).
+# lens: which seat asks it; directions: where it applies; dimension: register
+# column; red_line: the veto it can support (optional).
+
+[[item]]
+id = "LEG-01"
+lens = "legal"
+directions = ["outbound", "operation"]
+dimension = "legal"
+red_line = "fabrication_about_party"
+text = "Statements of fact about a named person, company or agency: is each provable as true with evidence we hold today (defamation, disparagement of goods or business reputation)? Separate fact from opinion."
+
+[[item]]
+id = "LEG-02"
+lens = "legal"
+directions = ["outbound"]
+dimension = "legal"
+text = "Comparative, superlative or absolute claims (best, first, only, No. 1, X% better, guaranteed): substantiated and not misleading under this jurisdiction's advertising and fair-trading law?"
+
+[[item]]
+id = "LEG-03"
+lens = "legal"
+directions = ["outbound", "operation"]
+dimension = "disclosure"
+red_line = "undisclosed_inauthentic"
+text = "Paid, sponsored, gifted or affiliated content: is the material connection disclosed clearly where this jurisdiction requires it (endorsement and advertorial rules)?"
+
+[[item]]
+id = "LEG-04"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+dimension = "legal"
+red_line = "privacy_doxxing"
+text = "Personal data: does the content or plan identify private individuals, or use or expose personal data without a lawful basis?"
+
+[[item]]
+id = "LEG-05"
+lens = "legal"
+directions = ["outbound", "operation"]
+dimension = "legal"
+red_line = "health_claims"
+text = "Health, medical, food, drug or cosmetic claims: does any claim of effect, cure or safety appear that this jurisdiction restricts?"
+
+[[item]]
+id = "LEG-06"
+lens = "legal"
+directions = ["outbound", "operation"]
+dimension = "legal"
+red_line = "market_manipulation"
+text = "Price-sensitive information about a listed company (ours or another's): could this move a market price, or breach disclosure rules or quiet periods?"
+
+[[item]]
+id = "LEG-07"
+lens = "legal"
+directions = ["outbound", "operation"]
+dimension = "legal"
+red_line = "election_law"
+text = "Elections and politics: does it touch candidates, parties, referendums or polls, or fall in an election period where this jurisdiction limits rumours, polls, ads or campaigning?"
+
+[[item]]
+id = "LEG-08"
+lens = "legal"
+directions = ["outbound", "operation"]
+dimension = "legal"
+text = "Intellectual property: third-party trademarks, images, text, music or quotes used lawfully and with permission or a valid exception?"
+
+[[item]]
+id = "LEG-09"
+lens = "legal"
+directions = ["operation"]
+dimension = "disclosure"
+red_line = "undisclosed_inauthentic"
+text = "Does the plan use fake or borrowed identities, undisclosed paid posters, coordinated accounts, review manipulation or staged 'grassroots' activity?"
+
+[[item]]
+id = "LEG-10"
+lens = "legal"
+directions = ["inbound"]
+dimension = "legal"
+text = "Which statements in the hostile content are actionable under this jurisdiction (defamation, disparagement, privacy, trade secrets), what must we prove, and what does pursuing them cost us?"
+
+[[item]]
+id = "JOU-01"
+lens = "journalist"
+directions = ["outbound", "operation"]
+dimension = "backlash"
+text = "Write the worst plausible headline about us if this is published or exposed (also fill worst_headlines). Is the story the message, or us?"
+
+[[item]]
+id = "JOU-02"
+lens = "journalist"
+directions = ["outbound", "operation"]
+dimension = "provability"
+text = "Which claims would a reporter ask us to prove, and could we answer on the record today with documents?"
+
+[[item]]
+id = "JOU-03"
+lens = "journalist"
+directions = ["outbound"]
+dimension = "backlash"
+text = "Does it contradict our past statements, actions or known facts that a reporter could put side by side?"
+
+[[item]]
+id = "JOU-04"
+lens = "journalist"
+directions = ["outbound", "operation"]
+dimension = "timing"
+text = "Timing: does the publish window collide with sensitive dates, disasters, ongoing crises or news about the named parties (see the context section)?"
+
+[[item]]
+id = "JOU-05"
+lens = "journalist"
+directions = ["operation"]
+dimension = "attribution"
+text = "If a reporter obtained this plan document, what is the story, and how likely is it to be traced back to us?"
+
+[[item]]
+id = "SOC-01"
+lens = "social"
+directions = ["outbound"]
+dimension = "backlash"
+text = "Which sentence or image is most likely to be screenshotted, memed or quoted out of context in this jurisdiction's online communities?"
+
+[[item]]
+id = "SOC-02"
+lens = "social"
+directions = ["outbound", "operation"]
+dimension = "backlash"
+text = "Does the tone read as arrogant, tone-deaf, mocking or punching down to the main communities of this jurisdiction?"
+
+[[item]]
+id = "SOC-03"
+lens = "social"
+directions = ["outbound", "inbound"]
+dimension = "backlash"
+text = "Streisand risk: does publishing or replying amplify something that would otherwise fade?"
+
+[[item]]
+id = "SOC-04"
+lens = "social"
+directions = ["operation"]
+dimension = "attribution"
+text = "If users find undisclosed links (staff accounts, agency, paid posters or KOLs), what happens to us and the people involved? Assess only; never suggest how to hide the links."
+
+[[item]]
+id = "SOC-05"
+lens = "social"
+directions = ["outbound", "operation"]
+dimension = "ethics"
+red_line = "hate_human_rights"
+text = "Does anything demean or stereotype a race, ethnicity, nationality, gender, sexual orientation, religion, disability or other protected group?"
+
+[[item]]
+id = "SOC-06"
+lens = "social"
+directions = ["inbound"]
+dimension = "backlash"
+text = "How far and how fast is the hostile content likely to spread in this jurisdiction, and in which communities?"
+
+[[item]]
+id = "TGT-01"
+lens = "target"
+directions = ["outbound"]
+dimension = "provability"
+text = "As the named party: how would you answer publicly, and what counter-evidence could you publish?"
+
+[[item]]
+id = "TGT-02"
+lens = "target"
+directions = ["outbound"]
+dimension = "legal"
+text = "As the named party's lawyer: do you have grounds and an incentive to sue, complain to a regulator or demand a retraction?"
+
+[[item]]
+id = "TGT-03"
+lens = "target"
+directions = ["outbound"]
+dimension = "ethics"
+text = "Does it attack a person (a private individual, an employee, a weaker party) rather than an organisation's conduct?"
+
+[[item]]
+id = "REG-01"
+lens = "regulator"
+directions = ["outbound", "operation"]
+dimension = "legal"
+text = "Which regulator of this jurisdiction could act on this content or plan, on what basis, and how likely is a complaint?"
+
+[[item]]
+id = "REG-02"
+lens = "regulator"
+directions = ["outbound", "operation"]
+dimension = "platform"
+text = "Platform policy: would a platform where this runs remove it or restrict the account or ad account (inauthentic behaviour, fake engagement, misleading ads, political ad rules)?"
+
+[[item]]
+id = "REG-03"
+lens = "regulator"
+directions = ["outbound"]
+dimension = "legal"
+text = "Mandatory disclosures or approvals: are required labels, licence numbers, risk warnings or pre-approvals missing?"
+
+[[item]]
+id = "REG-04"
+lens = "regulator"
+directions = ["inbound"]
+dimension = "platform"
+text = "Which notice-and-takedown, right-of-reply or regulator complaint routes exist here, and what do they require?"
+
+[[item]]
+id = "INT-01"
+lens = "internal"
+directions = ["outbound"]
+dimension = "stakeholder"
+text = "Employees: would staff feel misrepresented or exposed, and is there a leak or walk-out risk?"
+
+[[item]]
+id = "INT-02"
+lens = "internal"
+directions = ["outbound"]
+dimension = "stakeholder"
+text = "Investors and partners: does it create disclosure duties, breach agreements or put partners in an awkward position?"
+
+[[item]]
+id = "INT-03"
+lens = "internal"
+directions = ["outbound"]
+dimension = "stakeholder"
+text = "Sign-off: is there evidence that everyone who must approve (legal, management, partners, people quoted) has approved?"
+
+[[item]]
+id = "WHB-01"
+lens = "whistleblower"
+directions = ["operation"]
+dimension = "attribution"
+text = "Who inside or among contractors could leak this plan, and which part is most damaging when leaked?"
+
+[[item]]
+id = "WHB-02"
+lens = "whistleblower"
+directions = ["operation"]
+dimension = "legal"
+text = "Does the plan ask anyone to do something they could later be compelled to testify about (fake accounts, undisclosed payments, false statements)?"
+
+[[item]]
+id = "WHB-03"
+lens = "whistleblower"
+directions = ["operation"]
+dimension = "ethics"
+text = "Is there a transparent, attributable way to reach the same communication goal? Describe it."
+
+[[item]]
+id = "THR-01"
+lens = "threat"
+directions = ["inbound"]
+dimension = "provability"
+text = "Break the hostile content into discrete allegations; for each: verifiable fact, false, true, or opinion? Extract each as a claim of type allegation."
+
+[[item]]
+id = "THR-02"
+lens = "threat"
+directions = ["inbound"]
+dimension = "attribution"
+text = "Inside the provided material only: are there textual signs of coordination (identical phrasing, template structure, synchronized timestamps)? Never identify or guess the people behind accounts."
+
+[[item]]
+id = "THR-03"
+lens = "threat"
+directions = ["inbound"]
+dimension = "provability"
+text = "Which allegations have a factual basis that we must address rather than rebut?"
+
+[[item]]
+id = "THR-04"
+lens = "threat"
+directions = ["inbound"]
+dimension = "stakeholder"
+text = "Does the content contain our confidential information, suggesting a leak we must handle internally?"
+
+[[item]]
+id = "RSP-01"
+lens = "response"
+directions = ["inbound"]
+dimension = "backlash"
+text = "Compare silence, factual clarification, apology or correction, legal action and platform notice: the main risk of each."
+
+[[item]]
+id = "RSP-02"
+lens = "response"
+directions = ["inbound"]
+dimension = "provability"
+text = "What can we say on the record now that is entirely provable?"
+
+[[item]]
+id = "RSP-03"
+lens = "response"
+directions = ["inbound"]
+dimension = "stakeholder"
+text = "Who must hear from us before any public reply (staff, partners, regulators, the people affected)?"

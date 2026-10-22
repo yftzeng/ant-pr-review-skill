@@ -1,0 +1,71 @@
+# Starting point for reviewers, not legal advice. verified = false until each
+# citation is confirmed by a fact-check (D-PR-8). Written 2026-10-22 from memory.
+code = "tw"
+name = "Taiwan"
+verified = false
+regulators = ["Fair Trade Commission (公平交易委員會)", "National Communications Commission (NCC)", "Food and Drug Administration, MOHW (衛福部食藥署)", "Financial Supervisory Commission (金管會)", "Central Election Commission (中選會)", "Personal data protection authority (個人資料保護主管機關)"]
+platforms = ["PTT", "Dcard", "Facebook", "Instagram", "Threads", "LINE", "YouTube", "Mobile01"]
+
+[[law]]
+ref = "Criminal Code art. 310-311 (刑法 誹謗)"
+summary = "Defamation; not punished if the statement is proved true and not purely private, or is fair comment in good faith; reasonable verification standard (Interpretation No. 509)."
+
+[[law]]
+ref = "Criminal Code art. 309 (公然侮辱)"
+summary = "Public insult."
+
+[[law]]
+ref = "Criminal Code art. 313 (妨害信用)"
+summary = "Spreading rumours or using deceit to damage another's credit."
+
+[[law]]
+ref = "Civil Code art. 184, 195 (民法)"
+summary = "Tort liability for injury to reputation; damages and measures to restore reputation."
+
+[[law]]
+ref = "Fair Trade Act art. 21 (公平交易法)"
+summary = "False or misleading representations in advertising about goods or services."
+
+[[law]]
+ref = "Fair Trade Act art. 24"
+summary = "Stating or spreading false information that damages a competitor's business reputation, for competition."
+
+[[law]]
+ref = "Fair Trade Act art. 25; FTC principles on endorsement advertising (薦證廣告)"
+summary = "Deceptive or obviously unfair conduct; undisclosed endorsements and fake reviews."
+
+[[law]]
+ref = "Securities and Exchange Act art. 155 (證券交易法)"
+summary = "Spreading rumours or false information to affect market prices."
+
+[[law]]
+ref = "Personal Data Protection Act (個人資料保護法)"
+summary = "Collection, use and disclosure of personal data need a lawful basis."
+
+[[law]]
+ref = "Social Order Maintenance Act art. 63 (社會秩序維護法)"
+summary = "Spreading rumours sufficient to affect public peace."
+
+[[law]]
+ref = "Food Safety and Sanitation Management Act; Pharmaceutical Affairs Act; Medical Care Act (advertising rules)"
+summary = "Restrictions on exaggerated, misleading or medical-effect claims."
+
+[[law]]
+ref = "Public Officials Election and Recall Act; Presidential and Vice Presidential Election and Recall Act"
+summary = "Rumours to defeat a candidate, poll publication blackout before voting day, deepfake and campaign-activity limits."
+
+[[law]]
+ref = "Budget Act art. 62-1 (預算法)"
+summary = "Government agencies may not buy embedded marketing (置入性行銷)."
+
+[[sensitive_date]]
+md = "02-28"
+note = "228 Peace Memorial Day"
+
+[[sensitive_date]]
+md = "06-04"
+note = "Tiananmen anniversary"
+
+[[sensitive_date]]
+md = "09-21"
+note = "921 earthquake anniversary"

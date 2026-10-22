@@ -1,0 +1,41 @@
+# ant-pr-review
+
+多模型、跨厂商的**公关风险审查**工具，由 Claude skill（`SKILL.md`）加上独立的 Python CLI 组成。[English](README.md) · [繁體中文](README.zh-TW.md)
+
+可以审查三种内容：
+- **对外发布**：我方要发的内容（新闻稿、声明、帖子、广告、KOL 脚本）
+- **操作计划**：散布或舆论操作计划
+- **被攻击**：针对我方的内容（爆料、抹黑、差评潮）
+
+每一种都会按法域（台湾、美国、欧盟、中国）分别评估白公关与黑公关的发布与操作风险。
+
+- **每题都由每个模型作答的检查清单**：41 题，分属 9 个利益相关方视角：法务、敌意记者、网络社区、被指涉方、监管与平台、内部人、揭发者、威胁研判、回应策略。未作答的题目视为缺口，不算通过。
+- **跨厂商**：可用方向键勾选 Claude（opus / sonnet / fable，经 `claude -p`）、OpenAI、Gemini、Grok、OpenRouter。全部来自同一家时仍可执行，但会醒目提示，因为同一厂商的模型盲点相近。
+- **一个法域一组调用**：每个法域由各自的调用审查，不会一次处理多国。勾选多国时，会有一个独立的汇总模型比较各国结果、向各国审查者提问讨论，再生成汇总版报告与各国版报告。
+- **两种深度**：`quick` 是每个模型一次，加上每个法域一次；`full` 是每个视角、每个法域各一次，调用数约为 quick 的 4 倍。
+- **判定由程序计算**：风险登记表（可能性 × 冲击）、红线否决（对具名对象的捏造陈述、水军与未披露广告、人肉、选举法规、影响股价、疗效宣称、仇恨），最后给出可发布／有条件／送审／不可发布。
+- **有伦理护栏的处置方案 A/B/C**：A 是最小安全修改（字符级 diff），B 是合法替代方案，C 是应变包。护栏会移除隐匿身份或规避追溯的建议、假冒网友的评论，以及只换说法的抹黑，并标示移除了什么。
+- **禁发模式**：未公开的内容完全不上网查询。上下文扫描的查询字符串会先列出，经你同意才发送。
+
+本工具不构成法律意见。`src/ant_pr_review/jurisdictions/` 里的法规包只是尚未核实的起点清单；模型引用的每一条法条都会经过事实核查。
+
+## 安装
+
+```
+uv tool install .        # 或 pipx install .
+ant-pr-review            # 交互模式
+```
+
+JavaScript 渲染的网页：`uv tool install '.[render]'`，再执行 `playwright install chromium`。抓取失败时的顺序是：退避重试 → 无头浏览器 → AMP 版本 → 标注日期的 Wayback Machine 存档 → 请你粘贴正文。爬虫不会伪装成浏览器。
+
+需要 Python 3.11 以上。使用 Claude 模型需要 `claude` CLI；使用其他厂商需设置对应的 key：`OPENAI_API_KEY`、`GEMINI_API_KEY`、`XAI_API_KEY`、`OPENROUTER_API_KEY`。没有任何 runtime 依赖。
+
+## 非交互模式
+
+```
+ant-pr-review new --yes --direction outbound --jurisdictions tw,us --depth full \
+  --party "竞争对手A" --embargo --target ./release.md
+ant-pr-review decide <run> --yes --choice A
+```
+
+加上 `--backend fake` 可以离线试跑。设计见 `docs/DESIGN.md`；对 ant-peer-review 的评估见 `docs/EVALUATION.md`。

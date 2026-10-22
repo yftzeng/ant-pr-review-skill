@@ -1,0 +1,185 @@
+"""Fact-check ledger: build, check with search provenance, continue, finalize."""
+from __future__ import annotations
+
+import hashlib
+import json
+import re
+import unicodedata
+from collections import Counter
+from datetime import datetime
+
+from . import prompts
+from .backends.base import Backend, BackendError
+from .jsonio import read_json, write_text_atomic
+from .schemas import FACTCHECK
+from .workspace import Run
+
+LEDGER = "factcheck/ledger.jsonl"
+RETRYABLE = {"offline", "timeout", "error", "no_search", "embargo", "no_search_backend"}
+SEARCH_TOOLS = ("WebSearch", "WebFetch")
+
+
+def read_ledger(run: Run) -> list[dict]:
+    p = run.path(LEDGER)
+    if not p.exists():
+        return []
+    return [json.loads(line) for line in p.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
+def write_ledger(run: Run, ledger: list[dict]) -> None:
+    text = "".join(json.dumps(c, ensure_ascii=False) + "\n" for c in ledger)
+    write_text_atomic(run.path(LEDGER), text)
+
+
+def snapshot(ledger: list[dict]) -> str:
+    pairs = sorted((c["id"], c["status"], c.get("reason", "")) for c in ledger)
+    return hashlib.sha256(json.dumps(pairs).encode()).hexdigest()[:16]
+
+
+def _norm(text: str) -> str:
+    t = unicodedata.normalize("NFKC", text).lower()
+    return re.sub(r"[\W_]+", "", t)
+
+
+def is_retryable(c: dict) -> bool:
+    return c["status"] == "pending" or (c["status"] == "cannot_verify"
+                                        and c.get("reason") in RETRYABLE)
+
+
+def build_ledger(records: dict[str, dict], existing: list[dict]) -> list[dict]:
+    """records: '<unit>/<model-slug>' -> review record. A claim's refs are
+    '<record key>:<claim id>', so a risk can find the claims it relies on."""
+    ledger = [dict(c) for c in existing]
+    by_key = {(c["anchor"], _norm(c["text"])): c for c in ledger}
+    n = sum(1 for c in ledger if c["id"].startswith("C"))
+    for rk in sorted(records):
+        rec = records[rk]
+        if rec.get("status") != "ok":
+            continue
+        m = rec["model"]
+        for k in rec["data"].get("claims", []):
+            key = (k["anchor"], _norm(k["text"]))
+            ref = f"{rk}:{k['id']}"
+            if key in by_key:
+                c = by_key[key]
+                if ref not in c["refs"]:
+                    c["refs"].append(ref)
+                if m not in c["extracted_by"]:
+                    c["extracted_by"].append(m)
+                continue
+            n += 1
+            c = {"id": f"C{n:02d}", "anchor": k["anchor"], "text": k["text"], "type": k["type"],
+                 "status": "pending", "reason": "", "sources": [], "extracted_by": [m],
+                 "refs": [ref], "checked_by": "", "updated_at": ""}
+            ledger.append(c)
+            by_key[key] = c
+    return ledger
+
+
+def context_for(run: Run, anchor: str) -> str:
+    segs = read_json(run.path("01-sources/segments.json"), default={})
+    pid = ".".join(anchor.split(".")[:2])
+    for doc in segs.values():
+        for s in doc:
+            if s["id"] == pid:
+                return s["text"]
+    return ""
+
+
+_URL_RE = re.compile(r"https?://[^\s\"'<>\\\]\[)(]+", re.I)
+
+
+def norm_url(url: str) -> str | None:
+    """Comparable form of an http(s) URL, or None if it is not one."""
+    from urllib.parse import urlsplit
+    try:
+        p = urlsplit(url.strip().rstrip(".,;:"))
+    except ValueError:
+        return None
+    if p.scheme.lower() not in ("http", "https") or not p.hostname:
+        return None
+    path = p.path.rstrip("/")
+    return f"{p.hostname.lower()}{(':' + str(p.port)) if p.port else ''}{path}" + \
+        (f"?{p.query}" if p.query else "")
+
+
+def _provenance_filter(sources: list[dict], tool_results: list[str]) -> list[dict]:
+    """Keep a cited source only if the same URL appeared in a tool *result*."""
+    seen = {n for text in tool_results for u in _URL_RE.findall(text) if (n := norm_url(u))}
+    return [s for s in sources if (n := norm_url(s.get("url") or "")) and n in seen]
+
+
+def check_claim(backend: Backend, model: str, claim: dict, context: str, lang: str) -> dict:
+    c = dict(claim)
+    c["checked_by"] = model
+    c["updated_at"] = datetime.now().isoformat(timespec="seconds")
+    try:
+        res = backend.run(model, task="factcheck", system=prompts.factcheck_system(lang),
+                          prompt=prompts.factcheck_prompt(claim, context), schema=FACTCHECK,
+                          tools=SEARCH_TOOLS, effort="medium")
+    except BackendError as e:
+        reason = e.reason if e.reason in ("offline", "timeout") else "error"
+        c.update(status="cannot_verify", reason=reason, sources=[])
+        return c
+    if res.refused:
+        c.update(status="cannot_verify", reason="refused", sources=[])
+        return c
+    searched = [t for t in res.tool_calls if t.get("name") in SEARCH_TOOLS]
+    if not searched:
+        c.update(status="cannot_verify", reason="no_search", sources=[])
+        return c
+    data = res.data
+    sources = [dict(s, accessed_at=c["updated_at"])
+               for s in _provenance_filter(data.get("sources", []), res.tool_results)]
+    status = data["status"]
+    if status != "cannot_verify" and not sources:
+        c.update(status="cannot_verify", reason="no_source", sources=[])
+        return c
+    c.update(status=status, reason=data.get("reason", "") if status != "cannot_verify"
+             else (data.get("reason") or "no_source"), sources=sources)
+    if c["status"] == "cannot_verify" and c["reason"] not in ("no_source", "refused"):
+        c["reason"] = "no_source"
+    return c
+
+
+def pick_checker(models: list[str], active: list[str]) -> str | None:
+    """A Claude model, since only claude -p gives search provenance (D-PR-12); None if
+    the roster has none."""
+    from .roster import can_search, normalize
+    pool = [normalize(m) for m in (active or models)]
+    for pref in ("claude:sonnet", "claude:opus"):
+        if pref in pool:
+            return pref
+    return next((m for m in pool if can_search(m)), None)
+
+
+def summary(ledger: list[dict]) -> dict:
+    left = [c for c in ledger if is_retryable(c)]
+    reasons = Counter(c.get("reason") or "pending" for c in left)
+    return {"total": len(ledger), "done": len(ledger) - len(left), "left": len(left),
+            "reasons": dict(reasons)}
+
+
+def run_checks(run: Run, backend: Backend, checker: str | None, lang: str, *,
+               blocked: str | None = None, say=print) -> dict:
+    """Check pending/retryable claims one by one, saving after each.
+    blocked ('embargo') or no checker ('no_search_backend') records the claims as
+    cannot_verify without any web call. KeyboardInterrupt stops cleanly."""
+    ledger = read_ledger(run)
+    reason = blocked or (None if checker else "no_search_backend")
+    try:
+        for i, c in enumerate(ledger):
+            if not is_retryable(c):
+                continue
+            if reason:
+                ledger[i] = dict(c, status="cannot_verify", reason=reason, sources=[])
+                continue
+            say(f"  … {c['id']} {c['text'][:70]}")
+            ledger[i] = check_claim(backend, checker, c, context_for(run, c["anchor"]), lang)
+            write_ledger(run, ledger)
+            say(f"    → {ledger[i]['status']}"
+                + (f" ({ledger[i]['reason']})" if ledger[i]["status"] == "cannot_verify" else ""))
+    except KeyboardInterrupt:
+        say("  (interrupted — progress saved)")
+    write_ledger(run, ledger)
+    return summary(ledger)
