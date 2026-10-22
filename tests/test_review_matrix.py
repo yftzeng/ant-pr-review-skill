@@ -100,7 +100,7 @@ def test_unanswered_after_retry_is_a_gap(tmp_path):
     write_json(run.path("06-synthesis.json"), syn)
     write_report(run, syn, lang="en")
     md = run.path("08-report.v1.md").read_text()
-    assert "| LEG-02 |" in md and "∅" in md
+    assert "**LEG-02**" in md and "∅" in md
 
 
 # @S-review-matrix-006

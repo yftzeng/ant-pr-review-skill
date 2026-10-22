@@ -71,7 +71,7 @@ def test_strings_follow_language_and_every_key_exists():
     used = {m.group(1) for f in src.rglob("*.py")
             for m in re.finditer(r"""\bt\(\s*["']([^"'{]+)["']\s*[,)]""", f.read_text())}
     assert used and not used - set(en), used - set(en)
-    from ant_pr_review.catalog import DIMENSIONS, JURISDICTIONS, LENSES, RED_LINES
+    from ant_pr_review.catalog import DIMENSIONS, JURISDICTIONS, LENSES, MEANS, POSTURES, RED_LINES
     from ant_pr_review.intake import CARD_FIELDS, CHANNELS, STAKEHOLDERS
     from ant_pr_review.workspace import PHASES
     dynamic = ([f"lens.{x}" for x in LENSES] + [f"dim.{x}" for x in DIMENSIONS]
@@ -79,6 +79,13 @@ def test_strings_follow_language_and_every_key_exists():
                + [f"phase.{x}" for x in PHASES] + [f"card.{x}.label" for x in CARD_FIELDS]
                + [f"card.channels.{x}" for x in CHANNELS]
                + [f"card.stakeholders.{x}" for x in STAKEHOLDERS]
+               + [f"posture.{x}" for x in POSTURES] + [f"means.{x}" for x in MEANS]
+               + [f"means.{x}.short" for x in MEANS]
+               + [f"reaudit.{x}" for x in ("done", "failed", "unchanged", "not_applicable",
+                                            "pending")]
+               + [f"report.stage.{x}" for x in "ABCTX"]
+               + [f"plans.t.reason.{x}" for x in ("outside_means", "not_reviewed", "black", "too_many",
+                                                  "ethics_guard")]
                + [f"verdict.{x}" for x in ("go", "conditional", "escalate", "no_go")]
                + [f"item.{x}" for x in ("pass", "concern", "fail", "na", "unanswered")]
                + [f"context.{x}" for x in ("done", "skipped", "embargo", "no_search_backend")]

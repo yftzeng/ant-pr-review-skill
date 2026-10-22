@@ -296,3 +296,95 @@ lens = "response"
 directions = ["inbound"]
 dimension = "stakeholder"
 text = "Who must hear from us before any public reply (staff, partners, regulators, the people affected)?"
+
+# ---- posture items (D-0002): asked only under their posture ----
+
+[[item]]
+id = "CLR-01"
+lens = "journalist"
+directions = ["outbound", "inbound"]
+postures = ["clarify_apologize"]
+dimension = "provability"
+text = "Clarification: is every point we correct backed by evidence we can publish, and does the clarification avoid repeating the original claim in a way that spreads it further?"
+
+[[item]]
+id = "CLR-02"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+postures = ["clarify_apologize"]
+dimension = "legal"
+red_line = "fabrication_about_party"
+text = "Clarification: does the correction state anything about a named party that we cannot prove, or concede facts we have not checked?"
+
+[[item]]
+id = "APO-01"
+lens = "social"
+directions = ["outbound", "inbound"]
+postures = ["clarify_apologize"]
+dimension = "backlash"
+text = "Apology, where one is due: does it name the specific wrong, take responsibility without blaming others, say what we do to fix it and avoid conditional wording such as 'if anyone was offended'? Where the facts show a wrong, is a clarification alone read as evasion? (na if nothing calls for an apology)"
+
+[[item]]
+id = "APO-02"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+postures = ["clarify_apologize"]
+dimension = "legal"
+text = "Apology: could the wording be used as an admission of liability in this jurisdiction (litigation, regulator, insurer), and is that exposure accepted on purpose?"
+
+[[item]]
+id = "PRO-01"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+postures = ["promote"]
+dimension = "legal"
+text = "Advertising and campaigns: are prices, scarcity ('limited', 'today only'), awards, rankings, testimonials and before/after results true and substantiated, are giveaways, lotteries and referral rewards within this jurisdiction's rules, and is every paid or gifted endorsement disclosed?"
+
+[[item]]
+id = "PRO-02"
+lens = "social"
+directions = ["outbound", "operation"]
+postures = ["promote"]
+dimension = "backlash"
+text = "Hype: does the campaign ride a disaster, a sensitive date or a social movement, overpromise, or use a stunt that communities in this jurisdiction will call fake or tasteless?"
+
+[[item]]
+id = "EXP-01"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+postures = ["expose"]
+dimension = "legal"
+red_line = "fabrication_about_party"
+text = "Exposé of a named party: is each allegation provable with documents we may lawfully use and disclose (not obtained by intrusion, not under a confidentiality, NDA or trade-secret duty, no private individual's personal data), made on the record by us, and lawful under this jurisdiction's defamation, privacy, securities and trade-secret rules? Would reporting to a regulator, prosecutor or court first be the lawful route?"
+
+[[item]]
+id = "EXP-02"
+lens = "target"
+directions = ["outbound", "operation"]
+postures = ["expose"]
+dimension = "stakeholder"
+text = "How does the named party hit back (denial with documents, lawsuit, regulator complaint, leaks about us), and are we ready for each?"
+
+[[item]]
+id = "EXP-03"
+lens = "journalist"
+directions = ["outbound", "operation"]
+postures = ["expose"]
+dimension = "attribution"
+text = "Would the exposé read as a smear campaign: timed against the party's listing, deal, election or launch, seeded through unattributed third parties or media 'sources', or built on selected documents that leave out context? Seeding without attribution is a black means."
+
+[[item]]
+id = "RBT-01"
+lens = "journalist"
+directions = ["outbound", "inbound"]
+postures = ["rebut"]
+dimension = "backlash"
+text = "Answering a smear: does the reply repeat or amplify the false claim, answer with facts we can show rather than attacking its source, and weigh silence, a short correction and a full answer?"
+
+[[item]]
+id = "RBT-02"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+postures = ["rebut"]
+dimension = "legal"
+text = "Answering a smear: is the hostile content preserved (URL, time, capture) before any takedown request, and do the legal steps (notice, platform report, complaint, lawsuit) fit this jurisdiction's defamation and platform rules without silencing lawful criticism (a SLAPP risk)?"

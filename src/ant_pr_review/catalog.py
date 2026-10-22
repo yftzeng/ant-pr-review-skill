@@ -9,6 +9,28 @@ from pathlib import Path
 PKG = Path(__file__).resolve().parent
 
 DIRECTIONS = ["outbound", "operation", "inbound"]
+# D-0002: the stance our communication takes, and the means a plan may use.
+POSTURES = ["clarify_apologize", "promote", "expose", "rebut"]
+DEFAULT_POSTURE = "clarify_apologize"
+POSTURE_TEXT = {
+    "clarify_apologize": "correct a misunderstanding or a false claim with facts we can "
+                         "publish, and where we did wrong, own it and say how we fix it",
+    "promote": "advertising, a campaign or building hype for us",
+    "expose": "our own on-the-record disclosure of a named party's wrongdoing, on evidence we "
+              "may lawfully use; leaking through unattributed third parties is a black means",
+    "rebut": "answer a smear or false attack aimed at us",
+}
+# The first postures (before 2026-10-22) map onto the current ones.
+LEGACY_POSTURES = {"clarify": "clarify_apologize", "apologize": "clarify_apologize",
+                   "attack": "expose", "defend": "rebut"}
+MEANS = ["white", "gray", "black"]
+MEANS_TEXT = {
+    "white": "transparent, attributable and provable",
+    "gray": "lawful but contested, only with disclosure (an exclusive to one outlet, "
+            "newsjacking, comparative claims, timing a release, labelled sponsorship)",
+    "black": "deceptive or unlawful (fake or borrowed identities, undisclosed paid posts, "
+             "fabrication, doxxing, bought reviews)",
+}
 
 # key -> (scope, seat description). scope "j" = one unit per jurisdiction.
 LENSES: dict[str, tuple[str, str]] = {
@@ -72,7 +94,10 @@ def _check_unique(ids: list[str], what: str) -> None:
 @lru_cache(maxsize=None)
 def checklist() -> tuple[dict, ...]:
     data = tomllib.loads((PKG / "checklists" / "default.toml").read_text(encoding="utf-8"))
-    items = data["item"]
+    return tuple(validate_items(data["item"]))
+
+
+def validate_items(items: list[dict]) -> list[dict]:
     _check_unique([i["id"] for i in items], "checklist")
     for i in items:
         if i["lens"] not in LENSES:
@@ -83,7 +108,9 @@ def checklist() -> tuple[dict, ...]:
             raise ValueError(f"{i['id']}: unknown red line {i['red_line']}")
         if not set(i["directions"]) <= set(DIRECTIONS):
             raise ValueError(f"{i['id']}: unknown direction in {i['directions']}")
-    return tuple(items)
+        if not set(i.get("postures", POSTURES)) <= set(POSTURES):
+            raise ValueError(f"{i['id']}: unknown posture in {i['postures']}")
+    return items
 
 
 @lru_cache(maxsize=None)
@@ -93,8 +120,10 @@ def pack(code: str) -> dict:
     return tomllib.loads((PKG / "jurisdictions" / f"{code}.toml").read_text(encoding="utf-8"))
 
 
-def items_for(direction: str, lenses: list[str]) -> list[dict]:
-    return [i for i in checklist() if direction in i["directions"] and i["lens"] in lenses]
+def items_for(direction: str, lenses: list[str], posture: str = DEFAULT_POSTURE) -> list[dict]:
+    """An item without `postures` is asked under every posture."""
+    return [i for i in checklist() if direction in i["directions"] and i["lens"] in lenses
+            and posture in i.get("postures", POSTURES)]
 
 
 def unit_id(scope: str, lens: str) -> str:
@@ -103,13 +132,15 @@ def unit_id(scope: str, lens: str) -> str:
 
 
 def plan_units(direction: str, lenses: list[str], jurisdictions: list[str],
-               depth: str) -> list[dict]:
+               depth: str, posture: str = DEFAULT_POSTURE) -> list[dict]:
     """The matrix rows. Each unit: id, scope ('global' or a jurisdiction), lenses, items.
     A jurisdiction-scoped lens never shares a call with another jurisdiction (D-PR-5)."""
     if depth not in DEPTHS:
         raise ValueError(f"depth must be one of {DEPTHS}")
     if not jurisdictions:
         raise ValueError("at least one jurisdiction is needed")
+    if posture not in POSTURES:
+        raise ValueError(f"posture must be one of {POSTURES}")
     unknown = [ln for ln in lenses if ln not in LENSES]
     if unknown:
         raise ValueError(f"unknown lens(es): {unknown}")
@@ -118,7 +149,7 @@ def plan_units(direction: str, lenses: list[str], jurisdictions: list[str],
     units = []
 
     def add(scope: str, group: list[str], name: str) -> None:
-        items = [i["id"] for i in items_for(direction, group)]
+        items = [i["id"] for i in items_for(direction, group, posture)]
         if items:
             units.append({"id": unit_id(scope, name), "scope": scope, "lenses": group,
                           "items": items})

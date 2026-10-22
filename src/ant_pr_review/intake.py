@@ -5,16 +5,18 @@ import re
 from pathlib import Path
 
 from .i18n import T
-from .ui import IO, END_TOKENS, ask_text, checkbox, confirm, dim, prompt, question, radio, section
+from .ui import (IO, END_TOKENS, ask_text, checkbox, collect_lines, confirm, dim, prompt, question,
+                 radio, section)
 
-from .catalog import DEFAULT_JURISDICTIONS, DIRECTIONS, JURISDICTIONS
+from .catalog import (DEFAULT_JURISDICTIONS, DEFAULT_POSTURE, DIRECTIONS, JURISDICTIONS,
+                      LEGACY_POSTURES, MEANS, POSTURES)
 
 CHANNELS = ["press_release", "own_social", "kol", "forums", "ads", "media_interview",
             "internal_memo"]
 STAKEHOLDERS = ["consumers", "employees", "investors", "regulators", "partners", "competitors",
                 "media", "communities"]
 CARD_FIELDS = ["org", "parties", "jurisdictions", "channels", "stakeholders", "publish_at",
-               "keywords", "embargo"]
+               "keywords", "embargo", "speaker", "background", "locked", "focus"]
 URL_RE = re.compile(r"^https?://\S+$", re.I)
 
 
@@ -31,6 +33,27 @@ def classify_target(s: str) -> dict:
 def ask_direction(io: IO, t: T) -> str:
     return radio(io, t, t("intake.direction"),
                  [(d, t(f"intake.direction.{d}")) for d in DIRECTIONS], default="outbound")
+
+
+def ask_posture(io: IO, t: T) -> str:
+    return radio(io, t, t("intake.posture"), [(p, t(f"posture.{p}")) for p in POSTURES],
+                 default=DEFAULT_POSTURE)
+
+
+def ask_means(io: IO, t: T) -> list[str]:
+    return checkbox(io, t, t("intake.means"), [(m, t(f"means.{m}")) for m in MEANS], MEANS,
+                    min_selected=1)
+
+
+def posture_of(intake: dict) -> str:
+    """An intake written before D-0002 reads as the default posture with every means;
+    an earlier posture name maps onto the current one."""
+    p = intake.get("posture") or DEFAULT_POSTURE
+    return LEGACY_POSTURES.get(p, p)
+
+
+def means_of(intake: dict) -> list[str]:
+    return list(intake.get("means") or MEANS)
 
 
 def collect_targets(io: IO, t: T) -> list[dict]:
@@ -81,6 +104,8 @@ def card_line(t: T, field: str, card: dict) -> str:
     v = card.get(field)
     if field == "embargo":
         return t("ui.yes") if v else t("ui.no")
+    if field == "locked" and v:
+        return " / ".join(v)
     if isinstance(v, list):
         if not v:
             return t("intake.skipped")
@@ -106,6 +131,9 @@ def ask_field(io: IO, t: T, field: str, card: dict, direction: str) -> None:
         card[field] = _ask_choice_field(io, t, field, card.get(field, []))
     elif field in ("parties", "keywords"):
         card[field] = split_list(ask_text(io, t(f"card.{field}")))
+    elif field == "locked":  # whole sentences, one per line: commas stay inside
+        io.say(question(t("card.locked")))
+        card[field] = collect_lines(io, t, prompt(""), lambda s: dim("  ✓"))
     elif field == "embargo":
         card[field] = confirm(io, t, t("card.embargo"),
                               default=card.get("embargo", direction == "outbound"))
@@ -147,9 +175,19 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
                            jurisdictions: str | None = None, org: str = "",
                            parties: list[str] | None = None, channels: str | None = None,
                            stakeholders: str | None = None, publish_at: str = "",
-                           keywords: str | None = None, embargo: bool = False) -> dict:
+                           keywords: str | None = None, embargo: bool = False,
+                           posture: str | None = None, means: str | None = None,
+                           speaker: str = "", background: str = "",
+                           locked: list[str] | None = None, focus: str = "") -> dict:
     if direction not in DIRECTIONS:
         raise ValueError(f"direction must be one of {DIRECTIONS}")
+    posture = posture or DEFAULT_POSTURE
+    if posture not in POSTURES:
+        raise ValueError(f"posture must be one of {POSTURES}")
+    chosen = split_list(means or "") or list(MEANS)
+    bad_means = [m for m in chosen if m not in MEANS]
+    if bad_means:
+        raise ValueError(f"unknown means {bad_means}; choose from {MEANS}")
     if not targets:
         raise ValueError("at least one --target is needed")
     jur = [j for j in split_list(jurisdictions or "")] or list(DEFAULT_JURISDICTIONS)
@@ -161,13 +199,18 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
             "channels": parse_choices(channels, CHANNELS, "channel"),
             "stakeholders": parse_choices(stakeholders, STAKEHOLDERS, "stakeholder"),
             "publish_at": publish_at or "", "keywords": split_list(keywords or ""),
-            "embargo": bool(embargo)}
-    return {"direction": direction, "targets": [classify_target(x) for x in targets],
-            "card": card, "lang": lang}
+            "embargo": bool(embargo), "speaker": speaker or "", "background": background or "",
+            "locked": [x.strip() for x in (locked or []) if x.strip()], "focus": focus or ""}
+    return {"direction": direction, "posture": posture,
+            "means": [m for m in MEANS if m in chosen],
+            "targets": [classify_target(x) for x in targets], "card": card, "lang": lang}
 
 
 def run_intake_interactive(io: IO, t: T, lang: str) -> dict:
     direction = ask_direction(io, t)
+    posture = ask_posture(io, t)
+    means = ask_means(io, t)
     targets = collect_targets(io, t)
     card = ask_card(io, t, direction)
-    return {"direction": direction, "targets": targets, "card": card, "lang": lang}
+    return {"direction": direction, "posture": posture, "means": means, "targets": targets,
+            "card": card, "lang": lang}

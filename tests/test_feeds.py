@@ -143,7 +143,9 @@ def _intakes(store):
 # @S-cli-011
 def test_interactive_feed_one_run_per_ticked_article(feed_env):
     store, url = feed_env
-    io = ScriptedIO(["1", url, "/done", "", "", "", "", "", "", "", "", "",  # direction, target, card
+    io = ScriptedIO(["1", "", "", url, "/done",                    # direction, posture, means, target
+                     "", "", "", "", "", "", "", "",                    # card: org .. embargo
+                     "", "", "/done", "", "",                           # speaker .. focus, confirm
 
                      "1 3", "",                                          # tick articles 1 and 3
                      ])

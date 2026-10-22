@@ -143,6 +143,23 @@ Feature: review matrix
   Scenario: untrusted text cannot inject links, images or HTML into the report
     When  a cell holds "[x](http://evil) ![i](http://e/i.png) <script>"
     Then  the report shows it escaped and inert
+
+  @S-review-matrix-024
+  Scenario: the checklist is a checkbox list with a pass-rate bar and every reviewer's verdict
+    Given an item answered pass, pass, concern by three models, one answered na, pass by two and left unanswered by one, and one answered na by all
+    When  the report is written
+    Then  the first reads "- [ ]" with "███████░░░  67%  2/3 ⚠" and each model's mark, the second "- [ ]" with "██████████ 100%  2/2 ✓" and "1 unanswered" (a silent reviewer is never a tick), the third "- [x]" with "n/a"; subtotals per lens and scope and an overall rate follow
+
+  @S-review-matrix-025
+  Scenario: the report carries the revision, its re-audit and the timeline
+    Given an outbound run with plans and a re-audit done
+    When  the report is written
+    Then  it holds the A diff, the full revised text, before and after bars per item, the timeline and, with black ticked, the excluded table; the report phase runs after plans, and a missing plan file is skipped, not a crash
+  @S-review-matrix-026
+  Scenario: a reviewer whose whole unit failed is never a tick
+    Given M2's call for global.all failed, so M2 is not among the item's active reviewers
+    When  the checklist is rendered for the roster M1, M2
+    Then  the item is unticked with "M2 ∅" and "1 unanswered"; an item nobody answered is unticked too
 ```
 
 ## Must NOT
@@ -151,3 +168,6 @@ Feature: review matrix
 
 ## Revisions
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5 and rewritten for PR risk review; ids restart in this repo · decision: D-PR-1
+- 2026-10-22 · +S-review-matrix-024..025 pass-rate bars, revision and timeline in the report · decision: D-0002
+- 2026-10-22 · ~S-review-matrix-024 the checklist is a checkbox list with every reviewer's verdict (user: 報告裡的勾選清單) · decision: D-0002
+- 2026-10-22 · +S-review-matrix-026, ~S-review-matrix-025 (missing plan files do not stop the report), from the tier-3 review · decision: D-0002

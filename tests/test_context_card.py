@@ -5,8 +5,9 @@ from ant_pr_review.intake import ask_card, build_intake_from_args, collect_targe
 from ant_pr_review.ui import ScriptedIO
 
 t = T("en")
-# org, parties, jurisdictions, channels, stakeholders, publish_at, keywords, embargo
-FILL = ["Acme", "Beta Corp、Gamma", "", "1", "", "", "2027-01-05", "phones", ""]
+# org, parties, jurisdictions, channels, stakeholders, publish_at, keywords, embargo,
+# speaker, background, locked (lines, then /done), focus
+FILL = ["Acme", "Beta Corp、Gamma", "", "1", "", "", "2027-01-05", "phones", "", "", "", "/done", ""]
 
 
 # @S-context-card-001

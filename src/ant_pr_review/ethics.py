@@ -18,7 +18,8 @@ import unicodedata
 # hits, not advice against the practice.
 _NEG_WORD = (r"(?:\b(?:not|never|don'?t|do not|must not|should not|avoid using|stop using|"
              r"refrain from|against|instead of|prohibit(?:ed)?|ban(?:ned)?)\b|不要|切勿|勿|"
-             r"禁止|嚴禁|严禁|不得|不應|不应|不可|避免使用|停止|不使用|拒絕|拒绝|而非|取代|別|别)")
+             r"禁止|嚴禁|严禁|不得|不應|不应|不可|避免使用|停止|不使用|拒絕|拒绝|而非|取代|別|别|"
+             r"從未|从未|並未|并未|未曾|絕不|绝不)")
 _NEG = re.compile(_NEG_WORD + r"(?:\W*\w+){0,3}\W*$", re.I)
 _NOT_NEG = re.compile(r"(?:don'?t|do not|never) (?:hesitate|forget)|not only|不要猶豫|不要犹豫|"
                       r"別忘|别忘|不要忘|不只|不僅|不仅", re.I)
@@ -64,12 +65,14 @@ def _negated(text: str, start: int) -> bool:
     return bool(_NEG.search(_NOT_NEG.sub(" ", seg)))
 
 
-def scan_text(text: str) -> list[dict]:
+def scan_text(text: str, categories: tuple[str, ...] = ("evasion", "persona")) -> list[dict]:
     """Hits in one text: [{category, excerpt}]. A negated mention ('never use sockpuppets',
     '不要使用人頭帳號') is advice against the practice and is not a hit."""
     v = _view(text)
     hits = []
     for cat, rxs in (("evasion", _EV), ("persona", _PE)):
+        if cat not in categories:
+            continue
         for rx in rxs:
             for m in rx.finditer(v):
                 if _negated(v, m.start()):

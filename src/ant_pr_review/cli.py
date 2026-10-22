@@ -8,7 +8,7 @@ import sys
 
 from . import __version__
 from .backends.base import get_backend
-from .catalog import DEPTHS, DIRECTIONS, LENSES
+from .catalog import DEPTHS, DIRECTIONS, LENSES, POSTURES
 from .decision import run_decision
 from .i18n import T
 from .intake import CHANNELS, STAKEHOLDERS, build_intake_from_args, run_intake_interactive, split_list
@@ -39,6 +39,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     n = sub.add_parser("new", parents=[common], help="start a new run (default command)")
     n.add_argument("--direction", choices=DIRECTIONS)
+    n.add_argument("--posture", choices=POSTURES, help="default clarify_apologize")
+    n.add_argument("--means", help="comma list of white,gray,black (default all; black is "
+                                   "assessed, never scheduled)")
     n.add_argument("--target", action="append", default=[], help="URL, path or text (repeat)")
     n.add_argument("--jurisdictions", help="comma list of tw,us,eu,cn (default tw)")
     n.add_argument("--depth", choices=DEPTHS)
@@ -49,6 +52,11 @@ def build_parser() -> argparse.ArgumentParser:
     n.add_argument("--stakeholders", help="comma list: " + ",".join(STAKEHOLDERS))
     n.add_argument("--publish-at", default="", help="planned publish date, YYYY-MM-DD")
     n.add_argument("--keywords", help="topic keywords for the context scan")
+    n.add_argument("--speaker", default="", help="who publishes it, and in what role")
+    n.add_argument("--background", default="", help="known disputes or background")
+    n.add_argument("--locked", action="append", default=[],
+                   help="a sentence plan A must not change (repeat)")
+    n.add_argument("--focus", default="", help="what to look at most closely")
     n.add_argument("--embargo", action="store_true", help="no web calls at all (D-PR-9)")
     n.add_argument("--context-scan", action="store_true",
                    help="with --yes: run the web context scan without asking")
@@ -262,7 +270,9 @@ def cmd_new(args, io: IO, store: Store, cfg: Config) -> int:
                 args.direction or "outbound", args.target, lang=ctx.lang,
                 jurisdictions=args.jurisdictions, org=args.org, parties=args.party,
                 channels=args.channels, stakeholders=args.stakeholders,
-                publish_at=args.publish_at, keywords=args.keywords, embargo=args.embargo)
+                publish_at=args.publish_at, keywords=args.keywords, embargo=args.embargo,
+                posture=args.posture, means=args.means, speaker=args.speaker,
+                background=args.background, locked=args.locked, focus=args.focus)
         except ValueError as e:
             io.say(f"error: {e}")
             return EXIT_USAGE

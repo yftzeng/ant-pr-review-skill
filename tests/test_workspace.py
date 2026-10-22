@@ -60,9 +60,10 @@ def test_rerun_from_marks_later_phases_stale(tmp_path):
     run.rerun_from("review")
     st = run.state()["phases"]
     assert st["matrix"]["status"] == "done"
-    for ph in ("review", "factcheck", "debate", "synthesis", "jmerge", "report"):
+    for ph in ("review", "factcheck", "debate", "synthesis", "jmerge", "plans", "reaudit",
+               "report"):
         assert st[ph]["status"] == "stale"
-    assert st["plans"]["status"] == "pending"
+    assert st["decision"]["status"] == "pending"
 
 
 # @S-run-workspace-005

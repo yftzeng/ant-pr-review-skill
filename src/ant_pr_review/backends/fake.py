@@ -105,8 +105,25 @@ class FakeBackend(Backend):
                 "strictest": js[0] if js else "", "notes": [{"jurisdiction": j, "note": "fake"}
                                                            for j in js]}
 
-    def _plan_a(self, *a):
-        return {"paragraphs": [], "corrections": []}
+    def _plan_a(self, model, ids, paras, bias, prompt, schema):
+        return {"paragraphs": [{"id": paras[-1], "text": "[fake edit] A sentence that stands "
+                                "alone."}], "corrections": []}
+
+    def _timeline(self, model, ids, paras, bias, prompt, schema):
+        step = lambda day, time, action, cat: {"day": day, "time": time, "action": action,
+                                               "category": cat, "channel": "website",
+                                               "notes": "[fake]", "trigger": "", "stop": ""}
+        return {"steps": [step(0, "09:00", "[fake] Publish the statement", "white"),
+                          step(1, "10:00", "[fake] Disclosed briefing for one outlet", "gray")],
+                "excluded": [{"tactic": "[fake] undisclosed paid posts", "why": "deceives readers",
+                              "law": "[fake]", "exposure": "journalists and platform reports",
+                              "watch_for": "a wave of new accounts",
+                              "lawful_alternative": "a named spokesperson"}]}
+
+    def _classify_means(self, model, ids, paras, bias, prompt, schema):
+        n = len(re.findall(r'"step": \d+', prompt))
+        return {"labels": [{"step": i, "category": "white" if i == 1 else "gray", "reason": "fake"}
+                           for i in range(1, n + 1)], "excluded_flags": []}
 
     def _plan_b(self, model, ids, paras, bias, prompt, schema):
         props = schema["properties"]

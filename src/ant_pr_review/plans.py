@@ -4,8 +4,8 @@ C response kit; re-review by a different model; every plan passes the ethics gua
 the removal disclosed in ethics.json and the report."""
 from __future__ import annotations
 
-from . import ethics, prompts
-from .backends.base import Backend
+from . import ethics, prompts, timeline
+from .backends.base import Backend, BackendError
 from .factcheck import read_ledger
 from .i18n import T
 from .jsonio import read_json, write_json, write_text_atomic
@@ -82,20 +82,91 @@ def _redact_all(data, hits):
     return data
 
 
+_ENDS = "。！？.!?；;\n"
+
+
+def has_sentence(text: str, sentence: str) -> bool:
+    """The sentence stands on its own in text: at the start or after a sentence end, and
+    not inside quotes or another sentence (whitespace-insensitive)."""
+    norm = ethics._norm
+    body, s = norm(text), norm(sentence)
+    if not s:
+        return False
+    start = body.find(s)
+    while start != -1:
+        before_ok = start == 0 or body[start - 1] in _ENDS
+        end = start + len(s)
+        after_ok = end == len(body) or s[-1] in _ENDS or body[end] in _ENDS
+        if before_ok and after_ok:
+            return True
+        start = body.find(s, start + 1)
+    return False
+
+
+def keep_locked(paras: dict, replaced: dict[str, str], locked: list[str]) -> tuple[dict, list[str]]:
+    """D-0002: a paragraph change that loses a sentence the user locked, or wraps it in
+    other words, is dropped; an inserted paragraph right after one is flagged."""
+    out, warn = dict(replaced), []
+    warn += [f"locked sentence not found in the text, so nothing protects it: {s[:60]}"
+             for s in locked if not any(has_sentence(p.get("text", ""), s)
+                                        for p in paras.values())]
+    for pid, new in replaced.items():
+        if pid.endswith("+"):
+            near = [s for s in locked if has_sentence(paras.get(pid[:-1], {}).get("text", ""), s)]
+            if near:
+                warn.append(f"{pid}: inserted paragraph right after a locked sentence; check "
+                            f"it does not contradict it: {near[0][:60]}")
+            continue
+        old = paras.get(pid, {}).get("text", "")
+        lost = [s for s in locked if has_sentence(old, s) and not has_sentence(new, s)]
+        if lost:
+            del out[pid]
+            warn.append(f"{pid}: change dropped, it rewrote a locked sentence: {lost[0][:60]}")
+    return out, warn
+
+
+def _without(text: str, sentences: list[str]) -> str:
+    """The text with the user's locked sentences taken out: the guard judges what the
+    model wrote, not the sentences the user wrote and locked."""
+    for s in sentences:
+        text = text.replace(s, " ")
+    return text
+
+
 def plan_a(run, backend, writer, lang, risks, article, intake, paras, ledger, sents):
+    locked = intake.get("card", {}).get("locked", [])
+
+    def changes(d):
+        rep, warn = apply_changes(paras, d.get("paragraphs", []))
+        rep, warn2 = keep_locked(paras, rep, locked)
+        return rep, warn + warn2
+
     def check(d):
-        rep, _ = apply_changes(paras, d.get("paragraphs", []))
-        text = render_text(paras, rep)
-        return _scan_all(d) + ethics.laundering(text, ledger, sents)
+        rep_, _ = changes(d)
+        text = render_text(paras, rep_)
+        return [h for v in rep_.values() for h in ethics.scan_text(_without(v, locked))] \
+            + _scan_all({k: v for k, v in d.items() if k != "paragraphs"}) \
+            + ethics.laundering(text, ledger, sents)
 
     data, rep = _guarded(backend, writer, task="plan_a", system=prompts.plan_a_system(lang),
                          prompt=prompts.plan_prompt(risks, article, intake), schema=PLAN_A,
                          check=check)
-    replaced, warn = apply_changes(paras, data.get("paragraphs", []))
-    text = render_text(paras, replaced)
+    replaced, warn = changes(data)
     if rep["final"]:
-        text = ethics.redact(text, rep["final"])
+        # Persona and evasion hits are in what the model wrote: redact its paragraphs only,
+        # then drop any change whose redaction took a locked sentence with it.
+        ev = [h for h in rep["final"] if h["category"] != "laundering"]
+        if ev:
+            replaced = {pid: ethics.redact(v, ev) for pid, v in replaced.items()}
+            replaced, w = keep_locked(paras, replaced, locked)
+            warn += [x for x in w if "not found" not in x]
         rep["redacted"] = True
+    text = render_text(paras, replaced)
+    lau = [h for h in rep["final"] if h["category"] == "laundering"]
+    if lau:
+        text = ethics.redact(text, lau)
+        warn += [f"locked sentence removed as an unsupported allegation: {s[:60]}"
+                 for s in locked if any(h["sentence"] == s for h in lau)]
     write_text_atomic(run.path(f"{DIR}/A.md"), text)
     write_text_atomic(run.path(f"{DIR}/A.diff"), diff_text(paras, replaced))
     write_json(run.path(f"{DIR}/corrections.json"), data.get("corrections", []))
@@ -198,16 +269,41 @@ def run_plans(run: Run, backend: Backend, models: list[str], lang: str, *, say=p
     out["ethics"]["B"], out["warnings"] = rep, out["warnings"] + warn
     out["plans"].append("B")
     say(f"  … C ({writer})")
-    _, rep = plan_c(run, backend, writer, lang, risks, article, intake)
+    c_text, rep = plan_c(run, backend, writer, lang, risks, article, intake)
     out["ethics"]["C"] = rep
+    say(f"  … T ({writer})")
+    tl, rep, tl_stages = timeline.plan_t(backend, writer, checker, lang, risks, article, intake,
+                                         _guarded)
+    out["ethics"]["T"] = rep
+    write_json(run.path(f"{DIR}/T.json"), tl)
+    write_text_atomic(run.path(f"{DIR}/T.md"), timeline.render(T(lang), tl))
     rr = {"checker": checker}
-    if risks:
-        for name in [p for p in ("A", "B") if p in out["plans"]]:
+    stages = []
+    texts = {"A": a_text if "A" in out["plans"] else None, "B": b_text, "C": c_text}
+    for name, text in texts.items():
+        if text is None:
+            continue
+        st = {"stage": name, "writer": writer, "reviewer": checker, "status": "skipped",
+              "reason": "no_risks" if not risks else "empty", "result": ""}
+        if risks and text.strip():
             say(f"  … re-review {name} ({checker})")
-            res = backend.run(checker, task="rereview", system=prompts.rereview_system(lang),
-                              prompt=prompts.rereview_prompt(
-                                  risks, (a_text if name == "A" else b_text)), schema=REREVIEW)
-            rr[name] = (res.data or {"verdicts": []})["verdicts"] if not res.refused else []
+            try:
+                res = backend.run(checker, task="rereview", system=prompts.rereview_system(lang),
+                                  prompt=prompts.rereview_prompt(risks, text), schema=REREVIEW)
+            except BackendError as e:
+                st.update(status="failed", reason=e.reason)
+            else:
+                if res.refused:
+                    st.update(status="refused", reason="refused")
+                else:
+                    rr[name] = (res.data or {"verdicts": []})["verdicts"]
+                    counts: dict[str, int] = {}
+                    for v in rr[name]:
+                        counts[v["verdict"]] = counts.get(v["verdict"], 0) + 1
+                    st.update(status="ok", reason="",
+                              result=", ".join(f"{k} {n}" for k, n in counts.items()))
+        stages.append(st)
+    out["stages"] = stages + tl_stages
     write_json(run.path(f"{DIR}/rereview.json"), rr)
     write_json(run.path(f"{DIR}/ethics.json"), out["ethics"])
     write_json(run.path(f"{DIR}/summary.json"), out)

@@ -46,6 +46,7 @@ localized (en, zh-TW, zh-CN), and so is the README.
 | D-PR-12 | Web tools (fact-check, context scan) run only through `claude -p`, where search provenance can be verified (upstream D-13). With no Claude model in the roster, those claims are `cannot_verify:no_search_backend` | Trusting another vendor's cited URLs without tool-result provenance |
 | D-PR-13 | Every report carries "not legal advice". An Escalate verdict lists the concrete questions for counsel | — |
 | D-PR-15 | Fetch fallback order: (1) the honest-UA crawler with bounded retries on 429/502/503/504 (Retry-After, capped, within the deadline); (2) a headless browser (Playwright, optional extra `render`) only for thin JS-rendered pages or `needs_js` site profiles, every browser request checked like the crawler's; (3) the page's AMP version, then the newest Wayback Machine snapshot, labelled with its date; (4) the user pastes the text or passes a saved file. robots, a site-profile block, internal addresses, a login or paywall (in the page or as 401/402) and 451 never fall back; a 403 or a bot challenge uses the archive only with the user's consent (asked interactively with the archive date, or `--archive-on-block`), never the browser; a URL carrying secrets is never sent to the archive. The browser fetches every request itself without following redirects, checks each Location and every navigation, refuses popups and WebSockets, and sends our UA. Synced with ant-peer-review D-0001 | curl or a browser that spoofs a regular browser's User-Agent or TLS fingerprint: its only use is getting past a site's refusal, the evasion this tool's ethics guard forbids. Archive copies of robots-denied pages: same reason |
+| D-PR-16 | Posture (clarify_apologize, the default / promote / expose / rebut) adds its own checklist items; expose is on the record only, leaking through unattributed third parties is a black means. The ticked means (white / gray / black) shape only the plan's timeline; reviewers judge every item from all three angles. The timeline is labelled again by a reviewer from another vendor, and the stricter label wins. Black is never scheduled: it is assessed in an excluded table (law, how it is exposed, what to watch for, lawful alternative). Every stage's output (A, B, C, timeline, excluded table) is reviewed by another vendor's model. Outbound A is re-audited at depth quick. Locked sentences are never changed. The report checklist is a checkbox list with pass-rate bars. See specs/decisions/D-0002 | Scheduling black steps when ticked: an execution plan for deception (D-PR-7). Trusting the writer's own labels |
 | D-PR-14 | Dropped from the fork: drafting mode, recheck, S-curve, the weighted rubric | Outside a risk review; recheck can come back later by re-running on the revised text |
 
 ## 2. Commands
@@ -56,6 +57,8 @@ ant-pr-review new --yes --direction outbound --target <url|path|text> ...
       [--jurisdictions tw,us,eu,cn] [--depth quick|full] [--lenses legal,journalist,...]
       [--party "<name>" ...] [--org <name>] [--channels ...] [--publish-at <date>]
       [--embargo] [--context-scan] [--models claude:opus,openai:gpt-5] [--merger <model>]
+      [--posture clarify_apologize|promote|expose|rebut] [--means white,gray,black]
+      [--speaker ...] [--background ...] [--locked "<sentence>" ...] [--focus ...]
 ant-pr-review resume <run> | rerun <run> --from <phase> | runs [--summary]
 ant-pr-review factcheck <run> --continue [--yes --finalize]
 ant-pr-review decide <run> [--yes --choice A|B|manual|hold --rule <red_line>=confirmed|dismissed]
@@ -69,7 +72,7 @@ Exit codes as upstream: 0 done, 3 paused (decision gate, backend failure), 2 usa
 
 | Phase | What | HITL |
 |---|---|---|
-| intake | direction (radio), targets, context card: our org, named parties, jurisdictions (checkbox, default tw), channels (checkbox), stakeholders (checkbox), publish date, topic keywords, embargo | card confirm |
+| intake | direction (radio), posture (radio, default clarify_apologize), means (checkbox, default all), targets, context card: our org, named parties, jurisdictions (checkbox, default tw), channels (checkbox), stakeholders (checkbox), publish date, topic keywords, embargo, speaker, background, locked sentences, focus | card confirm |
 | sources | crawl / convert / anchor / injection scan (upstream) | — |
 | context | sensitive-date check (from packs, no web), then queries → confirm → `claude -p` WebSearch → provenance filter → `02-context.json` | query confirm |
 | matrix | depth (radio), lenses (checkbox, defaults per direction), shows the units × models and the call count, locks `03-matrix.json` | confirm |
@@ -78,8 +81,9 @@ Exit codes as upstream: 0 done, 3 paused (decision gate, backend failure), 2 usa
 | debate | within each unit: corroborate/dispute others' risks, red lines and differing item verdicts | — |
 | synthesis | per jurisdiction: global units + that jurisdiction's units → register, red lines, verdict; consolidated = worst | — |
 | jmerge | ≥2 jurisdictions only: merger compare → per-jurisdiction discussion calls → merger final | — |
-| report | consolidated report + one per jurisdiction, versioned | — |
-| plans | A minimal safe edit (char diff), B lawful alternative, C response kit; inbound: response-option comparison; re-review by a different model; ethics lint | — |
+| plans | A minimal safe edit (char diff, locked sentences kept), B lawful alternative, C response kit; inbound: response-option comparison; T timeline of means plus the black-PR excluded table; every stage reviewed by a model from another vendor; ethics guard | — |
+| reaudit | outbound only: A reviewed again at depth quick by the same models and jurisdictions, round 1 only (provisional) | — |
+| report | consolidated report + one per jurisdiction, versioned: checklist as a checkbox list with pass-rate bars, revision diff and full text, re-audit before → after, timeline, excluded table, stage reviews | — |
 | decision | rule contested red lines; choose A / B / manual / hold (do not publish) | decide |
 
 ## 4. Matrix
@@ -145,6 +149,8 @@ Vendor of a model: the provider, except for openrouter, where it is the path pre
 ## 9. Known limits
 
 - The ethics guard and the injection scan are pattern-based (en/zh). A paraphrase can slip past them.
+- The timeline's white/gray/black labels are model judgements. Two vendors and the stricter label lower the risk of a mislabelled black step, but do not remove it. With a single-vendor roster the reviewer shares the writer's blind spots.
+- The re-audit is round 1 only (no debate, no fact check), so its verdict is provisional.
 - The jurisdiction packs are starting points and incomplete; `verified = false` until a fact-check confirms a citation. Escalate means a human lawyer.
 - The context scan sees only what search engines index. Private groups and LINE chats are invisible to it.
 - Non-Claude providers cannot run web tools here (D-PR-12).

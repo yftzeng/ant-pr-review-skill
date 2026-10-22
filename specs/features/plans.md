@@ -71,10 +71,115 @@ Feature: plans
     Given a risk whose mitigation says to "rotate IP addresses to avoid being traced"
     When  the report is written
     Then  the register shows the marker instead and the lint lists "ethics guard (evasion)"
+
+  @S-plans-012
+  Scenario: the timeline is sorted by time and numbered, from the publish date
+    Given publish date 2026-11-02 and steps at T+3d 10:00, T0 09:00 and T-1d 15:00
+    When  plans run
+    Then  T.md lists them T-1d, T0, T+3d numbered 1-3 with their dates 2026-11-01, 2026-11-02, 2026-11-05 and white or gray labels
+
+  @S-plans-013
+  Scenario: the stricter label of writer and checker wins, and black never enters the timeline
+    Given the writer labels three steps white and the checker labels them gray, black and white
+    When  plans run
+    Then  the timeline has the first as gray and the third as white; the second is in the excluded table, not the timeline
+
+  @S-plans-014
+  Scenario: a step outside the ticked means is dropped and disclosed
+    Given the user ticked only white and a step is labelled gray
+    When  plans run
+    Then  the timeline holds no gray step and T.md lists the dropped step as outside the chosen means; with only black ticked the writer is asked to schedule no steps
+
+  @S-plans-015
+  Scenario: the excluded table appears only when black is ticked, and is scanned for evasion
+    Given an excluded entry naming "sockpuppet accounts" whose lawful alternative is clean, and one whose exposure says "rotate IP addresses to avoid being traced"
+    When  plans run with black ticked, and again without black
+    Then  with black the table keeps the first entry and shows the evasion marker in the second; without black there is no table
+
+  @S-plans-016
+  Scenario: persona and evasion advice in a timeline step is sent back once, then removed
+    Given the writer keeps proposing a step "seed comments from alt accounts"
+    When  plans run
+    Then  the retry prompt names the hit, and the step is not scheduled but listed as stopped by the ethics guard
+
+  @S-plans-017
+  Scenario: a step on or next to a sensitive date is warned, and the reviewer sees when each step runs
+    Given publish date 2027-02-26 in tw and steps at T0, T+1d and T+2d
+    When  plans run
+    Then  the T+1d and T+2d steps carry a warning naming 228 Peace Memorial Day, T0 none, and the reviewer's prompt holds each step's day and time
+
+  @S-plans-018
+  Scenario: plan A never changes a locked sentence
+    Given the card locks "我們的產品很棒棒，大家都喜翻。" and plan A rewrites that paragraph
+    When  plans run
+    Then  A.md keeps the sentence and a warning names the dropped change; a locked sentence not found in the text is warned; a change that wraps it in other words is dropped; an inserted paragraph right after it is warned; a locked sentence the guard would flag (a denial such as "我們沒有僱用網軍。") is kept
+
+  @S-plans-019
+  Scenario: the revision is re-audited at quick depth by the same panel
+    Given an outbound run whose plan A changed a paragraph
+    When  the reaudit phase runs
+    Then  every (quick unit, model) reviews A.md, the result is marked provisional, and the original reviews are untouched; a changed A, intake, matrix or context starts it afresh
+
+  @S-plans-020
+  Scenario: no re-audit when there is nothing revised, or no revision for the direction
+    When  the reaudit phase runs where plan A changed nothing, and for an inbound run
+    Then  no model is called and the status is unchanged, or not_applicable
+
+  @S-plans-021
+  Scenario: every stage's output is reviewed by a model from another vendor
+    Given the roster claude:opus, openai:gpt-5
+    When  plans run
+    Then  openai:gpt-5 reviews A, B, C, the timeline and the excluded table, and the report lists each stage with its writer, reviewer and result; a relabel counts only when the reviewer's stricter label won, the withheld count includes entries withheld because the review failed, and the reviewer's reasons pass the guard
+
+  @S-plans-022
+  Scenario: an excluded entry the reviewer finds too operational is withheld
+    Given the reviewer flags the second excluded entry as giving steps
+    When  plans run
+    Then  that entry keeps its tactic, law and alternative, and its exposure and watch-for text are withheld with the reviewer's reason
+
+  @S-plans-023
+  Scenario: a stage whose review failed is shown as not reviewed
+    Given the reviewer fails on the kit
+    When  the report is written
+    Then  the stage table shows C as not reviewed, with the reason
+  @S-plans-024
+  Scenario: two labels for one step keep the stricter, and misnumbered labels void the review
+    Given the reviewer labels step 1 black and then white, or numbers its labels from 0 or past the last step
+    When  plans run
+    Then  step 1 is not scheduled and is in the excluded table; misnumbered labels leave every step not reviewed and the stage shown as invalid
+
+  @S-plans-025
+  Scenario: an excluded table the reviewer never reviewed is withheld
+    Given the reviewer fails, or refuses
+    When  plans run
+    Then  no step is scheduled, and every excluded entry keeps its tactic, law and alternative while its exposure and watch-for text are withheld
+
+  @S-plans-026
+  Scenario: the reviewer's own text passes the guard, and naming a persona tactic survives rendering
+    Given the reviewer's reason for a black label says to rotate IP addresses, and an excluded tactic is "A sockpuppet network posting praise"
+    When  plans run
+    Then  neither T.md nor T.json holds the evasion text, and T.md shows the tactic by name
+
+  @S-plans-027
+  Scenario: steps beyond the cap are disclosed, and the reviewer sees every scheduled field
+    Given more steps than the cap, each with a stop condition
+    When  plans run
+    Then  the extra steps are listed as not scheduled (too many) and the reviewer's prompt holds the stop conditions
+
+  @S-plans-028
+  Scenario: an unreadable publish date is disclosed
+    Given the publish date "next Friday"
+    When  plans run
+    Then  T.md names it as unreadable, so no dates or sensitive-date warnings are given
 ```
 
 ## Must NOT
 - @N-plans-001 a plan reaches the user with concealment, persona or laundering text that the guard found and nobody was told
+- @N-plans-002 a step that the writer or the checker labelled black, or that is outside the ticked means, appears in the timeline
 
 ## Revisions
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5 and rewritten for PR risk review; ids restart in this repo · decision: D-PR-1
+- 2026-10-22 · +S-plans-012..020 timeline of means, excluded black tactics, locked sentences, re-audit · decision: D-0002
+- 2026-10-22 · +S-plans-021..023 every stage reviewed by another model (user: 每個階段的產出都要另一個 model 審) · decision: D-0002
+- 2026-10-22 · +S-plans-024..028, ~S-plans-018 (a lock not found is warned), ~S-plans-019 (the re-audit restarts when the intake, matrix or context change), from the tier-3 review · decision: D-0002
+- 2026-10-22 · ~S-plans-014, 016, 017, 018, 021, 024 from the second tier-3 review (fable): a guard-flagged step is never scheduled, misnumbered labels void the review, sentence-boundary locks, ±1 day warnings · decision: D-0002

@@ -41,7 +41,25 @@ Feature: checklist
   Scenario: sensitive dates near the publish date are found without the web
     When  the publish date is 2027-02-27 for tw and 2027-06-05 for cn
     Then  228 Peace Memorial Day and the June 4 anniversary are reported
+
+  @S-checklist-008
+  Scenario: posture items are asked only under their posture
+    When  the outbound quick matrix is planned under clarify_apologize, and under expose
+    Then  under clarify_apologize it holds CLR-01, CLR-02, APO-01 and APO-02 and no PRO, EXP or RBT item; under expose it holds EXP-01, EXP-02 and EXP-03 and no CLR or APO item
+
+  @S-checklist-009
+  Scenario: every posture is asked about in every direction
+    When  the matrix is planned for each direction with its default lenses under each posture
+    Then  each has at least one item of that posture, and an unknown posture in the checklist or the planner is refused
+  @S-checklist-010
+  Scenario: the ticked means never narrow the review
+    Given an intake whose ticked means are only white
+    When  the review prompt is built
+    Then  it asks every item from the white, gray and black angles and does not name the ticked means; only the timeline prompt does
 ```
 
 ## Revisions
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5 and rewritten for PR risk review; ids restart in this repo · decision: D-PR-1
+- 2026-10-22 · +S-checklist-008..009 posture items (CLR, APO, ATK, DEF) · decision: D-0002
+- 2026-10-22 · +S-checklist-010 means shape only the report's means, never the checklist (user: 不會影響檢查項，只會影響最後報告的手段) · decision: D-0002
+- 2026-10-22 · ~S-checklist-008 posture items CLR+APO (clarify_apologize), PRO (promote), EXP (expose), RBT (rebut) · decision: D-0002

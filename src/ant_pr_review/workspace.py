@@ -19,8 +19,9 @@ PHASES = [
     "debate",
     "synthesis",
     "jmerge",
-    "report",
     "plans",
+    "reaudit",
+    "report",
     "decision",
 ]
 
@@ -37,12 +38,17 @@ PHASE_INPUTS: dict[str, list[str]] = {
     "debate": ["04-reviews", "factcheck/ledger.jsonl"],
     "synthesis": ["03-matrix.json", "04-reviews", "05-debate", "factcheck/ledger.jsonl"],
     "jmerge": ["06-synthesis.json"],
-    "report": ["06-synthesis.json", "07-jmerge"],
-    "plans": ["06-synthesis.json", "01-sources/segments.json"],
+    "plans": ["06-synthesis.json", "01-sources/segments.json", "00-intake.json"],
+    "reaudit": ["09-plans/A.md"],
+    "report": ["06-synthesis.json", "07-jmerge", "09-plans"],
     "decision": ["09-plans"],
 }
 
 PENDING, DONE, STALE, RUNNING = "pending", "done", "stale", "running"
+STATE_VERSION = 2
+# Phases whose inputs changed in a state version: a run finished under the earlier
+# inputs keeps its done phases (D-0002 migration), re-hashed once.
+REHASHED_IN = {2: ["plans", "report"]}
 
 
 def slugify(text: str, max_len: int = 40) -> str:
@@ -82,6 +88,13 @@ class Run:
         for ph in PHASES:  # a phase added after this run was created did not apply to it
             st["phases"].setdefault(ph, {"status": DONE, "inputs": self.input_hashes(ph),
                                          "added_later": True})
+        if st.get("version", 1) < STATE_VERSION:
+            for v in range(st.get("version", 1) + 1, STATE_VERSION + 1):
+                for ph in REHASHED_IN.get(v, []):
+                    if st["phases"][ph]["status"] == DONE:
+                        st["phases"][ph]["inputs"] = self.input_hashes(ph)
+            st["version"] = STATE_VERSION
+            self.save_state(st)
         return st
 
     def save_state(self, state: dict) -> None:
@@ -180,7 +193,7 @@ def create_run(runs_dir: Path, slug_text: str, *, now: datetime | None = None,
         n += 1
     root.mkdir()
     state = {
-        "version": 1,
+        "version": STATE_VERSION,
         "created_at": now.isoformat(timespec="seconds"),
         "models": list(models),
         "backend": backend,

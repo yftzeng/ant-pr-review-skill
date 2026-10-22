@@ -1,0 +1,106 @@
+# D-0002 guards
+@@ src/ant_pr_review/timeline.py
+-         cat = max(wcat, ccat, key=STRICT.get)
++         cat = wcat
+@@ src/ant_pr_review/timeline.py
+-         if cat == "black":
++         if cat == "never":
+@@ src/ant_pr_review/timeline.py
+-         if cat not in means:
++         if False:
+@@ src/ant_pr_review/timeline.py
+-         if lab is None:
++         if lab is None and False:
+@@ src/ant_pr_review/timeline.py
+-         wcat = s.get("category") if s.get("category") in MEANS else "black"
++         wcat = s.get("category") or "white"
+@@ src/ant_pr_review/timeline.py
+-             if reason is not None:
++             if False:
+@@ src/ant_pr_review/timeline.py
+-             cats = ("evasion", "persona") if k == "lawful_alternative" else ("evasion",)
++             cats = ("persona",) if k == "lawful_alternative" else ()
+@@ src/ant_pr_review/timeline.py
+-     if "black" not in means:
++     if False:
+@@ src/ant_pr_review/plans.py
+-         if lost:
++         if lost and False:
+@@ src/ant_pr_review/plans.py
+-     texts = {"A": a_text if "A" in out["plans"] else None, "B": b_text, "C": c_text}
++     texts = {"A": a_text if "A" in out["plans"] else None, "B": b_text}
+@@ src/ant_pr_review/report.py
+-     vs = [v for i in items for v in i["by_model"].values() if v != "na"]
++     vs = [v for i in items for v in i["by_model"].values()]
+@@ src/ant_pr_review/prompts.py
+-     return f"""{means_block(intake)}
++     return f"""{posture_block(intake)}
+@@ src/ant_pr_review/catalog.py
+-             and posture in i.get("postures", POSTURES)]
++             ]
+@@ src/ant_pr_review/reaudit.py
+-     if not diff.exists() or not diff.read_text(encoding="utf-8").strip():
++     if not diff.exists():
+@@ src/ant_pr_review/timeline.py
+-                     if n not in labels or STRICT[cat] > STRICT[labels[n]["category"]]:
++                     if True:
+@@ src/ant_pr_review/timeline.py
+-             reason = flags.get(n) if labels is not None else unreviewed
++             reason = flags.get(n)
+@@ src/ant_pr_review/timeline.py
+-             black.append({"tactic": s.get("action", ""), "why": _clean(why, ("evasion",)),
++             black.append({"tactic": s.get("action", ""), "why": why,
+@@ src/ant_pr_review/timeline.py
+-     return cell(ethics.redact(s, ethics.scan_text(s, ("evasion",))))
++     return cell(ethics.redact(s, ethics.scan_text(s)))
+@@ src/ant_pr_review/timeline.py
+-                 for s in steps[MAX_STEPS:]]
++                 for s in steps[MAX_STEPS:] if False]
+@@ src/ant_pr_review/report.py
+-         ticked = not missing and all(v in ("pass", "na") for v in i["by_model"].values())
++         ticked = all(v in ("pass", "na") for v in i["by_model"].values())
+@@ src/ant_pr_review/report.py
+-         missing = [m for m in models if m not in i["by_model"]]
++         missing = list(i["unanswered"])
+@@ src/ant_pr_review/workspace.py
+-                         st["phases"][ph]["inputs"] = self.input_hashes(ph)
++                         pass
+@@ src/ant_pr_review/reaudit.py
+-     digest = sha256_bytes(json.dumps([text, intake, m, context], ensure_ascii=False,
++     digest = sha256_bytes(json.dumps([text], ensure_ascii=False,
+@@ src/ant_pr_review/plans.py
+-              for s in locked if not any(has_sentence(p.get("text", ""), s)
++              for s in locked if False and not any(has_sentence(p.get("text", ""), s)
+@@ src/ant_pr_review/intake.py
+-     return LEGACY_POSTURES.get(p, p)
++     return p
+@@ src/ant_pr_review/timeline.py
+-         if s.get("guard_hit"):
++         if False:
+@@ src/ant_pr_review/timeline.py
+-                 if any(not 1 <= n <= len(steps) for n in labels) or \
++                 if False or \
+@@ src/ant_pr_review/plans.py
+-         before_ok = start == 0 or body[start - 1] in _ENDS
++         before_ok = True
+@@ src/ant_pr_review/plans.py
+-             if near:
++             if False:
+@@ src/ant_pr_review/plans.py
+-         return [h for v in rep_.values() for h in ethics.scan_text(_without(v, locked))] \
++         return [h for v in rep_.values() for h in ethics.scan_text(v)] \
+@@ src/ant_pr_review/plans.py
+-             replaced, w = keep_locked(paras, replaced, locked)
++             w = []
+@@ src/ant_pr_review/timeline.py
+-     stricter = sum(1 for s in out["steps"] if s["category"] != s["writer_category"])
++     stricter = sum(1 for s in out["steps"] if s["reviewer_category"] != s["writer_category"])
+@@ src/ant_pr_review/timeline.py
+-                      "reviewer_reason": _clean(lab.get("reason", ""))})
++                      "reviewer_reason": lab.get("reason", "")})
+@@ src/ant_pr_review/ethics.py
+-              r"從未|从未|並未|并未|未曾|絕不|绝不)")
++              r"XX)")
+@@ src/ant_pr_review/prompts.py
+-             + ("Use only the means in scope. " if set(means) & {"white", "gray"} else
++             + ("Use only the means in scope. " if True else

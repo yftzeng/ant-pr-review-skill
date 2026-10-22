@@ -73,7 +73,7 @@ def test_rereview_by_another_vendor(tmp_path):
     b = backend()
     out = run_plans(run, b, models, "en", say=Q)
     assert out["writer"] == M1 and out["checker"] == M2
-    assert [c["model"] for c in b.calls if c["task"] == "rereview"] == [M2, M2]
+    assert [c["model"] for c in b.calls if c["task"] == "rereview"] == [M2, M2, M2]  # A, B, C
     assert read_json(run.path("09-plans/rereview.json"))["A"][0]["verdict"] == "FULLY"
 
 

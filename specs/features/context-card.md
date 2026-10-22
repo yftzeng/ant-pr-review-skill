@@ -52,7 +52,30 @@ Feature: context card
   Scenario: embargo defaults to yes for outbound and no otherwise
     When  the embargo question is answered with Enter for an outbound and an inbound review
     Then  embargo is true for outbound and false for inbound
+
+  @S-context-card-010
+  Scenario: posture is a radio defaulting to clarify_apologize, means a checkbox with all three ticked
+    When  the posture and means menus are confirmed with Enter
+    Then  the intake holds posture "clarify_apologize" and means ["white", "gray", "black"]; un-ticking every means is refused
+
+  @S-context-card-011
+  Scenario: posture and means from arguments, with defaults and refusals
+    When  intake is built from --posture expose --means white,gray, or without either, or with posture "smear" or means "red"
+    Then  it holds expose and [white, gray], or clarify_apologize and all three; the unknown values are ValueErrors naming the allowed ones
+
+  @S-context-card-012
+  Scenario: the audit questions are part of the card
+    When  the card asks speaker, background, locked sentences (one per line) and focus
+    Then  the card holds them, shows them for confirmation, and locked is a list of whole sentences even when they contain commas
+
+  @S-context-card-013
+  Scenario: an intake written before posture and means existed still runs
+    Given an intake without posture or means, and intakes with the earlier postures clarify, apologize, attack and defend
+    When  the matrix is planned and plans run
+    Then  they use clarify_apologize and all three means; the earlier postures read as clarify_apologize, clarify_apologize, expose and rebut
 ```
 
 ## Revisions
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5 and rewritten for PR risk review; ids restart in this repo · decision: D-PR-1
+- 2026-10-22 · +S-context-card-010..013 posture, means and the audit questions · decision: D-0002
+- 2026-10-22 · ~S-context-card-010, 011, 013 postures are clarify_apologize (default), promote, expose, rebut; earlier values map onto them (user: 澄清道歉/廣告造勢/狙擊爆料/回應抹黑,預設澄清道歉) · decision: D-0002

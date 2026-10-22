@@ -145,17 +145,131 @@ def _risk_table(t: T, risks: list[dict]) -> list[str]:
     return out
 
 
-def _items_table(t: T, items: list[dict], models: list[str]) -> list[str]:
+MARK = {"pass": "✓", "concern": "⚠", "fail": "✗", "na": "–"}
+UNANSWERED = "∅"
+
+
+def bar(passed: int, applicable: int) -> str:
+    """'███████░░░  67%  2/3'; n/a when no answer applies."""
+    if not applicable:
+        return "n/a"
+    filled = int(10 * passed / applicable + 0.5)
+    return (f"{'█' * filled}{'░' * (10 - filled)} {int(100 * passed / applicable + 0.5):>3}%  "
+            f"{passed}/{applicable}")
+
+
+def _counts(items: list[dict]) -> tuple[int, int]:
+    vs = [v for i in items for v in i["by_model"].values() if v != "na"]
+    return vs.count("pass"), len(vs)
+
+
+def checklist_lines(t: T, items: list[dict], models: list[str]) -> list[str]:
+    """D-0002: a checkbox list. Ticked only when every reviewer answered and every answer
+    is pass or na; each line carries its pass-rate bar and every reviewer's mark."""
     idx = item_index()
-    out = [f"| {t('report.item')} | {t('report.unit')} | {t('report.verdict')} | "
-           f"{t('report.label')} | " + " | ".join(models) + f" | {t('report.question')} |",
-           "|---|---|---|---|" + "---|" * len(models) + "---|"]
+    out = []
     for i in items:
-        cells = [t("item." + i["by_model"][m]) if m in i["by_model"]
-                 else ("∅" if m in i["unanswered"] else "—") for m in models]
-        out.append(f"| {i['item']} | {i['unit']} | **{t('item.' + i['verdict'])}** | "
-                   f"{i['label']} | " + " | ".join(cells)
-                   + f" | {cell(idx[i['item']]['text'][:90])} |")
+        p, n = _counts([i])
+        # A model of the roster with no answer (left the item out, or its whole unit
+        # failed or was refused) is a gap: never a tick.
+        missing = [m for m in models if m not in i["by_model"]]
+        ticked = not missing and all(v in ("pass", "na") for v in i["by_model"].values())
+        marks = " · ".join(f"{m} {MARK[i['by_model'][m]]}" if m in i["by_model"]
+                           else f"{m} {UNANSWERED}" for m in models)
+        gap = f" ({t('report.unanswered_n', n=len(missing))})" if missing else ""
+        b = bar(p, n) + (f" {MARK[i['verdict']]}" if n else "")
+        out.append(f"- [{'x' if ticked else ' '}] **{i['item']}** `{i['unit']}` `{b}`{gap} — "
+                   f"{marks} — {cell(idx[i['item']]['text'][:90])}")
+    if not items:
+        return [t("report.none")]
+    out += ["", f"**{t('report.subtotals')}**", ""]
+    by_lens: dict[str, list[dict]] = {}
+    by_scope: dict[str, list[dict]] = {}
+    for i in items:
+        by_lens.setdefault(idx[i["item"]]["lens"], []).append(i)
+        by_scope.setdefault(i["unit"].split(".")[0], []).append(i)
+    out += [f"- {t('lens.' + ln)} ({ln}): `{bar(*_counts(g))}`" for ln, g in by_lens.items()]
+    out += [f"- {t('report.scope')} {sc}: `{bar(*_counts(g))}`" for sc, g in by_scope.items()]
+    out += ["", f"**{t('report.overall_rate')}**: `{bar(*_counts(items))}`"]
+    return out
+
+
+def compare_lines(t: T, before: list[dict], after: list[dict]) -> list[str]:
+    """Before -> after per (item, scope), then overall."""
+    key = lambda i: (i["item"], i["unit"].split(".")[0])
+    got = {key(i): i for i in after}
+    out = []
+    for i in before:
+        a = got.get(key(i))
+        before_c, after_c = _counts([i]), (_counts([a]) if a else None)
+        moved = ""
+        if after_c and before_c[1] and after_c[1]:
+            d = after_c[0] / after_c[1] - before_c[0] / before_c[1]
+            moved = " ▲" if d > 0 else (" ▼" if d < 0 else "")
+        out.append(f"- **{i['item']}** `{key(i)[1]}` `{bar(*before_c)}` → "
+                   f"`{bar(*after_c) if after_c else t('report.not_reaudited')}`{moved}")
+    common = [i for i in before if key(i) in got]  # the same items on both sides
+    out += ["", f"**{t('report.overall_rate')}**: `{bar(*_counts(common))}` → "
+                f"`{bar(*_counts([got[key(i)] for i in common]))}`"]
+    return out
+
+
+def stage_lines(t: T, stages: list[dict]) -> list[str]:
+    out = [f"| {t('report.stage')} | {t('report.writer')} | {t('report.reviewer')} | "
+           f"{t('report.status')} | {t('report.result')} |", "|---|---|---|---|---|"]
+    for s in stages:
+        if s["status"] == "ok":
+            st = "✓"
+        elif s["status"] == "skipped":
+            st = f"— {t('report.stage.skipped')} ({s['reason']})"
+        else:
+            st = f"⚠ **{t('report.stage.not_reviewed')}** ({s['reason']})"
+        out.append(f"| {t('report.stage.' + s['stage'])} | {s['writer']} | {s['reviewer']} | "
+                   f"{st} | {cell(s.get('result', ''))} |")
+    return out
+
+
+def _fenced(text: str) -> list[str]:
+    fence = "`" * 3
+    return [fence + "text", text.replace(fence, "'" * 3).rstrip("\n"), fence]
+
+
+def _plans_sections(t: T, run: Run, scope: str | None) -> list[str]:
+    from .reaudit import status as reaudit_status
+    out: list[str] = []
+    summary = read_json(run.path("09-plans/summary.json"), default={})
+    if not summary:
+        return out
+    diff_p = run.path("09-plans/A.diff")
+    if "A" in summary.get("plans", []):
+        out += ["", f"## {t('report.revision')}", ""]
+        diff = diff_p.read_text(encoding="utf-8") if diff_p.exists() else ""
+        out += _fenced(diff) if diff.strip() else [t("report.revision_none")]
+        a_p = run.path("09-plans/A.md")
+        out += ["", f"### {t('report.revised_full')}", ""]
+        out += _fenced(a_p.read_text(encoding="utf-8")) if a_p.exists() else [t("report.missing")]
+        st = reaudit_status(run)
+        after = read_json(run.path("09-plans/reaudit/06-synthesis.json"), default=None)
+        if st["status"] == "done" and not after:
+            st = {"status": "failed"}
+        out += ["", f"### {t('report.reaudit')}", "",
+                t("report.reaudit_note", status=t("reaudit." + st["status"])), ""]
+        if st["status"] == "done":
+            before = read_json(run.path("06-synthesis.json"))
+            pick = (lambda syn: _consolidated_views(syn)["items"]) if scope is None else \
+                (lambda syn: syn["jurisdictions"][scope]["items"])
+            out += compare_lines(t, pick(before), pick(after))
+            v = after["consolidated"] if scope is None else after["jurisdictions"][scope]
+            out += ["", f"{t('report.verdict')}: {t('verdict.' + v['verdict'])} "
+                        f"({t('report.reaudit_provisional')})"]
+    tl_p = run.path("09-plans/T.md")
+    if tl_p.exists():
+        body = tl_p.read_text(encoding="utf-8").splitlines()[1:]
+        out += ["", f"## {t('plans.t')}"]
+        out += [("#" + ln) if ln.startswith("#") else ln for ln in body]
+    if summary.get("stages"):
+        out += ["", f"## {t('report.stages')}", "", t("report.stages_note"), ""]
+        out += stage_lines(t, summary["stages"])
     return out
 
 
@@ -304,7 +418,7 @@ def render(run: Run, syn: dict, *, lang: str, version: int, changelog: list[str]
     L += ["", f"## {t('report.heatmap')}", ""] + heatmap(t, v["risks"])
     L += ["", f"## {t('report.register')}", ""] + _risk_table(t, v["risks"])
     L += ["", f"## {t('report.checklist')}", "", t("report.checklist_note"), ""]
-    L += _items_table(t, v["items"], models)
+    L += checklist_lines(t, v["items"], models)
     if v["unanswered"]:
         L += ["", f"### {t('report.unanswered')}", ""]
         L += [f"- {u['item']} ({u['unit']}): {', '.join(u['models'])}" for u in v["unanswered"]]
@@ -325,6 +439,7 @@ def render(run: Run, syn: dict, *, lang: str, version: int, changelog: list[str]
         if len(js) > 1:
             L += ["", f"### {t('report.per_jurisdiction')}", ""]
             L += [f"- {t('jur.' + j)}: `08-report.v{version}.{j}.md`" for j in js]
+    L += _plans_sections(t, run, scope)
     if context:
         L += ["", f"## {t('report.context')}", "",
               f"- {t('report.status')}: {t('context.' + context.get('status', 'skipped'))}"]

@@ -44,6 +44,11 @@ Feature: run workspace
     Given a file already exists at a raw-source path
     When  the workspace is asked to write a raw source there again
     Then  the write is refused and the original bytes are unchanged
+  @S-run-workspace-007
+  Scenario: a run finished before the phase reorder stays done
+    Given a finished run whose state was written with the earlier phase inputs and without reaudit
+    When  it is refreshed
+    Then  no phase becomes stale and the run is finished
 ```
 
 ## Must NOT
@@ -52,3 +57,4 @@ Feature: run workspace
 ## Revisions
 - 2026-10-22 · +S-run-workspace-001..006 +N-run-workspace-001 · decision: none -- first spec, decisions live in docs/DESIGN.md §1
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5; phase list replaced by the PR review phases · decision: D-PR-1
+- 2026-10-22 · +S-run-workspace-007 state version 2 migrates the earlier phase inputs · decision: D-0002

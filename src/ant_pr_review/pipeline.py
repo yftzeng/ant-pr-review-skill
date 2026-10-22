@@ -9,10 +9,11 @@ from .contextscan import base_context, build_queries, run_queries
 from .decision import run_decision
 from .factcheck import build_ledger, pick_checker, read_ledger, run_checks, write_ledger
 from .i18n import T
-from .intake import run_intake_interactive
+from .intake import posture_of, run_intake_interactive
 from .jmerge import run_jmerge
 from .jsonio import read_json, write_json
 from .plans import run_plans
+from .reaudit import run_reaudit
 from .refresh import compute_synthesis, factcheck_blocked
 from .report import latest_version, write_report
 from .review import failed_jobs, load_records, run_debate, run_round1
@@ -187,7 +188,7 @@ def ph_matrix(run: Run, ctx: Ctx) -> None:
             lenses = checkbox(ctx.io, t, t("matrix.lenses"),
                               [(ln, t(f"lens.{ln}")) for ln in LENSES], default,
                               min_selected=1) if ctx.interactive else default
-        units = plan_units(direction, lenses, js, depth)
+        units = plan_units(direction, lenses, js, depth, posture_of(intake))
         if not units:
             raise Stop("no checklist item applies to these lenses and direction")
         ctx.say(info(t("matrix.summary", units=len(units), models=len(ctx.models),
@@ -199,6 +200,7 @@ def ph_matrix(run: Run, ctx: Ctx) -> None:
         depth, lenses = None, None
     merger = ctx.options.get("merger") or ctx.models[0]
     write_json(run.path("03-matrix.json"), {"direction": direction, "depth": depth,
+                                            "posture": posture_of(intake),
                                             "lenses": lenses, "jurisdictions": js,
                                             "units": units, "models": ctx.models,
                                             "merger": merger})
@@ -285,6 +287,14 @@ def ph_plans(run: Run, ctx: Ctx) -> None:
                                        else "plans.ethics.fixed")))
     for w in out["warnings"]:
         ctx.say(f"  · {w}")
+    for s in out.get("stages", []):
+        if s["status"] not in ("ok", "skipped"):
+            ctx.say(f"  ⚠ {ctx.t('plans.stage.not_reviewed', stage=s['stage'], reason=s['reason'])}")
+
+
+def ph_reaudit(run: Run, ctx: Ctx) -> None:
+    st = run_reaudit(run, ctx.backend, ctx.models, ctx.lang, ctx.cfg.thresholds, say=ctx.say)
+    ctx.say(ctx.t("reaudit.status", status=ctx.t("reaudit." + st["status"])))
 
 
 def ph_decision(run: Run, ctx: Ctx) -> None:
@@ -298,8 +308,8 @@ def ph_decision(run: Run, ctx: Ctx) -> None:
 PHASE_FUNCS = {
     "intake": ph_intake, "sources": ph_sources, "context": ph_context, "matrix": ph_matrix,
     "review": ph_review, "factcheck": ph_factcheck, "debate": ph_debate,
-    "synthesis": ph_synthesis, "jmerge": ph_jmerge, "report": ph_report, "plans": ph_plans,
-    "decision": ph_decision,
+    "synthesis": ph_synthesis, "jmerge": ph_jmerge, "plans": ph_plans, "reaudit": ph_reaudit,
+    "report": ph_report, "decision": ph_decision,
 }
 
 
