@@ -1,0 +1,3 @@
+@@ src/ant_pr_review/prompts.py
+-             "names the next update. Phrases not to say always include 'no comment' without a "
++             "names the next update. Phrases not to say always include 'XX' without a "

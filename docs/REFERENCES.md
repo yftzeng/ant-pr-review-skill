@@ -32,6 +32,7 @@ Licences differ (see each section; two have none and one is share-alike), so ide
 | 20 | [asgard-ai-platform/skills — med-news-reporter @4e7f4f8](https://github.com/asgard-ai-platform/skills/tree/4e7f4f8e389847757a5a4236c2f1ed9813359179/med-news-reporter) | newsroom writing workflow (Taiwan) | no unsourced facts; right of reply; vulnerable people |
 | 21 | [qcmcbw7qm2-svg/ziyu @fa893b3](https://github.com/qcmcbw7qm2-svg/ziyu/tree/fa893b32eb2148cb41a09dcfd9255c9ac13ae70e) | crisis playbooks by type (mainland China) | crimes go to the police; counter-examples: tracing posters, seeding comments |
 | 22 | [HachikoJ/crisis-pr-response @9fabde2](https://github.com/HachikoJ/crisis-pr-response/tree/9fabde2f3d4630be5693d582fb138a8bddd07536) | crisis statement generator (mainland China) | done vs planned; bounded commitments; expectation gaps |
+| 23 | The user's own reference notes (local only, not in the repo) | crisis-handling notes, case letters, flow charts | admit, act, account; a Q&A answers the question; no exoneration overclaim |
 
 Full commits read: coreyhaines31/marketingskills `e85f3cbc2e4a79bf33b2a12e9bdd9087d414735b`; asgard-ai-platform/skills `4e7f4f8e389847757a5a4236c2f1ed9813359179`; dclacher/pr-crisis-analyzer `eeed137fb9cb792432dc67f84b443c69c58fa0af`; metadatastician/sim-public-relations `c4db8ffb9afbbdbe125a1ff91ad2312ceb863189`; tsy-fred/declaration-and-media-skill `a4ea626a81fc90e41072e13f833e0ae6f8da8152`; AshLSnow/pr-crisis `349f34486ca3ce3d80ccc5ab6f81259b748664b0`; ur-grue/autopunk-media-skills `39e119bfef25957223d6c44fccab0329e936d2f6`; ShenyuanNext/wepr-growth-skills `822504b8c72003b7efe84cb5c621bf752a3244fe`; qcmcbw7qm2-svg/ziyu `fa893b32eb2148cb41a09dcfd9255c9ac13ae70e`; HachikoJ/crisis-pr-response `9fabde2f3d4630be5693d582fb138a8bddd07536` (asgard #19-20 at the same `4e7f4f8`; main had not moved).
 
@@ -399,3 +400,30 @@ MIT.
 | Satire modes; trending headlines, screenshot hooks, comeback replies, remix lines | Viral engineering, not risk review. |
 | Implicit triggering ("do not wait to be named"); a PDF by default | Instructions aimed at agents; not followed. |
 | The casebook narratives | Paraphrased from Wikipedia; claims about real companies stay out of the checklist. |
+
+## 23. The user's own reference notes (local only)
+
+**This material belongs to the user. It stays on the user's machine, is ignored by git (`docs/references/`) and is never committed, published or linked.** It is a personal collection (2006–2026) of book and article excerpts, crisis-handling principles, flow charts and screenshots of third-party apology letters and statements. Read 2026-10-22. Ideas only; the third-party texts keep their owners' rights, and only short attributed quotes may appear in this repo.
+
+| Borrowed | Where here |
+|---|---|
+| A Q&A answer answers the question asked, or says what we cannot say, why and when; restating a question is fine, bridging away from it is not | checklist JOU-15; plan C kit prompt (S-plans-037) |
+| A decision not to charge, or a passed inspection, is not proof of innocence or safety | checklist LEG-14 |
+| Leaked discipline notices that name staff for an organisational failure; the board, not staff, carries the blame | checklist INT-08 |
+| "Caused a misunderstanding" and intent-first apologies; show we understand the anger | checklist APO-01 (amended) |
+| An apology padded with company history, patents and CSR | checklist SOC-10 (amended) |
+| An implied culprit through arranged facts; people before the product when someone was hurt | checklist JOU-06, SOC-07 (amended) |
+| A speaker's own stake is declared | checklist LEG-03 (amended) |
+| A disclaimer limited to communication risk that does not cleanse black tactics | `report.disclaimer` (S-review-matrix-030) |
+| Dated, attributed case patterns and counter-patterns with short quotes | planned: drafting-mode examples file |
+
+| Left out | Why |
+|---|---|
+| Changing the subject, focus-shifting, vague answers, "let third parties say it" | Evasion or undisclosed amplification (RTM-02, LEG-09). |
+| Paid-placement price lists | Operational black-PR detail. |
+| Golden 48 hours, fixed press-conference hours | Unsourced and dated; see #16. |
+| The spokesperson deliberately "not the top executive" | Builds in a scapegoat; STK-01 asks who speaks with a mandate. |
+| Asking reporters for sources; friendly-press lists | Identity-seeking (D-PR-10); gray means. |
+| Litigation as a war of attrition; "don't write this" | SLAPP risk (RBT-02); pressure on the press. |
+| State-facing key messages and single-market apology wording | No state influence work; POL-03 assesses only. |
+| Satirical, anecdotal or unsourced case claims | Not evidence. |

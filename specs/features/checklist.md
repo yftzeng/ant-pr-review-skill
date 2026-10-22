@@ -86,6 +86,10 @@ Feature: checklist
   Scenario: the news and crisis borrowed items are in the checklist, packs and parties
     When  the checklist, the tw and cn packs and the parties load
     Then  EXP-05, LEG-12, LEG-13, JOU-13, JOU-14, POL-04, INT-07, RSP-06 and SOC-11 exist; tw lists the Anti-Infiltration Act, the Political Donations Act, Constitution art. 73 and Code of Criminal Procedure art. 245 and a 2026 poll blackout; cn lists Maimai; the channel party names franchisees; each source is in docs/REFERENCES.md
+  @S-checklist-018
+  Scenario: the items from the user's own notes are in the checklist
+    When  the checklist loads
+    Then  JOU-15 (answer the question asked), LEG-14 (no exoneration overclaim) and INT-08 (no blame on named staff) exist, and APO-01, SOC-10, JOU-06, SOC-07 and LEG-03 carry the amendments
 ```
 
 ## Revisions
@@ -100,3 +104,4 @@ Feature: checklist
 - 2026-10-22 · +S-checklist-015 borrowed items from five more repos (user: 現在併進去) · decision: D-0003
 - 2026-10-22 · +S-checklist-016 items borrowed from wepr-growth-skills (user: 現在併進去) · decision: D-0003
 - 2026-10-22 · +S-checklist-017 items from med-political, med-news-reporter, ziyu, crisis-pr-response (user: 現在併進去) · decision: D-0003
+- 2026-10-22 · +S-checklist-018 items from the user's own reference notes (user: 讀過並整理借鏡，不收進 repo) · decision: D-0003

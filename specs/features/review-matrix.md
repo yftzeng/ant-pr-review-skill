@@ -174,6 +174,10 @@ Feature: review matrix
   Scenario: the report has a stress-test section
     When  the report is written for an outbound run
     Then  a stress-test section lists RTM-01..05 and POL-01..03 with their dimension and red-team question once, then per unit the parties tested there (that jurisdiction's parties for the political tests), the pass-rate bar and each model's evidence; the jurisdiction merger sees the panels' POL-03 quotes and names cross-region wording only from them
+  @S-review-matrix-030
+  Scenario: the report's disclaimer limits it to communication risk
+    When  the report is written in en, zh-TW and zh-CN
+    Then  the disclaimer says it assesses communication risk only, finds nothing on facts or liability, is not professional advice, and makes no tactic acceptable
 ```
 
 ## Must NOT
@@ -189,3 +193,4 @@ Feature: review matrix
 2026-10-22 · ~S-review-matrix-027, 028 from the tier-3 review and the political parties; +S-review-matrix-029 stress tests · decision: D-0003
 - 2026-10-22 · ~S-review-matrix-029 second tier-3 review: per-unit parties, question once, merger evidence · decision: D-0003
 - 2026-10-22 · ~S-review-matrix-028 reactions labelled model-simulated (borrowed) · decision: D-0003
+- 2026-10-22 · +S-review-matrix-030 disclaimer from the user's notes · decision: D-0003

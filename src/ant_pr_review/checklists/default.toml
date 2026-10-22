@@ -23,7 +23,7 @@ lens = "legal"
 directions = ["outbound", "operation"]
 dimension = "disclosure"
 red_line = "undisclosed_inauthentic"
-text = "Paid, sponsored, gifted or affiliated content, including ghostwritten bylines: is the material connection disclosed clearly where this jurisdiction requires it (endorsement and advertorial rules)?"
+text = "Paid, sponsored, gifted or affiliated content, including ghostwritten bylines: is the material connection disclosed clearly where this jurisdiction requires it (endorsement and advertorial rules)? Does a spokesperson or expert commenting on a public-interest matter declare their own stake (roles, holdings, ties to the parties)?"
 
 [[item]]
 id = "LEG-04"
@@ -322,7 +322,7 @@ lens = "social"
 directions = ["outbound", "inbound"]
 postures = ["clarify_apologize"]
 dimension = "backlash"
-text = "Apology, where one is due: does it name the specific wrong, take responsibility without blaming others, say what we do to fix it and avoid conditional wording such as 'if anyone was offended'? Where the facts show a wrong, is a clarification alone read as evasion? (na if nothing calls for an apology)"
+text = "Apology, where one is due: does it name the specific wrong, take responsibility without blaming others, say what we do to fix it and avoid conditional wording such as 'if anyone was offended'? Where the facts show a wrong, is a clarification alone read as evasion? (na if nothing calls for an apology) Does it frame the harm as others' misunderstanding ('caused a misunderstanding', 'no ill intent') or explain our intentions before naming the wrong, and does it show we understand why people are angry?"
 
 [[item]]
 id = "APO-02"
@@ -396,7 +396,7 @@ id = "JOU-06"
 lens = "journalist"
 directions = ["outbound", "inbound"]
 dimension = "provability"
-text = "Cause, scope and blame: does it state a cause, a scope or a reassurance ('no sensitive data', 'only a few users', 'isolated', 'resolved', 'it will not happen again', 'no jobs are at risk') that is not yet confirmed, name a culprit ('a temporary worker', 'one franchise store', 'a supplier', 'our account was hacked') before the facts establish it, and separate what is confirmed from what is still under investigation?"
+text = "Cause, scope and blame: does it state a cause, a scope or a reassurance ('no sensitive data', 'only a few users', 'isolated', 'resolved', 'it will not happen again', 'no jobs are at risk') that is not yet confirmed, name a culprit ('a temporary worker', 'one franchise store', 'a supplier', 'our account was hacked') before the facts establish it, and separate what is confirmed from what is still under investigation? Does it imply a cause or culprit by how the facts are arranged, leaving readers to infer what we would not state?"
 
 [[item]]
 id = "JOU-07"
@@ -426,7 +426,7 @@ id = "SOC-07"
 lens = "social"
 directions = ["outbound"]
 dimension = "stakeholder"
-text = "If anyone may be harmed or affected (safety, money, data), does it tell them early whether they are affected and what to do now (stop using, refund, reset, contact), before explanation or defence?"
+text = "If anyone may be harmed or affected (safety, money, data), does it tell them early whether they are affected and what to do now (stop using, refund, reset, contact), before explanation or defence? Where someone was injured or died, is the first sentence about them, before anything about the product?"
 
 [[item]]
 id = "SOC-08"
@@ -538,7 +538,7 @@ lens = "social"
 directions = ["outbound", "inbound"]
 postures = ["clarify_apologize", "rebut"]
 dimension = "backlash"
-text = "One objective: does a single message mix clarifying, apologising, rebutting and promoting (a product plug, brand slogan or achievement in an apology or correction), so that the apology reads as advertising or the rebuttal as a denial?"
+text = "One objective: does a single message mix clarifying, apologising, rebutting and promoting (a product plug, brand slogan, achievement, company history, patents, awards, CSR or policy slogans in an apology or correction), so that the apology reads as advertising or the rebuttal as a denial?"
 
 [[item]]
 id = "INT-06"
@@ -620,6 +620,29 @@ directions = ["outbound", "inbound"]
 postures = ["clarify_apologize", "rebut"]
 dimension = "backlash"
 text = "Expectation gap: when people are upset because a product or service differed from what they were led to expect (freshly made, a real discount, a human answer), does the reply answer with a legal or technical definition ('complies with regulations', 'by industry definition this is not X') instead of addressing the gap and what we disclose from now on?"
+
+[[item]]
+id = "JOU-15"
+lens = "journalist"
+directions = ["outbound", "inbound"]
+postures = ["clarify_apologize", "rebut"]
+dimension = "backlash"
+text = "Q&A and press answers: does each answer the question as asked, or say plainly that we cannot answer, why (law, privacy, an open investigation) and when we will? Flag pivots to our record, values or a broader topic ('the real issue is', 'more broadly'), a refused hypothetical where the question is about harm to people, a vague 'we are monitoring closely', and an omission or arrangement of facts that leaves a false impression. Assess only; never suggest a bridge."
+
+[[item]]
+id = "LEG-14"
+lens = "legal"
+directions = ["outbound", "inbound"]
+postures = ["clarify_apologize", "rebut"]
+dimension = "provability"
+text = "Exoneration claims: does it present a decision not to prosecute, a dismissed complaint, a passed inspection, an expired deadline or a regulator's silence as proof that we did nothing wrong or that a product is safe, beyond what that decision actually says? Quote the decision's own scope."
+
+[[item]]
+id = "INT-08"
+lens = "internal"
+directions = ["outbound", "operation"]
+dimension = "stakeholder"
+text = "Accountability direction: does a public statement, or a staff or discipline notice that could leak, name, number or penalise individual employees (names, staff IDs, pay cuts) for an organisational failure, or say leadership takes responsibility while every penalty falls on junior staff or an agency? Does it expose staff personal data?"
 
 # ---- the stakeholder map (D-0003): one item per group, per jurisdiction ----
 

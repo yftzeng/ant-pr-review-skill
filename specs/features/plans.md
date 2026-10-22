@@ -213,6 +213,10 @@ Feature: plans
     Given tw's 2026 poll blackout from 11-18 to 11-28 and publish date 2026-11-15, with a poll step at T+5d and another at T+1d
     When  plans run
     Then  the T+5d poll step is dropped and disclosed as inside the blackout, and the T+1d step stays
+  @S-plans-037
+  Scenario: the response kit's Q&A answers the question asked
+    When  the kit prompt is built
+    Then  it asks each answer to restate and answer the question, to say what is unknown and when we will update, to give the reason when we cannot answer, to answer a hypothetical about harm with the safeguards, never to pivot, and lists "no comment" without a reason among the phrases not to say
 ```
 
 ## Must NOT
@@ -230,3 +234,4 @@ Feature: plans
 - 2026-10-22 · +S-plans-031..033 harm first, disclosure first, stage the launch (borrowed) · decision: D-0003
 - 2026-10-22 · +S-plans-034..035 protection-list diff, AI-detection and independent-voice evasion (borrowed from wepr; ethics guard D-PR-7) · decision: D-0003
 - 2026-10-22 · +S-plans-036 poll blackout (borrowed from med-political) · decision: D-0003
+- 2026-10-22 · +S-plans-037 plan C Q&A rules from the user's notes · decision: D-0003

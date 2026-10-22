@@ -384,7 +384,16 @@ def kit_system(lang: str) -> str:
             "homophones, traditional/simplified forms), product, officer (our own public "
             "officers only), issue (brand plus an issue word), competitor, exclusion - and the "
             "platforms to watch; never a handle or name of a private person), an escalation "
-            "tree (trigger, action, owner role), and phrases not to say. Never include personas, astroturfing or counter-smears.\n\n"
+            "tree (trigger, action, owner role), and phrases not to say. Each Q&A answer "
+            "restates the question in neutral words and then answers that question; if the "
+            "answer is unknown it says so, who is checking and when we will update, never a "
+            "guess; if it is known but cannot be given it names the reason (law, privacy, an "
+            "investigation) and when it may be possible; a hypothetical about harm to people "
+            "is answered with the safeguards that exist and what we would do for anyone "
+            "affected; no pivot to our record, values or a wider topic, and nothing that "
+            "implies more than the facts. The holding statement uses only confirmed facts and "
+            "names the next update. Phrases not to say always include 'no comment' without a "
+            "reason, 'it was just a misunderstanding' and any unconfirmed scope. Never include personas, astroturfing or counter-smears.\n\n"
             + SHARED_RULES.format(lang_name=_lang(lang)) + "\n" + ETHICS_RULES)
 
 
