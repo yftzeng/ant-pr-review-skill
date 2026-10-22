@@ -78,6 +78,10 @@ Feature: checklist
   Scenario: the second set of borrowed items is in the checklist and credited
     When  the checklist loads
     Then  JOU-10, JOU-11, INT-05, REG-05, RSP-05 and SOC-09 exist, JOU-06 names early scapegoats and "it will not happen again", and each source is in docs/REFERENCES.md with its commit
+  @S-checklist-016
+  Scenario: the wepr borrowed items are in the checklist and credited
+    When  the checklist loads
+    Then  LEG-11, REG-06, JOU-12, SOC-10, INT-06 and THR-05 exist; LEG-02, RSP-01, JOU-10 and INT-03 carry the amendments; each source is in docs/REFERENCES.md with its commit
 ```
 
 ## Revisions
@@ -90,3 +94,4 @@ Feature: checklist
 2026-10-22 · ~S-checklist-011 STK-07 politics; +S-checklist-014 role and political stress tests (user: 角色壓力測試檢核矩陣, Political Red-Teaming) · decision: D-0003
 - 2026-10-22 · ~S-checklist-007 dated sensitive dates (elections) · decision: D-0003
 - 2026-10-22 · +S-checklist-015 borrowed items from five more repos (user: 現在併進去) · decision: D-0003
+- 2026-10-22 · +S-checklist-016 items borrowed from wepr-growth-skills (user: 現在併進去) · decision: D-0003

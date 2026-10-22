@@ -15,7 +15,7 @@ id = "LEG-02"
 lens = "legal"
 directions = ["outbound"]
 dimension = "legal"
-text = "Comparative, superlative or absolute claims (best, first, only, No. 1, X% better, guaranteed): substantiated and not misleading under this jurisdiction's advertising and fair-trading law?"
+text = "Comparative, superlative or absolute claims (best, first, only, No. 1, X% better, guaranteed): substantiated and not misleading under this jurisdiction's advertising and fair-trading law? One real, contemporaneous counterexample defeats 'only' or 'first'."
 
 [[item]]
 id = "LEG-03"
@@ -225,7 +225,7 @@ id = "INT-03"
 lens = "internal"
 directions = ["outbound"]
 dimension = "stakeholder"
-text = "Sign-off: is there evidence that everyone who must approve (legal, management, partners, people quoted) has approved?"
+text = "Sign-off: is there evidence that everyone who must approve (legal, management, partners, people quoted) has approved, and does no statement in a named person's first person claim an experience or a quote that person has not confirmed?"
 
 [[item]]
 id = "WHB-01"
@@ -281,7 +281,7 @@ id = "RSP-01"
 lens = "response"
 directions = ["inbound"]
 dimension = "backlash"
-text = "Compare silence, factual clarification, apology or correction, legal action and platform notice: the main risk of each."
+text = "Compare silence, monitoring, an internal correction, a targeted reply to those affected, a public clarification, apology or correction, legal action and platform notice: the main risk, the commitment it creates and how reversible each is. Public action must justify the attention it creates."
 
 [[item]]
 id = "RSP-02"
@@ -470,7 +470,7 @@ id = "JOU-10"
 lens = "journalist"
 directions = ["outbound", "operation"]
 dimension = "provability"
-text = "Third-party support and results: does it claim an endorsement, partnership, approval, co-design or community backing ('supported by', 'designed with', 'welcomed by') that the third party has not confirmed for publication, present views heard at a consultation as endorsement, or state a forecast, pilot or target as an achieved result?"
+text = "Third-party support and results: does it claim an endorsement, partnership, approval, co-design or community backing ('supported by', 'designed with', 'welcomed by') that the third party has not confirmed for publication, present views heard at a consultation as endorsement, infer a public reaction ('netizens praise', 'widely welcomed') from a few posts, or state a forecast, pilot or target as an achieved result?"
 
 [[item]]
 id = "JOU-11"
@@ -508,6 +508,51 @@ lens = "social"
 directions = ["outbound"]
 dimension = "stakeholder"
 text = "Plain language and access: can the people affected grasp the core message in a few plain sentences, free of legal or official jargon and passive evasions ('mistakes were made'), and can they get it in an accessible form (text not only in images, alt text, captions, the languages they read)?"
+
+[[item]]
+id = "LEG-11"
+lens = "legal"
+directions = ["outbound", "inbound"]
+postures = ["rebut", "clarify_apologize"]
+dimension = "provability"
+red_line = "fabrication_about_party"
+text = "Strong labels: does a reply or platform notice call content 'false', 'never happened', 'malicious', 'organised' or the work of paid posters beyond what our records show? Is each denial bounded by the scope we actually checked ('no record found in X for period Y'), and is coordination left for the platform or counsel to establish rather than asserted?"
+
+[[item]]
+id = "REG-06"
+lens = "regulator"
+directions = ["operation", "inbound"]
+dimension = "platform"
+text = "Notice routes: does each takedown or platform notice use the route that fits the right at stake (copyright for copying, trademark for source confusion, defamation for a false statement of fact, privacy for personal data), never copyright or trademark against criticism, and does any signed statement claim no more than what was checked? Could the notice be held a misrepresentation or manifestly unfounded in this jurisdiction?"
+
+[[item]]
+id = "JOU-12"
+lens = "journalist"
+directions = ["outbound", "operation"]
+dimension = "provability"
+text = "Headline and preview: does the headline, first line, thumbnail or link preview claim more than the body supports, relying on a caveat further down ('pilot', 'not yet available', 'selected markets', 'terms apply') that a reader of the preview never sees?"
+
+[[item]]
+id = "SOC-10"
+lens = "social"
+directions = ["outbound", "inbound"]
+postures = ["clarify_apologize", "rebut"]
+dimension = "backlash"
+text = "One objective: does a single message mix clarifying, apologising, rebutting and promoting (a product plug, brand slogan or achievement in an apology or correction), so that the apology reads as advertising or the rebuttal as a denial?"
+
+[[item]]
+id = "INT-06"
+lens = "internal"
+directions = ["outbound"]
+dimension = "stakeholder"
+text = "Delivery: can customer service, operations, legal, channel partners and leadership actually honour every promise, remedy, contact path and date in the text (staffed hotline, refund process, stock, a named owner), and has each owner confirmed? If the conduct itself is not defensible, the action changes before the words."
+
+[[item]]
+id = "THR-05"
+lens = "threat"
+directions = ["inbound"]
+dimension = "provability"
+text = "For a hostile article or post: separate the editorial choices we can point to (ordering, sources, omitted context), the effect they may have, and any intent hypothesis. Is any claim of paid placement, sponsorship, coordination or AI generation backed by evidence beyond timing, tone, a beneficiary or reliance on one source? Never estimate whether it was AI-written, and never identify the people behind it."
 
 # ---- the stakeholder map (D-0003): one item per group, per jurisdiction ----
 

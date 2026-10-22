@@ -1,0 +1,12 @@
+@@ src/ant_pr_review/ethics.py
+-     r"(?:bypass(?:es)?|evade[sd]?|beats?|fools?|pass(?:es)?|gets? past|avoids?) (?:the |an? )?"
++     r"XXXX"
+@@ src/ant_pr_review/ethics.py
+-     r"降(?:低)?\s?ai\s?(?:率|感|味)", r"去\s?ai\s?(?:味|感|化)",
++     r"XXXX",
+@@ src/ant_pr_review/ethics.py
+-     r"像(?:普通|真實|真实|一般)(?:網友|网友|用戶|用户|消費者|消费者|路人)",
++     r"XXXX",
+@@ src/ant_pr_review/plans.py
+-         if removed or added:
++         if False:

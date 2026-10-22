@@ -39,6 +39,13 @@ EVASION = [
     r"隐藏(?:我方|公司|品牌|真实)身份", r"(?:換|换|分散|輪換|轮换)\s?ip",
     r"(?:刪除|删除|清除)(?:檔案)?(?:metadata|中繼資料|元数据|元資料)", r"規避(?:平台|偵測|審查)",
     r"规避(?:平台|检测|审核)",
+    # AI-detection evasion (docs/REFERENCES.md #12): making machine text pass as human
+    r"humani[sz]e (?:the |this |our )?(?:text|copy|content|post|draft|ai)",
+    r"(?:bypass(?:es)?|evade[sd]?|beats?|fools?|pass(?:es)?|gets? past|avoids?) (?:the |an? )?"
+    r"ai[- ]?(?:content )?detect",
+    r"undetectable(?: by)? (?:ai|detectors?|gptzero)",
+    r"降(?:低)?\s?ai\s?(?:率|感|味)", r"去\s?ai\s?(?:味|感|化)",
+    r"(?:绕过|繞過|规避|規避|躲过|躲過)\s?ai\s?(?:检测|檢測|偵測|侦测)",
 ]
 
 PERSONA = [
@@ -50,6 +57,10 @@ PERSONA = [
     r"水軍", r"水军", r"網軍", r"网军", r"假扮", r"冒充", r"偽裝成(?:網友|消費者|顧客|路人)",
     r"伪装成(?:网友|消费者|顾客|路人)", r"以(?:網友|网友|消費者|消费者|路人)(?:身分|身份|口吻)",
     r"帶風向", r"带节奏", r"带风向",
+    # an independent voice for our content (docs/REFERENCES.md #12)
+    r"sound(?:s|ing)? like (?:an? )?(?:ordinary|real|regular|independent|genuine|normal) "
+    r"(?:user|customer|person|netizen|consumer|fan)",
+    r"像(?:普通|真實|真实|一般)(?:網友|网友|用戶|用户|消費者|消费者|路人)",
 ]
 
 _EV = [re.compile(p, re.I) for p in EVASION]

@@ -198,6 +198,16 @@ Feature: plans
     Given the ledger holds a claim that is cannot_verify and the timeline has a press step
     When  plans run
     Then  the first press or public step warns and names the claim id
+  @S-plans-034
+  Scenario: plan A's changes to protected details are disclosed
+    Given a paragraph "Revenue grew 40% in 2025, said 「CEO」." that plan A rewrites as "Revenue grew 45% in 2025."
+    When  plans run
+    Then  a warning names the paragraph, the removed "40%" and quote and the added "45%"
+
+  @S-plans-035
+  Scenario: advice to evade AI detection or to sound like an independent user is a hit
+    When  the guard reads "Humanize the copy so it passes AI detection", "降低AI率，去AI味", "make it sound like an ordinary customer" and "像普通網友一樣留言"
+    Then  each is a hit; "Never use tools that bypass AI detection" and "we do not claim the text is AI-generated" are not
 ```
 
 ## Must NOT
@@ -213,3 +223,4 @@ Feature: plans
 2026-10-22 · +S-plans-029..030 timeline audience rules, typed monitoring keywords · decision: D-0003
 - 2026-10-22 · ~S-plans-029, 030 from the tier-3 review · decision: D-0003
 - 2026-10-22 · +S-plans-031..033 harm first, disclosure first, stage the launch (borrowed) · decision: D-0003
+- 2026-10-22 · +S-plans-034..035 protection-list diff, AI-detection and independent-voice evasion (borrowed from wepr; ethics guard D-PR-7) · decision: D-0003

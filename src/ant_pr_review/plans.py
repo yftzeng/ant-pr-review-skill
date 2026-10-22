@@ -106,6 +106,19 @@ def has_sentence(text: str, sentence: str) -> bool:
     return False
 
 
+_PROTECTED = re.compile(r"[$€£¥]?\d[\d,.]*\s?(?:%|％|萬|万|億|亿|元|million|billion|bn|m)?"
+                        r"|「[^」]{1,80}」|“[^”]{1,80}”|\"[^\"]{1,80}\"")
+
+
+def protected_changes(old: str, new: str) -> tuple[list[str], list[str]]:
+    """Numbers, amounts, dates and quotes removed from or added to a paragraph (borrowed:
+    docs/REFERENCES.md #13). Removing one may be the fix; adding one is never a guess."""
+    norm = lambda m: m.strip().rstrip(".,")
+    a = [norm(m) for m in _PROTECTED.findall(old)]
+    b = [norm(m) for m in _PROTECTED.findall(new)]
+    return [x for x in a if x and x not in b], [x for x in b if x and x not in a]
+
+
 def keep_locked(paras: dict, replaced: dict[str, str], locked: list[str]) -> tuple[dict, list[str]]:
     """D-0002: a paragraph change that loses a sentence the user locked, or wraps it in
     other words, is dropped; an inserted paragraph right after one is flagged."""
@@ -155,6 +168,11 @@ def plan_a(run, backend, writer, lang, risks, article, intake, paras, ledger, se
                          prompt=prompts.plan_prompt(risks, article, intake), schema=PLAN_A,
                          check=check)
     replaced, warn = changes(data)
+    for pid, new in replaced.items():
+        removed, added = protected_changes(paras.get(pid, {}).get("text", ""), new)
+        if removed or added:
+            warn.append(f"{pid}: protected details changed — removed: {', '.join(removed) or '—'};"
+                        f" added: {', '.join(added) or '—'}")
     if rep["final"]:
         # Persona and evasion hits are in what the model wrote: redact its paragraphs only,
         # then drop any change whose redaction took a locked sentence with it.

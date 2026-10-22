@@ -4,7 +4,7 @@ The skills reviewed while designing ant-pr-review (analysed 2026-10-22). For eac
 - what we borrowed, and where it lives in this repo (or "planned" when it waits for a later change);
 - what we left out, and why.
 
-Licences differ (see each section; two have none and one is share-alike), so ideas are borrowed and paraphrased; no text is copied. None of the eleven has multi-model review, per-jurisdiction calls, a red-line veto, code-computed verdicts or an ethics guard. Those parts are original to this project. The upstream ant-peer-review references are in that repo's `docs/REFERENCES.md`.
+Licences differ (see each section; two have none and one is share-alike), so ideas are borrowed and paraphrased; no text is copied. None of the eighteen has multi-model review, per-jurisdiction calls, a red-line veto, code-computed verdicts or an ethics guard. Those parts are original to this project. The upstream ant-peer-review references are in that repo's `docs/REFERENCES.md`.
 
 ## Repo list
 
@@ -21,10 +21,17 @@ Licences differ (see each section; two have none and one is share-alike), so ide
 | 9 | [tsy-fred/declaration-and-media-skill @a4ea626](https://github.com/tsy-fred/declaration-and-media-skill/tree/a4ea626a81fc90e41072e13f833e0ae6f8da8152) | statements and media handling (mainland China, NGOs) | four-part statement; no positive content during the outbreak |
 | 10 | [AshLSnow/pr-crisis @349f344](https://github.com/AshLSnow/pr-crisis/tree/349f34486ca3ce3d80ccc5ab6f81259b748664b0) | harm × spread triage, case library | not everything is a rumour; stop harm first; graded sources |
 | 11 | [ur-grue/autopunk-media-skills — pr-communications @39e119b](https://github.com/ur-grue/autopunk-media-skills/tree/39e119bfef25957223d6c44fccab0329e936d2f6/skills/pr-communications) | crisis package and media-relations skills | holding statement, landmines, embargo agreement, disclosure first |
+| 12 | [ShenyuanNext/wepr-growth-skills — wepr-human-writing @822504b](https://github.com/ShenyuanNext/wepr-growth-skills/tree/822504b8c72003b7efe84cb5c621bf752a3244fe/skills/wepr-human-writing) | natural-Chinese rewriting | no simulated quotes; headline within the facts; counter-example: model-tell scrubbing |
+| 13 | [ShenyuanNext/wepr-growth-skills — wepr-editorial-quality @822504b](https://github.com/ShenyuanNext/wepr-growth-skills/tree/822504b8c72003b7efe84cb5c621bf752a3244fe/skills/wepr-editorial-quality) | editorial audit, minimal rewrite | protected details; never claim a text is AI-written |
+| 14 | [ShenyuanNext/wepr-growth-skills — draft-corporate-content-appeals @822504b](https://github.com/ShenyuanNext/wepr-growth-skills/tree/822504b8c72003b7efe84cb5c621bf752a3244fe/skills/draft-corporate-content-appeals) | takedown appeals (mainland China) | an evidence bar for strong labels; the right route per right |
+| 15 | [ShenyuanNext/wepr-growth-skills — pr-strategy-workbench @822504b](https://github.com/ShenyuanNext/wepr-growth-skills/tree/822504b8c72003b7efe84cb5c621bf752a3244fe/skills/pr-strategy-workbench) | PR strategy and copy review | can the organisation honour it; option ladder; intent is a hypothesis |
+| 16 | [ShenyuanNext/wepr-growth-skills — diagnose-pr-crisis @822504b](https://github.com/ShenyuanNext/wepr-growth-skills/tree/822504b8c72003b7efe84cb5c621bf752a3244fe/skills/diagnose-pr-crisis) | crisis diagnosis | one objective per message; issue states; no golden hours |
+| 17 | [ShenyuanNext/wepr-growth-skills — analyze-brand-strategy @822504b](https://github.com/ShenyuanNext/wepr-growth-skills/tree/822504b8c72003b7efe84cb5c621bf752a3244fe/skills/analyze-brand-strategy) | brand positioning | a claim is not a fact; not found is not absent; five competitor roles |
+| 18 | [ShenyuanNext/wepr-growth-skills — wepr-market-signal-research @822504b](https://github.com/ShenyuanNext/wepr-growth-skills/tree/822504b8c72003b7efe84cb5c621bf752a3244fe/skills/wepr-market-signal-research) | public-signal research | reposts are one source; engagement never summed |
 
-Full commits read: coreyhaines31/marketingskills `e85f3cbc2e4a79bf33b2a12e9bdd9087d414735b`; asgard-ai-platform/skills `4e7f4f8e389847757a5a4236c2f1ed9813359179`; dclacher/pr-crisis-analyzer `eeed137fb9cb792432dc67f84b443c69c58fa0af`; metadatastician/sim-public-relations `c4db8ffb9afbbdbe125a1ff91ad2312ceb863189`; tsy-fred/declaration-and-media-skill `a4ea626a81fc90e41072e13f833e0ae6f8da8152`; AshLSnow/pr-crisis `349f34486ca3ce3d80ccc5ab6f81259b748664b0`; ur-grue/autopunk-media-skills `39e119bfef25957223d6c44fccab0329e936d2f6`.
+Full commits read: coreyhaines31/marketingskills `e85f3cbc2e4a79bf33b2a12e9bdd9087d414735b`; asgard-ai-platform/skills `4e7f4f8e389847757a5a4236c2f1ed9813359179`; dclacher/pr-crisis-analyzer `eeed137fb9cb792432dc67f84b443c69c58fa0af`; metadatastician/sim-public-relations `c4db8ffb9afbbdbe125a1ff91ad2312ceb863189`; tsy-fred/declaration-and-media-skill `a4ea626a81fc90e41072e13f833e0ae6f8da8152`; AshLSnow/pr-crisis `349f34486ca3ce3d80ccc5ab6f81259b748664b0`; ur-grue/autopunk-media-skills `39e119bfef25957223d6c44fccab0329e936d2f6`; ShenyuanNext/wepr-growth-skills `822504b8c72003b7efe84cb5c621bf752a3244fe`.
 
-Licences: #1-6 MIT (root LICENSE at the commit read); #7 none; #8 code MPL-2.0, documents CC-BY-SA-4.0; #9 no licence file (its README says MIT); #10 MIT, concept from a paid column; #11 MIT.
+Licences: #1-6 MIT (root LICENSE at the commit read); #7 none; #8 code MPL-2.0, documents CC-BY-SA-4.0; #9 no licence file (its README says MIT); #10 MIT, concept from a paid column; #11 MIT; #12-18 MIT (an agency's marketing suite, scwepr.com).
 
 ## 1. coreyhaines31 public-relations (@e85f3cb)
 
@@ -202,3 +209,112 @@ MIT.
 | Releasing ahead of the regulator to own the narrative | A race, not a duty. |
 | "$50,120 per violation" | Inflation-adjusted yearly; quick to age. |
 | Self-graded LLM eval scores | Not evidence of quality. |
+
+## 12. ShenyuanNext wepr-human-writing (@822504b)
+
+MIT. A rewriting skill aimed at "降低機械感" (less machine-like); only reader-facing advice is borrowed.
+
+| Borrowed | Where here |
+|---|---|
+| No quote without an authorised source; never simulate an executive speaking | checklist INT-03 (a named person's first person) |
+| The headline goes only as far as the facts; a caveat lower down does not save it | checklist JOU-12 |
+| Main clause first, verbs not nominalisations, one name per thing, the remove-the-brand test, adjectives become evidence; writing for the ear | planned: drafting-mode writing checks |
+
+| Left out | Why |
+|---|---|
+| Sentence-length variance, no dashes or colons, lists of "words models favour" | They target machine-authorship tells, not readers: AI-detection evasion (D-PR-7). The ethics guard now flags such advice. |
+| Forum and 知乎 voice with fictional first-person samples and a planted "search trace" | Client content passed off as an independent voice (LEG-09, D-PR-7); the guard flags "sound like an ordinary user". |
+| Fiction and poetry guidance | Outside a risk review. |
+
+## 13. ShenyuanNext wepr-editorial-quality (@822504b)
+
+MIT.
+
+| Borrowed | Where here |
+|---|---|
+| Never claim or guess that a text is AI-generated; no "AI probability" | checklist THR-05 |
+| Protected details (names, dates, amounts, scope, quotes) checked after an edit | `plans.protected_changes`: plan A's removed and added numbers, amounts and quotes are disclosed (S-plans-034) |
+| Reverse check after a rewrite: facts unchanged, views not strengthened | the re-audit (S-plans-019) and the warning above |
+| Evidence labels: confirmed, sourced but unchecked, judgement, assumption, gap | planned: drafting-mode claim register |
+
+| Left out | Why |
+|---|---|
+| "降低 AI 感" as a use case | Detection evasion is not a quality goal (D-PR-7). |
+
+## 14. ShenyuanNext draft-corporate-content-appeals (@822504b)
+
+MIT.
+
+| Borrowed | Where here |
+|---|---|
+| An evidence bar for "false", "never happened", "malicious", "paid posters"; a denial bounded by the scope checked | checklist LEG-11 |
+| Copyright only for copying, trademark only for source confusion; a signed statement within what was checked | checklist REG-06 |
+| One real, contemporaneous counterexample defeats "the only one" | checklist LEG-02; planned: company profile lookup (competitor models) |
+
+| Left out | Why |
+|---|---|
+| A default closing that asserts malice | Contradicts its own evidence bar; LEG-11. |
+| "If not removed, throttle and drop it from search" for criticism | Gray means; SOC-08, RBT-02. |
+| Asking the platform to check the poster's identity and linked accounts | Identity-seeking (D-PR-10). |
+| Success rates "70%–85%" | Unsourced. |
+
+## 15. ShenyuanNext pr-strategy-workbench (@822504b)
+
+MIT.
+
+| Borrowed | Where here |
+|---|---|
+| Can the organisation honour the message; change the action before the words | checklist INT-06 |
+| Option ladder: none, monitor, internal correction, targeted, public; commitment and reversibility of each | checklist RSP-01 |
+| Editorial choices, possible effect and intent kept apart; timing or tone does not prove paid placement | checklist THR-05 |
+| "Decision required" (publish, revise, delay, respond, monitor, investigate, withdraw, escalate) | planned: drafting-mode fixed questions |
+| Claims: safe to say publicly, internal only, not supportable, needs validation | planned: drafting-mode claim register |
+| Pre-launch sort: change the action, prepare the answer, monitor | planned: report risk grouping |
+
+| Left out | Why |
+|---|---|
+| Proposal scope, KPIs, SLAs, 30/60/90 budgets | Agency sales material. |
+
+## 16. ShenyuanNext diagnose-pr-crisis (@822504b)
+
+MIT.
+
+| Borrowed | Where here |
+|---|---|
+| Never mix clarification, apology, rebuttal and promotion in one message | checklist SOC-10 |
+| Insufficient spread evidence is not "no risk" | checklist RSP-05 (already); planned: report issue state |
+| State-change triggers (new facts, more affected, a reusable label, cross-platform, institutions, our own reply); no universal golden hours | planned: timeline trigger kinds |
+
+| Left out | Why |
+|---|---|
+| Fixed 0–2h / 2–24h buckets | Contradicts its own "no golden hours". |
+| "Coordinated attack" as a class with no evidence bar | THR-02 asks for signs in the text only. |
+
+## 17. ShenyuanNext analyze-brand-strategy (@822504b)
+
+MIT.
+
+| Borrowed | Where here |
+|---|---|
+| An official page proves a claim, not a market position; a search result or AI summary is a lead | planned: company profile lookup (source labels) |
+| "Not found" is not "does not exist" | planned: company profile lookup (scoped absence) |
+| Five competitor roles: direct, indirect, workaround, inaction, mental benchmark | planned: company profile lookup |
+| Different slogans are not different strategies; at most three blocking questions | planned: drafting mode |
+
+| Left out | Why |
+|---|---|
+| Positioning formula, advantage tests, case patterns | Brand strategy, not risk. |
+
+## 18. ShenyuanNext wepr-market-signal-research (@822504b)
+
+MIT.
+
+| Borrowed | Where here |
+|---|---|
+| A public reaction inferred from too small a sample is an early lead | checklist JOU-10 |
+| Reposts, syndication and aggregators count as one source; engagement per platform, never summed | planned: company profile lookup and context scan |
+
+| Left out | Why |
+|---|---|
+| Author type per sample; usernames left out only "by default" | We never record the people behind accounts (D-PR-10). |
+| Mining public language for copy | Marketing, not risk. |
