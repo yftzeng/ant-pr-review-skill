@@ -457,5 +457,6 @@
   "side.legislature": "議會",
   "plans.t.warn_promo_first": "在協助受影響者之前就宣傳",
   "plans.t.warn_before_filing": "早於或與交易所／主管機關公告同時",
-  "plans.t.warn_unverified": "在查證未完成時就對外：{ids}"
+  "plans.t.warn_unverified": "在查證未完成時就對外：{ids}",
+  "plans.t.reason.poll_blackout": "在民調封關期內發布民調"
 }

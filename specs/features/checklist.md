@@ -82,6 +82,10 @@ Feature: checklist
   Scenario: the wepr borrowed items are in the checklist and credited
     When  the checklist loads
     Then  LEG-11, REG-06, JOU-12, SOC-10, INT-06 and THR-05 exist; LEG-02, RSP-01, JOU-10 and INT-03 carry the amendments; each source is in docs/REFERENCES.md with its commit
+  @S-checklist-017
+  Scenario: the news and crisis borrowed items are in the checklist, packs and parties
+    When  the checklist, the tw and cn packs and the parties load
+    Then  EXP-05, LEG-12, LEG-13, JOU-13, JOU-14, POL-04, INT-07, RSP-06 and SOC-11 exist; tw lists the Anti-Infiltration Act, the Political Donations Act, Constitution art. 73 and Code of Criminal Procedure art. 245 and a 2026 poll blackout; cn lists Maimai; the channel party names franchisees; each source is in docs/REFERENCES.md
 ```
 
 ## Revisions
@@ -95,3 +99,4 @@ Feature: checklist
 - 2026-10-22 · ~S-checklist-007 dated sensitive dates (elections) · decision: D-0003
 - 2026-10-22 · +S-checklist-015 borrowed items from five more repos (user: 現在併進去) · decision: D-0003
 - 2026-10-22 · +S-checklist-016 items borrowed from wepr-growth-skills (user: 現在併進去) · decision: D-0003
+- 2026-10-22 · +S-checklist-017 items from med-political, med-news-reporter, ziyu, crisis-pr-response (user: 現在併進去) · decision: D-0003

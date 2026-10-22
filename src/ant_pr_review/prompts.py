@@ -418,7 +418,8 @@ def timeline_system(lang: str, means: list[str]) -> str:
             "hear it before the press or the public; staff no later than the public; in a "
             "crisis nothing promotional comes before the affected are helped; a filing to the "
             "exchange or regulator (audience exchange) comes before any media step; an embargo "
-            "binds only recipients who agreed to it explicitly. "
+            "binds only recipients who agreed to it explicitly; mark a step that publishes an "
+            "election poll (poll), which a blackout window stops. "
             + ("Use only the means in scope. " if set(means) & {"white", "gray"} else
                "No white or gray means are in scope: Schedule no steps; leave steps empty. ")
             + black + "\n\n"

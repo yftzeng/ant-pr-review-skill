@@ -208,6 +208,11 @@ Feature: plans
   Scenario: advice to evade AI detection or to sound like an independent user is a hit
     When  the guard reads "Humanize the copy so it passes AI detection", "降低AI率，去AI味", "make it sound like an ordinary customer" and "像普通網友一樣留言"
     Then  each is a hit; "Never use tools that bypass AI detection" and "we do not claim the text is AI-generated" are not
+  @S-plans-036
+  Scenario: a step that publishes an election poll inside a blackout is not scheduled
+    Given tw's 2026 poll blackout from 11-18 to 11-28 and publish date 2026-11-15, with a poll step at T+5d and another at T+1d
+    When  plans run
+    Then  the T+5d poll step is dropped and disclosed as inside the blackout, and the T+1d step stays
 ```
 
 ## Must NOT
@@ -224,3 +229,4 @@ Feature: plans
 - 2026-10-22 · ~S-plans-029, 030 from the tier-3 review · decision: D-0003
 - 2026-10-22 · +S-plans-031..033 harm first, disclosure first, stage the launch (borrowed) · decision: D-0003
 - 2026-10-22 · +S-plans-034..035 protection-list diff, AI-detection and independent-voice evasion (borrowed from wepr; ethics guard D-PR-7) · decision: D-0003
+- 2026-10-22 · +S-plans-036 poll blackout (borrowed from med-political) · decision: D-0003

@@ -5,3 +5,6 @@ build/
 dist/
 .venv/
 /workspaces/
+
+# the user's own reference material: local only, never committed
+docs/references/

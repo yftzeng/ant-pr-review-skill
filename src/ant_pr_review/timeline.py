@@ -98,6 +98,12 @@ def _order_warnings(kept: list[dict], posture: str, t: T, unverified: list[str])
                 s["warnings"].append(t("plans.t.warn_staff_late"))
 
 
+def _blackouts(code: str) -> list[dict]:
+    from .catalog import JURISDICTIONS, pack
+    return [b for b in pack(code).get("blackout", []) if b.get("kind") == "poll"] \
+        if code in JURISDICTIONS else []
+
+
 def _clean(text, cats: tuple[str, ...] = ("evasion", "persona")) -> str:
     s = str(text or "")
     return ethics.redact(s, ethics.scan_text(s, cats))
@@ -141,13 +147,23 @@ def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict
             continue
         kept.append({**{k: str(s.get(k, "")) for k in STEP_FIELDS}, "order": n,
                      "audience": str(s.get("audience", "")), "paid": bool(s.get("paid")),
-                     "promotional": bool(s.get("promotional")),
+                     "promotional": bool(s.get("promotional")), "poll": bool(s.get("poll")),
                      "day": _day(s.get("day")),
                      "time": s.get("time") if TIME_RE.match(str(s.get("time", ""))) else "",
                      "category": cat, "writer_category": wcat, "reviewer_category": ccat,
                      "reviewer_reason": _clean(lab.get("reason", ""))})
     kept.sort(key=lambda s: (s["day"], s["time"] or "99:99", s["order"]))
     t0 = _t0(publish_at)
+    if t0:  # a poll inside a jurisdiction's publication blackout is not scheduled
+        blocked = []
+        for s in kept:
+            when = (t0 + timedelta(days=s["day"])).isoformat()
+            if s.get("poll") and any(b["start"] <= when <= b["end"]
+                                     for j in jurisdictions for b in _blackouts(j)):
+                blocked.append(s)
+                dropped.append({"action": s["action"], "category": s["category"],
+                                "reason": "poll_blackout"})
+        kept = [s for s in kept if s not in blocked]
     for n, s in enumerate(kept, 1):
         s["n"] = n
         s["date"] = (t0 + timedelta(days=s["day"])).isoformat() if t0 else ""

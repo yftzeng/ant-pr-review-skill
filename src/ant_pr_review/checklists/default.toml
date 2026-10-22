@@ -554,6 +554,73 @@ directions = ["inbound"]
 dimension = "provability"
 text = "For a hostile article or post: separate the editorial choices we can point to (ordering, sources, omitted context), the effect they may have, and any intent hypothesis. Is any claim of paid placement, sponsorship, coordination or AI generation backed by evidence beyond timing, tone, a beneficiary or reliance on one source? Never estimate whether it was AI-written, and never identify the people behind it."
 
+[[item]]
+id = "EXP-05"
+lens = "target"
+directions = ["outbound", "operation"]
+postures = ["expose"]
+dimension = "provability"
+text = "Right of reply: before publication, has each allegation been put to the named party in writing with a reasonable time to answer, are the attempts recorded (date, channel), and does the text carry their answer or say plainly that they declined or did not reply? Does a claim from the party's adversary have independent corroboration?"
+
+[[item]]
+id = "LEG-13"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+dimension = "provability"
+red_line = "fabrication_about_party"
+text = "Repeated accusations: does it restate as established fact an accusation made by someone else (a legislator in the chamber, a party or candidate, a media report, an anonymous source, an investigation before charge or judgment)? A speaker's privilege, such as a legislator's immunity, does not pass to us: attribute it ('X alleged'), say 'suspected' or 'accused' until a judgment, and respect the secrecy of an ongoing investigation in this jurisdiction."
+
+[[item]]
+id = "JOU-13"
+lens = "journalist"
+directions = ["outbound", "operation"]
+dimension = "provability"
+text = "Polls and surveys: does every poll or survey we cite (ours or another's) give the sample size, margin of error, method, who commissioned and who ran it, and the fieldwork dates; does it avoid calling a gap within the margin of error a lead, or a snapshot a forecast; is a sponsor with a stake named; and does any election poll fall in this jurisdiction's publication blackout?"
+
+[[item]]
+id = "POL-04"
+lens = "stakeholders"
+directions = ["outbound", "inbound"]
+dimension = "backlash"
+text = "Neutrality (na when our identity is a political party): for an organisation that means to stay out of politics, does the wording take a side through loaded labels for parties, people or policies, verbs that trust one side and doubt the other ('explained' against 'claimed'), or naming only one party? Swap the parties' names: does the sentence still read as fair? Quote what fails. Assess only; never rewrite partisan content to look neutral."
+
+[[item]]
+id = "JOU-14"
+lens = "journalist"
+directions = ["outbound", "inbound"]
+dimension = "provability"
+text = "Done or planned: does the text present an action as taken (paused, recalled, refunded, reported to the regulator, independent review appointed) when it is only proposed, pending approval or partial? Each action should read as done, decided with a date, or under consideration, matching our records."
+
+[[item]]
+id = "INT-07"
+lens = "internal"
+directions = ["outbound"]
+dimension = "stakeholder"
+text = "Bounded commitments: does it promise 'full compensation', 'unconditional refunds', 'we bear all losses' or a company-wide halt beyond a scope, budget and authority already confirmed? Does it say what continues as normal (unaffected batches, orders, stores) so customers and partners do not panic, and does it avoid shifting the cost onto suppliers, dealers, franchisees or staff?"
+
+[[item]]
+id = "LEG-12"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+dimension = "legal"
+red_line = "privacy_doxxing"
+text = "Vulnerable people: does it identify, or give details that together identify, a minor, a victim of sexual violence, or a person in a suspected suicide or self-harm case (name, photo, school, workplace, address, relatives), which this jurisdiction may forbid? Where suicide or self-harm is mentioned, does it avoid method and location detail and give help-line information, following the WHO media guidelines?"
+
+[[item]]
+id = "RSP-06"
+lens = "response"
+directions = ["inbound"]
+dimension = "legal"
+text = "Crimes against people: does the hostile activity include threats of violence, extortion ('pay or we publish'), a leak of a home address or other personal data leading to harassment, or attacks on a minor? Then the first step is safety, a police report and a platform report with the preserved content, not a public statement or a lawyer's letter. Leave identifying the people behind accounts to the police and platforms."
+
+[[item]]
+id = "SOC-11"
+lens = "social"
+directions = ["outbound", "inbound"]
+postures = ["clarify_apologize", "rebut"]
+dimension = "backlash"
+text = "Expectation gap: when people are upset because a product or service differed from what they were led to expect (freshly made, a real discount, a human answer), does the reply answer with a legal or technical definition ('complies with regulations', 'by industry definition this is not X') instead of addressing the gap and what we disclose from now on?"
+
 # ---- the stakeholder map (D-0003): one item per group, per jurisdiction ----
 
 [[item]]

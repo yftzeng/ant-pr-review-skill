@@ -58,6 +58,26 @@ summary = "Rumours to defeat a candidate, poll publication blackout before votin
 ref = "Budget Act art. 62-1 (預算法)"
 summary = "Government agencies may not buy embedded marketing (置入性行銷)."
 
+[[law]]
+ref = "Anti-Infiltration Act (反滲透法, 2020)"
+summary = "Political donations, campaigning, lobbying, disrupting assemblies or spreading election disinformation on the instruction, commission or funding of an infiltration source are offences."
+
+[[law]]
+ref = "Political Donations Act (政治獻金法)"
+summary = "Who may give and receive political donations; foreign, mainland-Chinese and certain other donors are barred; receipts and spending are filed and published."
+
+[[law]]
+ref = "Constitution art. 73 (立法委員言論免責)"
+summary = "Legislators are not liable outside the Legislative Yuan for what they say there; repeating their accusations carries no such protection."
+
+[[law]]
+ref = "Code of Criminal Procedure art. 245 (偵查不公開)"
+summary = "Investigations are not public; disclosures about an ongoing case can prejudice it and the parties."
+
+[[law]]
+ref = "Child and Youth Welfare and Rights Protection Act; Sexual Assault Crime Prevention Act (identity of minors and victims; article numbers to verify)"
+summary = "Media and others may not publish information that identifies certain minors or sexual-assault victims."
+
 [[sensitive_date]]
 md = "02-28"
 note = "228 Peace Memorial Day"
@@ -74,6 +94,14 @@ note = "921 earthquake anniversary"
 md = "11-28"
 year = 2026
 note = "2026 local elections (九合一選舉); campaign and poll rules apply in the run-up"
+
+# Publication blackouts (D-0003): a timeline step that publishes a poll inside one is not
+# scheduled. Unverified; check the statute (選罷法 art. 53: from 10 days before voting day).
+[[blackout]]
+kind = "poll"
+start = "2026-11-18"
+end = "2026-11-28"
+note = "election poll publication blackout before the 2026 local elections"
 
 # Political parties (D-0003). Sides change with elections: check as_of; unverified.
 [[party]]

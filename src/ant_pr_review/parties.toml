@@ -62,8 +62,8 @@ viewpoint = "Can I defend the brand with this, or does it make me look foolish?"
 [[party]]
 key = "channel"
 group = "commerce"
-text = "distributors, dealers and the supply chain up and down"
-concerns = "returns, inventory write-downs, getting paid on time, protests at stores"
+text = "distributors, dealers, franchisees and the supply chain up and down"
+concerns = "returns, inventory write-downs, getting paid on time, protests at stores, franchisees blamed for the brand's own rules"
 viewpoint = "Do we pull the product as a precaution, and can my store staff use this statement to answer customers?"
 
 [[party]]

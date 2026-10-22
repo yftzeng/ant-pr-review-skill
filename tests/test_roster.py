@@ -96,7 +96,7 @@ def test_strings_follow_language_and_every_key_exists():
                                             "pending")]
                + [f"report.stage.{x}" for x in "ABCTX"]
                + [f"plans.t.reason.{x}" for x in ("outside_means", "not_reviewed", "black", "too_many",
-                                                  "ethics_guard")]
+                                                  "ethics_guard", "poll_blackout")]
                + [f"verdict.{x}" for x in ("go", "conditional", "escalate", "no_go")]
                + [f"item.{x}" for x in ("pass", "concern", "fail", "na", "unanswered")]
                + [f"context.{x}" for x in ("done", "skipped", "embargo", "no_search_backend")]

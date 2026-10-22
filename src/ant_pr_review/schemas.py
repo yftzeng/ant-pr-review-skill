@@ -203,7 +203,7 @@ TIMELINE = obj({
     "steps": arr(obj({"day": {"type": "integer"}, "time": STR, "action": STR,
                       "category": enum(["white", "gray", "black"]), "channel": STR, "notes": STR,
                       "trigger": STR, "stop": STR, "audience": enum(AUDIENCES),
-                      "paid": BOOL, "promotional": BOOL})),
+                      "paid": BOOL, "promotional": BOOL, "poll": BOOL})),
     "excluded": arr(obj({"tactic": STR, "why": STR, "law": STR, "exposure": STR, "watch_for": STR,
                          "lawful_alternative": STR})),
 })

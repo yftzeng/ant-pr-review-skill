@@ -457,5 +457,6 @@
   "side.legislature": "legislature",
   "plans.t.warn_promo_first": "promotion before the affected parties are helped",
   "plans.t.warn_before_filing": "comes before (or with) the exchange or regulator filing",
-  "plans.t.warn_unverified": "goes public while claims are unverified: {ids}"
+  "plans.t.warn_unverified": "goes public while claims are unverified: {ids}",
+  "plans.t.reason.poll_blackout": "publishes a poll inside a publication blackout"
 }

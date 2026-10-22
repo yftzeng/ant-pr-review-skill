@@ -4,7 +4,7 @@ The skills reviewed while designing ant-pr-review (analysed 2026-10-22). For eac
 - what we borrowed, and where it lives in this repo (or "planned" when it waits for a later change);
 - what we left out, and why.
 
-Licences differ (see each section; two have none and one is share-alike), so ideas are borrowed and paraphrased; no text is copied. None of the eighteen has multi-model review, per-jurisdiction calls, a red-line veto, code-computed verdicts or an ethics guard. Those parts are original to this project. The upstream ant-peer-review references are in that repo's `docs/REFERENCES.md`.
+Licences differ (see each section; two have none and one is share-alike), so ideas are borrowed and paraphrased; no text is copied. None of the twenty-two has multi-model review, per-jurisdiction calls, a red-line veto, code-computed verdicts or an ethics guard. Those parts are original to this project. The upstream ant-peer-review references are in that repo's `docs/REFERENCES.md`.
 
 ## Repo list
 
@@ -28,10 +28,14 @@ Licences differ (see each section; two have none and one is share-alike), so ide
 | 16 | [ShenyuanNext/wepr-growth-skills — diagnose-pr-crisis @822504b](https://github.com/ShenyuanNext/wepr-growth-skills/tree/822504b8c72003b7efe84cb5c621bf752a3244fe/skills/diagnose-pr-crisis) | crisis diagnosis | one objective per message; issue states; no golden hours |
 | 17 | [ShenyuanNext/wepr-growth-skills — analyze-brand-strategy @822504b](https://github.com/ShenyuanNext/wepr-growth-skills/tree/822504b8c72003b7efe84cb5c621bf752a3244fe/skills/analyze-brand-strategy) | brand positioning | a claim is not a fact; not found is not absent; five competitor roles |
 | 18 | [ShenyuanNext/wepr-growth-skills — wepr-market-signal-research @822504b](https://github.com/ShenyuanNext/wepr-growth-skills/tree/822504b8c72003b7efe84cb5c621bf752a3244fe/skills/wepr-market-signal-research) | public-signal research | reposts are one source; engagement never summed |
+| 19 | [asgard-ai-platform/skills — med-political @4e7f4f8](https://github.com/asgard-ai-platform/skills/tree/4e7f4f8e389847757a5a4236c2f1ed9813359179/med-political) | political news reporting (Taiwan) | polls need five facts; immunity does not pass on; the swap test |
+| 20 | [asgard-ai-platform/skills — med-news-reporter @4e7f4f8](https://github.com/asgard-ai-platform/skills/tree/4e7f4f8e389847757a5a4236c2f1ed9813359179/med-news-reporter) | newsroom writing workflow (Taiwan) | no unsourced facts; right of reply; vulnerable people |
+| 21 | [qcmcbw7qm2-svg/ziyu @fa893b3](https://github.com/qcmcbw7qm2-svg/ziyu/tree/fa893b32eb2148cb41a09dcfd9255c9ac13ae70e) | crisis playbooks by type (mainland China) | crimes go to the police; counter-examples: tracing posters, seeding comments |
+| 22 | [HachikoJ/crisis-pr-response @9fabde2](https://github.com/HachikoJ/crisis-pr-response/tree/9fabde2f3d4630be5693d582fb138a8bddd07536) | crisis statement generator (mainland China) | done vs planned; bounded commitments; expectation gaps |
 
-Full commits read: coreyhaines31/marketingskills `e85f3cbc2e4a79bf33b2a12e9bdd9087d414735b`; asgard-ai-platform/skills `4e7f4f8e389847757a5a4236c2f1ed9813359179`; dclacher/pr-crisis-analyzer `eeed137fb9cb792432dc67f84b443c69c58fa0af`; metadatastician/sim-public-relations `c4db8ffb9afbbdbe125a1ff91ad2312ceb863189`; tsy-fred/declaration-and-media-skill `a4ea626a81fc90e41072e13f833e0ae6f8da8152`; AshLSnow/pr-crisis `349f34486ca3ce3d80ccc5ab6f81259b748664b0`; ur-grue/autopunk-media-skills `39e119bfef25957223d6c44fccab0329e936d2f6`; ShenyuanNext/wepr-growth-skills `822504b8c72003b7efe84cb5c621bf752a3244fe`.
+Full commits read: coreyhaines31/marketingskills `e85f3cbc2e4a79bf33b2a12e9bdd9087d414735b`; asgard-ai-platform/skills `4e7f4f8e389847757a5a4236c2f1ed9813359179`; dclacher/pr-crisis-analyzer `eeed137fb9cb792432dc67f84b443c69c58fa0af`; metadatastician/sim-public-relations `c4db8ffb9afbbdbe125a1ff91ad2312ceb863189`; tsy-fred/declaration-and-media-skill `a4ea626a81fc90e41072e13f833e0ae6f8da8152`; AshLSnow/pr-crisis `349f34486ca3ce3d80ccc5ab6f81259b748664b0`; ur-grue/autopunk-media-skills `39e119bfef25957223d6c44fccab0329e936d2f6`; ShenyuanNext/wepr-growth-skills `822504b8c72003b7efe84cb5c621bf752a3244fe`; qcmcbw7qm2-svg/ziyu `fa893b32eb2148cb41a09dcfd9255c9ac13ae70e`; HachikoJ/crisis-pr-response `9fabde2f3d4630be5693d582fb138a8bddd07536` (asgard #19-20 at the same `4e7f4f8`; main had not moved).
 
-Licences: #1-6 MIT (root LICENSE at the commit read); #7 none; #8 code MPL-2.0, documents CC-BY-SA-4.0; #9 no licence file (its README says MIT); #10 MIT, concept from a paid column; #11 MIT; #12-18 MIT (an agency's marketing suite, scwepr.com).
+Licences: #1-6 MIT (root LICENSE at the commit read); #7 none; #8 code MPL-2.0, documents CC-BY-SA-4.0; #9 no licence file (its README says MIT); #10 MIT, concept from a paid column; #11 MIT; #12-18 MIT (an agency's marketing suite, scwepr.com); #19-20 MIT (as #2-6); #21 MIT, no holder named, its knowledge notes paraphrase a published book (田辉《危机公关》); #22 MIT, its casebook summarised from Wikipedia.
 
 ## 1. coreyhaines31 public-relations (@e85f3cb)
 
@@ -318,3 +322,80 @@ MIT.
 |---|---|
 | Author type per sample; usernames left out only "by default" | We never record the people behind accounts (D-PR-10). |
 | Mining public language for copy | Marketing, not risk. |
+
+## 19. asgard med-political (@4e7f4f8)
+
+MIT. Only risk assessment is borrowed; nothing that writes political persuasion.
+
+| Borrowed | Where here |
+|---|---|
+| A cited poll gives sample, margin of error, method, sponsor and dates; a gap within the margin is no lead | checklist JOU-13 |
+| Poll blackout from 10 days before voting day (選罷法 art. 53) | `jurisdictions/tw.toml` `[[blackout]]`; `timeline.build` drops a poll step inside it (S-plans-036) |
+| A legislator's immunity (Constitution art. 73) does not cover those who repeat the accusation | checklist LEG-13; `tw.toml` law |
+| Swap the parties' names to test a sentence's fairness; loaded labels and unequal verbs | checklist POL-04 (detection only) |
+| Anti-Infiltration Act and Political Donations Act | `tw.toml` laws (unverified) |
+| A figure carries its period, scope and source | planned: drafting-mode claim register |
+
+| Left out | Why |
+|---|---|
+| Stance tags for named politicians; comparing donation filings with campaign spending | Opposition research on people. |
+| Think tanks labelled by political lean | Contestable; not ours to assert. |
+| A neutral-wording replacement table and balanced rewrites, as a rewriting tool | Would make partisan messaging read as neutral; we only detect. |
+| Beat lists, equal-time coverage, political profiles | Journalism craft or profiling. |
+| "Gap > 6%" at ±3%; a "phone 30%+" response rate as a standard | Oversimplified or unsourced. |
+
+## 20. asgard med-news-reporter (@4e7f4f8)
+
+MIT.
+
+| Borrowed | Where here |
+|---|---|
+| Put an accusation to its target, and say so when there is no answer | checklist EXP-05 |
+| Minors, sexual-violence victims and suicide: no identifying details; WHO guidance | checklist LEG-12; `tw.toml` law |
+| Presumption of innocence; investigation secrecy (偵查不公開) | checklist LEG-13; `tw.toml` law (Code of Criminal Procedure art. 245) |
+| No unsourced facts: a gap stays a "[to verify]" placeholder | planned: drafting mode (export blocked while placeholders remain) |
+| Stop and ask on contradictions, a single source for an accusation, sensitive subjects | planned: drafting-mode fixed questions |
+
+| Left out | Why |
+|---|---|
+| Account history and bot signs; the user ID when quoting posts | Profiles the people behind accounts (D-PR-10). |
+| Several AI detectors plus judgement | Conflicts with THR-05. |
+| Verification-time ratios | Unsourced. |
+
+## 21. qcmcbw7qm2-svg ziyu (@fa893b3)
+
+MIT, no holder named; the knowledge notes paraphrase a published book: ideas only.
+
+| Borrowed | Where here |
+|---|---|
+| Threats, extortion and doxxing go to the police, not a lawyer's letter | checklist RSP-06 |
+| Never blame "one franchisee" | `parties.toml` channel (franchisees); checklist INT-07 |
+| 脉脉 (Maimai) as a staff-leak platform | `jurisdictions/cn.toml` platforms |
+| Progress reports on set days after the first statement | planned: timeline rule (each promised update has a step) |
+
+| Left out | Why |
+|---|---|
+| Trace the posters' links and expose who is behind them; the accused's real name in the legal brief | D-PR-10. |
+| Claim the top comments early, keep posting rebuttal links, recruit "neutral" creators, encourage happy customers to post | Gray or undisclosed amplification (LEG-03, PRO-01). |
+| "Dilute with positive news" | SOC-10 and the harm-first timeline rule. |
+| Severity thresholds, "3-5x", "48-72 hours", a Tylenol "95%" | Unsourced. |
+| Civil Code art. 1025 as "commercial disparagement" | Wrong: it is the news-reporting exemption. |
+| A scan script that runs an unattended agent with shell and write access over web results | Prompt-injection risk; never run. |
+
+## 22. HachikoJ crisis-pr-response (@9fabde2)
+
+MIT.
+
+| Borrowed | Where here |
+|---|---|
+| A proposed pause is not written as a done pause | checklist JOU-14; planned: drafting-mode claim register (action status) |
+| No unbounded compensation; say what continues as normal; suppliers are no scapegoat | checklist INT-07 |
+| Answering an expectation gap with a definition ("complies with regulations") | checklist SOC-11 |
+| Open with the affected people's strongest emotion | planned: drafting-mode fixed question |
+| Strip placeholders and internal notes from the deliverable | planned: report check on plan A and the C kit |
+
+| Left out | Why |
+|---|---|
+| Satire modes; trending headlines, screenshot hooks, comeback replies, remix lines | Viral engineering, not risk review. |
+| Implicit triggering ("do not wait to be named"); a PDF by default | Instructions aimed at agents; not followed. |
+| The casebook narratives | Paraphrased from Wikipedia; claims about real companies stay out of the checklist. |

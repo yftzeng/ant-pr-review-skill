@@ -1,0 +1,6 @@
+@@ src/ant_pr_review/timeline.py
+-             if s.get("poll") and any(b["start"] <= when <= b["end"]
++             if False and any(b["start"] <= when <= b["end"]
+@@ src/ant_pr_review/timeline.py
+-     return [b for b in pack(code).get("blackout", []) if b.get("kind") == "poll"] \
++     return [b for b in pack(code).get("blackout", []) if b.get("kind") == "none"] \
