@@ -133,8 +133,8 @@ Feature: source acquisition
     Then  it waited 2 seconds once and succeeded; a server that keeps answering 503 fails as "http_status" after 2 retries
 
   @S-source-acquisition-021
-  Scenario: robots, a site-profile block and internal addresses never fall back
-    When  a fetch fails for robots, site_profile_blocked or blocked_address
+  Scenario: robots, a site-profile block, internal addresses and a login or paywall never fall back
+    When  a fetch fails for robots, site_profile_blocked, blocked_address or login_or_paywall
     Then  no browser, AMP or archive fetch is tried and the item fails with that reason
 
   @S-source-acquisition-022
@@ -171,6 +171,87 @@ Feature: source acquisition
     Given site profile {"news.example": {"needs_js": true}}
     When  a page of news.example is fetched
     Then  it is rendered even though the HTML is not thin, and the second crawl lesson for a domain offers "needs_js"
+  @S-source-acquisition-028
+  Scenario: a challenge page served with HTTP 200 is a failure, a normal page with a challenge script is not
+    Given a 200 page "Just a moment..." with cf-chl markers and almost no text, and a long article page that embeds /cdn-cgi/challenge-platform
+    When  each is fetched and converted
+    Then  the first fails with reason "blocked_by_challenge" and the second is read normally
+
+  @S-source-acquisition-029
+  Scenario: soft 404s, login or paywalls and empty pages are failures with a reason
+    Given 200 pages titled "404 Not Found", asking to "Sign in to continue reading", and with no text
+    When  each is fetched
+    Then  they fail with reasons "soft_404", "login_or_paywall" and "empty_page"
+
+  @S-source-acquisition-030
+  Scenario: secrets in URL query strings never reach the manifest, the report or the screen
+    Given a target "https://ex.example/feed?token=abc123&page=2"
+    When  the run's sources phase and report are written
+    Then  manifest, report and progress output show "token=REDACTED&page=2" and never "abc123"
+
+  @S-source-acquisition-031
+  Scenario: requests to the same host are spaced out
+    Given a crawler with a minimum interval of 0.3 seconds per host
+    When  robots.txt and a page are fetched from one host
+    Then  the second request starts at least 0.3 seconds after the first
+
+  @S-source-acquisition-032
+  Scenario: a hostile Retry-After fails only that fetch
+    When  a server answers 429 with "Retry-After: ²"
+    Then  the default backoff is used and the run does not crash
+
+  @S-source-acquisition-033
+  Scenario: 401, 402 and 451 never fall back; 403 may use the archive
+    Given archive snapshots of four URLs answering 401, 402, 451 and 403
+    When  each is fetched
+    Then  the first three fail with their status and no archive request, and the 403 one is read from the archive
+
+  @S-source-acquisition-034
+  Scenario: a URL carrying secrets is never sent to the archive
+    Given "https://news.example/story?token=SECRET" fails with 503
+    When  it is fetched
+    Then  no archive request is made and nothing stored contains "SECRET"
+
+  @S-source-acquisition-035
+  Scenario: a paywall seen by the browser or on the AMP page stops the chain
+    Given a thin page whose rendered or AMP version asks to subscribe, and an archive snapshot
+    When  it is fetched
+    Then  it fails as "login_or_paywall" and the archive is not requested
+
+  @S-source-acquisition-036
+  Scenario: where the browser lands is checked, recorded, and sends our User-Agent
+    Given a thin page whose browser render ends on a robots-denied URL, and another that ends on an allowed one
+    When  each is fetched
+    Then  the first render is discarded, the second document records the URL it landed on, and the browser was given our User-Agent
+
+  @S-source-acquisition-037
+  Scenario: an archive copy replaces a live page only when clearly longer
+    Given a live page of 150 characters and an archive copy of 250
+    When  it is fetched
+    Then  the live page is kept with the thin-page warning; an archive copy of 400 characters replaces it
+
+  @S-source-acquisition-038
+  Scenario: retried items keep raw files that match their recorded hash
+    Given an item whose first attempt was an empty page and whose retry serves the full article
+    When  the item is fetched twice
+    Then  the kept document's sha256 equals the bytes of its own raw file, and rejected candidates leave no raw file
+
+  @S-source-acquisition-039
+  Scenario: an unreadable archive answer is ignored and the first reason kept
+    Given a 503 page whose archive answers a timestamp "latest", or a snapshot that cannot be converted
+    When  it is fetched
+    Then  the item fails with "http_status", not with an archive or conversion error
+
+  @S-source-acquisition-040
+  Scenario: --no-render turns the browser off, and a contact detail joins our User-Agent
+    When  a run starts with --no-render, and the user promotes a crawl lesson with the contact "ed@acme.example"
+    Then  no renderer is used, and the site profile's user agent is ours followed by that contact
+
+  @S-source-acquisition-041
+  Scenario: in a real browser, redirects, popups and WebSockets cannot reach an internal address
+    Given Chromium and a page that loads an image redirecting to 127.0.0.1, opens a popup to 127.0.0.1 and redirects another image within the allowed host
+    When  the page is rendered
+    Then  the article is rendered, nothing reaches 127.0.0.1, and the allowed redirect is followed
 ```
 
 ## Must NOT
@@ -185,3 +266,4 @@ Feature: source acquisition
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5; kept unchanged · decision: D-PR-1
 - 2026-10-22 · +S-source-acquisition-020..027 +N-source-acquisition-002 · decision: D-PR-15 -- user: fallback order when a fetch fails or is blocked
 - 2026-10-22 · ~S-source-acquisition-009 a profile user agent must still name ant-pr-review · decision: D-PR-15
+- 2026-10-22 · +S-source-acquisition-028..041 ~S-source-acquisition-021 · decision: D-0001 -- synced with ant-peer-review 3af9252: its page-quality checks, URL redaction and pacing (there S-020..023), and the fixes from the tier-3 review (sonnet, fable) of the same fallback code

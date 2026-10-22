@@ -20,3 +20,11 @@ class ProbeBackend(Backend):
 @pytest.fixture
 def store(tmp_path):
     return Store(tmp_path / "home")
+
+
+@pytest.fixture(autouse=True)
+def _no_politeness_delay(monkeypatch):
+    """Tests talk to local servers; the 1 s per-host politeness pause only slows them."""
+    import ant_pr_review.sources.crawler as crawler
+    if hasattr(crawler, "DEFAULT_MIN_INTERVAL"):
+        monkeypatch.setattr(crawler, "DEFAULT_MIN_INTERVAL", 0.0)

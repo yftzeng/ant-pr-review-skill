@@ -108,11 +108,12 @@ def paste_texts(run: Run, ctx: Ctx, items: list[dict]) -> None:
     """Replace each failed URL target by text the user pastes; the URL stays its origin."""
     intake = read_json(run.path("00-intake.json"))
     for it in items:
+        url = intake["targets"][it["item"] - 1]["value"]  # the manifest shows it redacted
         ctx.say(question(ctx.t("sources.paste_for", url=it["value"])))
         lines = collect_lines(ctx.io, ctx.t, prompt(""), lambda s: "")
         if lines:
             intake["targets"][it["item"] - 1] = {"kind": "text", "value": "\n".join(lines),
-                                                 "pasted_for": it["value"]}
+                                                 "pasted_for": url}
     write_json(run.path("00-intake.json"), intake)
 
 

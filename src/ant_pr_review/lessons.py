@@ -135,6 +135,9 @@ def promote_if_repeated(io, t, store: Store, lid: str, area: str) -> dict | None
         return set_site_profile(store, domain, needs_js=True, note=f"lessons {ids}")
     if act == "ua":
         ua = io.ask(t("lessons.ua_prompt") + " ").strip()
+        if ua and "ant-pr-review" not in ua.lower():
+            from .sources.crawler import DEFAULT_UA
+            ua = f"{DEFAULT_UA} {ua}"  # contact details join our UA, never replace it (D-PR-15)
         if ua:
             return set_site_profile(store, domain, user_agent=ua, note=f"lessons {ids}")
     return None

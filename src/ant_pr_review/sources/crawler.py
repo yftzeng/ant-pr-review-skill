@@ -29,6 +29,7 @@ MAX_REDIRECTS = 5
 RETRY_STATUSES = (429, 502, 503, 504)
 MAX_RETRIES = 2
 MAX_WAIT = 30.0
+DEFAULT_MIN_INTERVAL = 1.0   # seconds between requests to one host (politeness)
 _V6_EMBEDDED_V4 = [ipaddress.ip_network(n) for n in ("64:ff9b::/96", "64:ff9b:1::/48", "::/96")]
 
 
@@ -96,6 +97,9 @@ class Crawler:
     def __init__(self, *, resolver: Resolver = system_resolver, max_bytes: int = 10_000_000,
                  timeout: float = 20.0, site_profiles: dict | None = None,
                  respect_robots: bool = True, deadline: float = 120.0,
+                 min_interval: float | None = None,
+                 allowed_types: tuple[str, ...] = ALLOWED_TYPES,
+                 host_intervals: dict[str, float] | None = None,
                  sleep: Callable[[float], None] = time.sleep,
                  _allow_hosts_for_tests: frozenset[str] = frozenset()):
         self.resolver = resolver
@@ -104,8 +108,13 @@ class Crawler:
         self.profiles = site_profiles or {}
         self.respect_robots = respect_robots
         self.deadline = deadline
+        self.min_interval = DEFAULT_MIN_INTERVAL if min_interval is None else min_interval
+        self.allowed_types = allowed_types
+        self.host_intervals = host_intervals or {}
+        self._last_hit: dict[str, float] = {}
         self._test_hosts = _allow_hosts_for_tests
         self.sleep = sleep
+        self._dns: dict[tuple[str, int], list[str]] = {}
         self._robots: dict[str, urllib.robotparser.RobotFileParser | None] = {}
 
     # -- public -------------------------------------------------------------
@@ -125,12 +134,13 @@ class Crawler:
         """For a headless browser's own requests: http(s) only, no credentials, and
         every resolved address global (D-PR-15)."""
         try:
-            self._target(url)
+            self._target(url, cache=True)
         except FetchError:
             return False
         return True
 
-    def fetch(self, url: str, *, types: tuple[str, ...] = ALLOWED_TYPES) -> FetchResult:
+    def fetch(self, url: str, *, types: tuple[str, ...] | None = None) -> FetchResult:
+        types = types or self.allowed_types
         ua = self.preflight(url)
         hops: list[str] = []
         current = url
@@ -140,7 +150,7 @@ class Crawler:
             if hops and self.respect_robots and _origin(current) != _origin(url) \
                     and not self._robots_ok(current, ua):
                 raise FetchError("robots", current)
-            status, headers, body = self._request(current, ua, until)
+            status, headers, body = self._request(current, ua, until, accept=types)
             if status in RETRY_STATUSES and retries < MAX_RETRIES:
                 wait = _retry_after(headers.get("retry-after"), 2.0 ** retries)
                 if time.monotonic() + wait < until:
@@ -171,7 +181,7 @@ class Crawler:
         return {}
 
     # -- internals ----------------------------------------------------------
-    def _target(self, url: str) -> tuple[str, str, int, str, str]:
+    def _target(self, url: str, cache: bool = False) -> tuple[str, str, int, str, str]:
         try:
             parts = urlsplit(url)
             port_ = parts.port
@@ -185,7 +195,13 @@ class Crawler:
         if not host:
             raise FetchError("no_host")
         port = port_ or (443 if parts.scheme == "https" else 80)
-        ips = self.resolver(host, port)
+        if cache:  # a browser asks per subresource; one lookup per host and port
+            key = (host, port)
+            if key not in self._dns:
+                self._dns[key] = self.resolver(host, port)
+            ips = self._dns[key]
+        else:
+            ips = self.resolver(host, port)
         if host in self._test_hosts:
             allowed = ips
         else:
@@ -197,13 +213,19 @@ class Crawler:
             path += "?" + parts.query
         return parts.scheme, host, port, allowed[0], path
 
-    def _request(self, url: str, ua: str, until: float | None = None) -> tuple[int, dict, bytes]:
+    def _request(self, url: str, ua: str, until: float | None = None,
+                 accept: tuple[str, ...] | None = None) -> tuple[int, dict, bytes]:
         until = until or time.monotonic() + self.deadline
         scheme, host, port, ip, path = self._target(url)
+        interval = max(self.min_interval, self.host_intervals.get(host, 0.0))
+        wait = self._last_hit.get(host, -1e9) + interval - time.monotonic()
+        if wait > 0:
+            time.sleep(wait)
+        self._last_hit[host] = time.monotonic()
         cls = _PinnedHTTPS if scheme == "https" else _PinnedHTTP
         conn = cls(host, ip, port=port, timeout=self.timeout)
         try:
-            conn.request("GET", path, headers={"User-Agent": ua, "Accept": "*/*",
+            conn.request("GET", path, headers={"User-Agent": ua, "Accept": ", ".join(accept or self.allowed_types),
                                                "Accept-Encoding": "identity"})
             resp = conn.getresponse()
             headers = {k.lower(): v for k, v in resp.getheaders()}
@@ -255,7 +277,7 @@ def _retry_after(value: str | None, default: float) -> float:
     """Seconds from a Retry-After header (seconds or HTTP date), capped at MAX_WAIT."""
     if value:
         v = value.strip()
-        if v.isdigit():
+        if v.isascii() and v.isdigit():
             return min(float(v), MAX_WAIT)
         try:
             from email.utils import parsedate_to_datetime
