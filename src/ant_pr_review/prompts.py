@@ -414,8 +414,11 @@ def timeline_system(lang: str, means: list[str]) -> str:
             "every step again and the stricter label wins), the channel, notes (for gray: the "
             "disclosure that makes it acceptable), the trigger that starts it, the condition "
             "that stops it, the audience it is for, and whether it is paid (a paid step must "
-            "say when it stops in a crisis). People affected hear it before the press or the "
-            "public; staff no later than the public. "
+            "say when it stops in a crisis), and whether it is promotional. People affected "
+            "hear it before the press or the public; staff no later than the public; in a "
+            "crisis nothing promotional comes before the affected are helped; a filing to the "
+            "exchange or regulator (audience exchange) comes before any media step; an embargo "
+            "binds only recipients who agreed to it explicitly. "
             + ("Use only the means in scope. " if set(means) & {"white", "gray"} else
                "No white or gray means are in scope: Schedule no steps; leave steps empty. ")
             + black + "\n\n"

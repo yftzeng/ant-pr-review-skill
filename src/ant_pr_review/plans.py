@@ -313,8 +313,10 @@ def run_plans(run: Run, backend: Backend, models: list[str], lang: str, *, say=p
     out["warnings"] += rep.pop("keyword_warnings", [])
     out["ethics"]["C"] = rep
     say(f"  … T ({writer})")
+    unverified = [c["id"] for c in ledger
+                  if c.get("status") in ("unsupported", "cannot_verify", "pending")]
     tl, rep, tl_stages = timeline.plan_t(backend, writer, checker, lang, risks, article, intake,
-                                         _guarded)
+                                         _guarded, unverified)
     out["ethics"]["T"] = rep
     write_json(run.path(f"{DIR}/T.json"), tl)
     write_text_atomic(run.path(f"{DIR}/T.md"), timeline.render(T(lang), tl))

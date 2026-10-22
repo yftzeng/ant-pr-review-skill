@@ -4,7 +4,7 @@ code = "cn"
 name = "China (mainland)"
 verified = false
 regulators = ["Cyberspace Administration of China (国家网信办)", "State Administration for Market Regulation (市场监管总局)", "China Securities Regulatory Commission (证监会)", "Public security organs (公安机关)"]
-platforms = ["Weibo (微博)", "WeChat (微信)", "Douyin (抖音)", "Xiaohongshu (小红书)", "Zhihu (知乎)", "Bilibili (B站)"]
+platforms = ["Weibo (微博)", "WeChat (微信)", "Douyin (抖音)", "Xiaohongshu (小红书)", "Zhihu (知乎)", "Bilibili (B站)", "Kuaishou (快手)", "WeChat Channels (视频号)"]
 
 [[law]]
 ref = "Civil Code, personality rights: reputation (民法典 名誉权)"

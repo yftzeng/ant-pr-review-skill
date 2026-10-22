@@ -169,7 +169,7 @@ Feature: review matrix
   @S-review-matrix-028
   Scenario: the report shows the stakeholder matrix per jurisdiction, grouped
     When  the report is written
-    Then  it has a stakeholder section per jurisdiction with the seven groups, rows sorted by relevance, each type's relevance (∅ when nobody answered), max L×I, and each model's reaction, needs and handling; a type every model rated none is one line; with several jurisdictions the consolidated report keeps only high, L×I ≥ 8 or gap rows
+    Then  it has a stakeholder section per jurisdiction with the seven groups, rows sorted by relevance, each type's relevance (∅ when nobody answered), max L×I, and each model's reaction, needs and handling; a type every model rated none is one line; with several jurisdictions the consolidated report keeps only high, L×I ≥ 8 or gap rows; the reaction column is labelled model-simulated
   @S-review-matrix-029
   Scenario: the report has a stress-test section
     When  the report is written for an outbound run
@@ -188,3 +188,4 @@ Feature: review matrix
 2026-10-22 · +S-review-matrix-027..028 the stakeholder matrix · decision: D-0003
 2026-10-22 · ~S-review-matrix-027, 028 from the tier-3 review and the political parties; +S-review-matrix-029 stress tests · decision: D-0003
 - 2026-10-22 · ~S-review-matrix-029 second tier-3 review: per-unit parties, question once, merger evidence · decision: D-0003
+- 2026-10-22 · ~S-review-matrix-028 reactions labelled model-simulated (borrowed) · decision: D-0003

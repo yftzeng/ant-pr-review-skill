@@ -74,6 +74,10 @@ Feature: checklist
   Scenario: the role stress tests and the political stress tests are asked per jurisdiction
     When  the outbound and inbound matrices are planned for tw and cn
     Then  RTM-01..05 and POL-01..03 are in the tw and cn units, not in global units, and not in an operation matrix
+  @S-checklist-015
+  Scenario: the second set of borrowed items is in the checklist and credited
+    When  the checklist loads
+    Then  JOU-10, JOU-11, INT-05, REG-05, RSP-05 and SOC-09 exist, JOU-06 names early scapegoats and "it will not happen again", and each source is in docs/REFERENCES.md with its commit
 ```
 
 ## Revisions
@@ -85,3 +89,4 @@ Feature: checklist
 - 2026-10-22 · ~S-checklist-004 11 units with the stakeholders lens · decision: D-0003
 2026-10-22 · ~S-checklist-011 STK-07 politics; +S-checklist-014 role and political stress tests (user: 角色壓力測試檢核矩陣, Political Red-Teaming) · decision: D-0003
 - 2026-10-22 · ~S-checklist-007 dated sensitive dates (elections) · decision: D-0003
+- 2026-10-22 · +S-checklist-015 borrowed items from five more repos (user: 現在併進去) · decision: D-0003

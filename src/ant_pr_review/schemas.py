@@ -194,7 +194,8 @@ REREVIEW = obj({
     })),
 })
 
-AUDIENCES = ["affected", "staff", "partners", "investors", "regulators", "press", "public"]
+AUDIENCES = ["affected", "staff", "partners", "investors", "regulators", "exchange", "press",
+             "public"]
 
 # D-0002: the timeline of means and its independent labelling. `day` is relative to the
 # publish day (T0); `time` is HH:MM local to the first jurisdiction.
@@ -202,7 +203,7 @@ TIMELINE = obj({
     "steps": arr(obj({"day": {"type": "integer"}, "time": STR, "action": STR,
                       "category": enum(["white", "gray", "black"]), "channel": STR, "notes": STR,
                       "trigger": STR, "stop": STR, "audience": enum(AUDIENCES),
-                      "paid": BOOL})),
+                      "paid": BOOL, "promotional": BOOL})),
     "excluded": arr(obj({"tactic": STR, "why": STR, "law": STR, "exposure": STR, "watch_for": STR,
                          "lawful_alternative": STR})),
 })

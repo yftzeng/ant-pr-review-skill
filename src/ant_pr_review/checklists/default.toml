@@ -23,7 +23,7 @@ lens = "legal"
 directions = ["outbound", "operation"]
 dimension = "disclosure"
 red_line = "undisclosed_inauthentic"
-text = "Paid, sponsored, gifted or affiliated content: is the material connection disclosed clearly where this jurisdiction requires it (endorsement and advertorial rules)?"
+text = "Paid, sponsored, gifted or affiliated content, including ghostwritten bylines: is the material connection disclosed clearly where this jurisdiction requires it (endorsement and advertorial rules)?"
 
 [[item]]
 id = "LEG-04"
@@ -396,7 +396,7 @@ id = "JOU-06"
 lens = "journalist"
 directions = ["outbound", "inbound"]
 dimension = "provability"
-text = "Cause and scope: does it state a cause, a scope or a reassurance ('no sensitive data', 'only a few users', 'isolated', 'resolved') that is not yet confirmed, and does it separate what is confirmed from what is still under investigation?"
+text = "Cause, scope and blame: does it state a cause, a scope or a reassurance ('no sensitive data', 'only a few users', 'isolated', 'resolved', 'it will not happen again', 'no jobs are at risk') that is not yet confirmed, name a culprit ('a temporary worker', 'one franchise store', 'a supplier', 'our account was hacked') before the facts establish it, and separate what is confirmed from what is still under investigation?"
 
 [[item]]
 id = "JOU-07"
@@ -464,6 +464,50 @@ directions = ["outbound", "operation"]
 postures = ["expose"]
 dimension = "ethics"
 text = "Could the point be made against a practice, rule or system instead of the named party, and does naming the party add anything we can prove?"
+
+[[item]]
+id = "JOU-10"
+lens = "journalist"
+directions = ["outbound", "operation"]
+dimension = "provability"
+text = "Third-party support and results: does it claim an endorsement, partnership, approval, co-design or community backing ('supported by', 'designed with', 'welcomed by') that the third party has not confirmed for publication, present views heard at a consultation as endorsement, or state a forecast, pilot or target as an achieved result?"
+
+[[item]]
+id = "JOU-11"
+lens = "journalist"
+directions = ["outbound", "inbound"]
+postures = ["clarify_apologize", "rebut"]
+dimension = "backlash"
+text = "Labels: does the reply call the whole matter a rumour, a smear or black PR when it mixes fabrications with value judgements, lawful criticism or claims with a factual basis ('pure rumour, we reserve the right to sue')? Is each claim answered by its kind (evidence for a factual claim, preservation and legal routes for a fabrication, no endless argument over a value judgement), and is one legal threat aimed at all critics alike?"
+
+[[item]]
+id = "INT-05"
+lens = "legal"
+directions = ["outbound"]
+dimension = "legal"
+text = "Staff instructions: does a staff note or social media instruction ('do not discuss this with anyone', 'not even on personal accounts') restrict more than this jurisdiction's employment, labour and whistleblower law allows, and does it keep the routes to regulators, counsel and the internal hotline open?"
+
+[[item]]
+id = "REG-05"
+lens = "regulator"
+directions = ["outbound", "operation"]
+dimension = "disclosure"
+red_line = "undisclosed_inauthentic"
+text = "Synthetic media: is any image, video, voice or text generated or materially altered by AI, above all one depicting a real person, place or event, labelled where this jurisdiction's law or the platform requires, and could a viewer take it as a real record?"
+
+[[item]]
+id = "RSP-05"
+lens = "response"
+directions = ["inbound"]
+dimension = "stakeholder"
+text = "Proportion: does the planned response match the harm and the actual spread (a small-circle claim answered in public creates its first searchable record; a lawyer's letter can be screenshotted), and where people are harmed or we bear responsibility, is low spread being used as a reason to stay silent?"
+
+[[item]]
+id = "SOC-09"
+lens = "social"
+directions = ["outbound"]
+dimension = "stakeholder"
+text = "Plain language and access: can the people affected grasp the core message in a few plain sentences, free of legal or official jargon and passive evasions ('mistakes were made'), and can they get it in an accessible form (text not only in images, alt text, captions, the languages they read)?"
 
 # ---- the stakeholder map (D-0003): one item per group, per jurisdiction ----
 

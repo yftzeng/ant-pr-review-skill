@@ -181,6 +181,23 @@ Feature: plans
   Scenario: plan C monitoring keywords are typed terms
     When  plan C returns keywords with a kind and platforms
     Then  C-kit.md lists them by kind; a keyword that looks like an account handle or a link (@, ＠, u/, t.me/, URLs) is dropped and counted without repeating it; malformed entries are skipped or normalised
+  @S-plans-031
+  Scenario: in a crisis posture, no promotion before the affected parties are helped
+    Given a promotional step at T0 09:00 and the step telling affected customers what to do at T0 10:00, under clarify_apologize; and the same under promote
+    When  plans run
+    Then  the promotional step warns under clarify_apologize and not under promote
+
+  @S-plans-032
+  Scenario: the exchange or regulator hears first
+    Given an exchange filing at T0 16:00 and a press release at T0 09:00
+    When  plans run
+    Then  the press release warns that it comes before the filing
+
+  @S-plans-033
+  Scenario: a public step while claims are unverified is warned
+    Given the ledger holds a claim that is cannot_verify and the timeline has a press step
+    When  plans run
+    Then  the first press or public step warns and names the claim id
 ```
 
 ## Must NOT
@@ -195,3 +212,4 @@ Feature: plans
 - 2026-10-22 · ~S-plans-014, 016, 017, 018, 021, 024 from the second tier-3 review (fable): a guard-flagged step is never scheduled, misnumbered labels void the review, sentence-boundary locks, ±1 day warnings · decision: D-0002
 2026-10-22 · +S-plans-029..030 timeline audience rules, typed monitoring keywords · decision: D-0003
 - 2026-10-22 · ~S-plans-029, 030 from the tier-3 review · decision: D-0003
+- 2026-10-22 · +S-plans-031..033 harm first, disclosure first, stage the launch (borrowed) · decision: D-0003

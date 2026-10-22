@@ -1,0 +1,15 @@
+@@ src/ant_pr_review/timeline.py
+-             if s["promotional"] and (not affected or key(s, True) <= min(affected)):
++             if s["promotional"] and (affected and key(s, True) < min(affected)):
+@@ src/ant_pr_review/timeline.py
+-     if posture in CRISIS:
++     if True:
+@@ src/ant_pr_review/timeline.py
+-             if key(s, True) <= min(filings):
++             if key(s, True) > min(filings):
+@@ src/ant_pr_review/timeline.py
+-     if unverified and public:
++     if False:
+@@ src/ant_pr_review/plans.py
+-                   if c.get("status") in ("unsupported", "cannot_verify", "pending")]
++                   if False]

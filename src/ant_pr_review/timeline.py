@@ -62,9 +62,12 @@ def _t0(publish_at: str) -> date | None:
 CRISIS = {"clarify_apologize", "rebut"}  # postures where someone may be affected
 
 
-def _order_warnings(kept: list[dict], posture: str, t: T) -> None:
-    """Affected parties first, staff no later than the public (D-0003). A tie is not
-    'after', and a missing time counts as early for the press and late for the affected."""
+def _order_warnings(kept: list[dict], posture: str, t: T, unverified: list[str]) -> None:
+    """Affected parties first, staff no later than the public (D-0003). In a crisis
+    posture no promotion before the affected are helped; the exchange or regulator filing
+    before the press; no public step while claims are unverified (docs/REFERENCES.md #8-11).
+    A tie is not 'after', and a missing time counts as early for the press and late for the
+    affected."""
     def key(s, early: bool):
         return (s["day"], s["time"] or ("00:00" if early else "99:99"))
     affected = [key(s, False) for s in kept if s["audience"] == "affected"]
@@ -76,6 +79,18 @@ def _order_warnings(kept: list[dict], posture: str, t: T) -> None:
                 s["warnings"].append(t("plans.t.warn_before_affected"))
     elif public and posture in CRISIS:
         public[0]["warnings"].append(t("plans.t.warn_no_affected"))
+    if posture in CRISIS:
+        for s in kept:
+            if s["promotional"] and (not affected or key(s, True) <= min(affected)):
+                s["warnings"].append(t("plans.t.warn_promo_first"))
+    filings = [key(s, False) for s in kept if s["audience"] == "exchange"]
+    if filings:
+        for s in public:
+            if key(s, True) <= min(filings):
+                s["warnings"].append(t("plans.t.warn_before_filing"))
+    if unverified and public:
+        first = min(public, key=lambda s: key(s, True))
+        first["warnings"].append(t("plans.t.warn_unverified", ids=", ".join(unverified[:8])))
     if public:
         first_public = min(key(s, True) for s in public)
         for s in kept:
@@ -95,7 +110,8 @@ def rel(day: int) -> str:
 def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict],
           flags: dict[int, str], means: list[str], publish_at: str,
           jurisdictions: list[str], withheld: str, unreviewed: str = "not reviewed",
-          t: T | None = None, posture: str = "clarify_apologize") -> dict:
+          t: T | None = None, posture: str = "clarify_apologize",
+          unverified: list[str] | None = None) -> dict:
     """labels: 1-based step number -> {category, reason}, or None when the review did not
     run (every step is then not_reviewed)."""
     kept, dropped, black = [], [], []
@@ -125,6 +141,7 @@ def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict
             continue
         kept.append({**{k: str(s.get(k, "")) for k in STEP_FIELDS}, "order": n,
                      "audience": str(s.get("audience", "")), "paid": bool(s.get("paid")),
+                     "promotional": bool(s.get("promotional")),
                      "day": _day(s.get("day")),
                      "time": s.get("time") if TIME_RE.match(str(s.get("time", ""))) else "",
                      "category": cat, "writer_category": wcat, "reviewer_category": ccat,
@@ -138,7 +155,7 @@ def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict
                          for d in sensitive_dates_near(jurisdictions, s["date"], days=1)] \
             if s["date"] else []
     t = t or T("en")
-    _order_warnings(kept, posture, t)
+    _order_warnings(kept, posture, t, unverified or [])
     for s in kept:
         if s["paid"] and not s["stop"].strip():
             s["warnings"].append(t("plans.t.warn_paid_stop"))
@@ -213,7 +230,8 @@ def render(t: T, d: dict) -> str:
 
 
 def plan_t(backend: Backend, writer: str, checker: str, lang: str, risks: list[dict],
-           article: str, intake: dict, guarded) -> tuple[dict, dict, list[dict]]:
+           article: str, intake: dict, guarded,
+           unverified: list[str] | None = None) -> tuple[dict, dict, list[dict]]:
     """Returns (timeline, ethics report, stage reviews)."""
     t = T(lang)
     means = means_of(intake)
@@ -264,7 +282,7 @@ def plan_t(backend: Backend, writer: str, checker: str, lang: str, risks: list[d
     card = intake.get("card", {})
     out = build(steps, labels, excluded, flags, means, card.get("publish_at", ""),
                 card.get("jurisdictions", []), t("plans.x.withheld"),
-                t("plans.x.unreviewed"), t, posture_of(intake))
+                t("plans.x.unreviewed"), t, posture_of(intake), unverified)
     stricter = sum(1 for s in out["steps"] if s["category"] != s["writer_category"])
     black = sum(1 for n in range(1, len(steps) + 1)
                 if (labels or {}).get(n, {}).get("category") == "black")

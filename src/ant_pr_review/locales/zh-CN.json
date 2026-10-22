@@ -413,7 +413,7 @@
   "report.stakeholders_note": "每个模型都针对每个法域回答了每一类角色。相关程度取最高，L×I 取最大，按相关程度排序。",
   "report.party": "角色",
   "report.relevance": "相关程度",
-  "report.reaction": "可能反应",
+  "report.reaction": "可能反应（模型模拟，非实际观察）",
   "report.needs": "他们需要什么",
   "report.handling": "我方如何处理",
   "plans.t.warn_before_affected": "早于或与受影响者同时得知",
@@ -454,5 +454,8 @@
   "stress.pol_ammunition": "弹药测试",
   "stress.pol_polarised": "极化夹杀测试",
   "stress.pol_sovereign": "主权与合规红线测试",
-  "side.legislature": "议会"
+  "side.legislature": "议会",
+  "plans.t.warn_promo_first": "在协助受影响者之前就宣传",
+  "plans.t.warn_before_filing": "早于或与交易所／主管机关公告同时",
+  "plans.t.warn_unverified": "在查证未完成时就对外：{ids}"
 }

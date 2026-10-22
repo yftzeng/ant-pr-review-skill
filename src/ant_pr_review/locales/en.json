@@ -413,7 +413,7 @@
   "report.stakeholders_note": "Every model answered every party type for each jurisdiction. Relevance is the highest given, L×I the largest; rows are sorted by relevance.",
   "report.party": "Party",
   "report.relevance": "Relevance",
-  "report.reaction": "Likely reaction",
+  "report.reaction": "Likely reaction (model-simulated)",
   "report.needs": "What they need",
   "report.handling": "Our handling",
   "plans.t.warn_before_affected": "comes before (or with) the affected parties hearing from us",
@@ -454,5 +454,8 @@
   "stress.pol_ammunition": "Political ammunition",
   "stress.pol_polarised": "Polarised trap",
   "stress.pol_sovereign": "Sovereign red line",
-  "side.legislature": "legislature"
+  "side.legislature": "legislature",
+  "plans.t.warn_promo_first": "promotion before the affected parties are helped",
+  "plans.t.warn_before_filing": "comes before (or with) the exchange or regulator filing",
+  "plans.t.warn_unverified": "goes public while claims are unverified: {ids}"
 }
