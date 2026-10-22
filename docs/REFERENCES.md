@@ -33,6 +33,7 @@ Licences differ (see each section; two have none and one is share-alike), so ide
 | 21 | [qcmcbw7qm2-svg/ziyu @fa893b3](https://github.com/qcmcbw7qm2-svg/ziyu/tree/fa893b32eb2148cb41a09dcfd9255c9ac13ae70e) | crisis playbooks by type (mainland China) | crimes go to the police; counter-examples: tracing posters, seeding comments |
 | 22 | [HachikoJ/crisis-pr-response @9fabde2](https://github.com/HachikoJ/crisis-pr-response/tree/9fabde2f3d4630be5693d582fb138a8bddd07536) | crisis statement generator (mainland China) | done vs planned; bounded commitments; expectation gaps |
 | 23 | The user's own reference notes (local only, not in the repo) | crisis-handling notes, case letters, flow charts | admit, act, account; a Q&A answers the question; no exoneration overclaim |
+| 24 | Three brake-pedal crisis commentary videos (Bilibili BV19bpg6kEWr, BV1hMpE6FEXG, BV1dmJi6yEAi) | crisis-communication theory applied to one case | a standards claim does not answer a safety scare; fast actions, slow conclusions; one voice across a shared brand |
 
 Full commits read: coreyhaines31/marketingskills `e85f3cbc2e4a79bf33b2a12e9bdd9087d414735b`; asgard-ai-platform/skills `4e7f4f8e389847757a5a4236c2f1ed9813359179`; dclacher/pr-crisis-analyzer `eeed137fb9cb792432dc67f84b443c69c58fa0af`; metadatastician/sim-public-relations `c4db8ffb9afbbdbe125a1ff91ad2312ceb863189`; tsy-fred/declaration-and-media-skill `a4ea626a81fc90e41072e13f833e0ae6f8da8152`; AshLSnow/pr-crisis `349f34486ca3ce3d80ccc5ab6f81259b748664b0`; ur-grue/autopunk-media-skills `39e119bfef25957223d6c44fccab0329e936d2f6`; ShenyuanNext/wepr-growth-skills `822504b8c72003b7efe84cb5c621bf752a3244fe`; qcmcbw7qm2-svg/ziyu `fa893b32eb2148cb41a09dcfd9255c9ac13ae70e`; HachikoJ/crisis-pr-response `9fabde2f3d4630be5693d582fb138a8bddd07536` (asgard #19-20 at the same `4e7f4f8`; main had not moved).
 
@@ -427,3 +428,31 @@ MIT.
 | Litigation as a war of attrition; "don't write this" | SLAPP risk (RBT-02); pressure on the press. |
 | State-facing key messages and single-market apology wording | No state influence work; POL-03 assesses only. |
 | Satirical, anecdotal or unsourced case claims | Not evidence. |
+
+## 24. Three brake-pedal crisis commentary videos (Bilibili)
+
+- 刹车断裂门公关漫谈：公关回应如何避免问题？ (BV19bpg6kEWr)
+- 刹车断裂事件公关漫谈2：品牌回应的困境与策略原理深度解析 (BV1hMpE6FEXG)
+- 刹车断裂事件，公关漫谈3：部门联合调查真上热搜了吗？ (BV1dmJi6yEAi)
+
+A brand professional's personal commentary on one automotive crisis, with the brand left anonymous. The videos were watched 2026-10-22 from local copies, which are not in the repo, and the sponsored segments were skipped. Ideas are paraphrased; the quotes in `examples.toml` are short. The commentator is not named here.
+
+| Borrowed | Where here |
+|---|---|
+| A denial next to an unexplained free upgrade reads as an admission | checklist JOU-16 |
+| Control is lost on three axes: predictability, explicability and influence. Internal checks are a black box; invite replication by a third party or the original tester. Fast actions, slow conclusions | checklist JOU-17; planned: the report grouped by the three axes |
+| A defensive or compliance frame fits only with evidence others can check, a victim or rumour crisis and no safety at stake (Coombs's continuum, SCCT, Benoit) | checklist JOU-09 (amended) |
+| Two PR systems behind one co-owned brand; a cited test that nobody stands behind | checklist JOU-18 |
+| Executives' defiant asides after an investigation is announced | checklist STK-01 (amended) |
+| The same-day statement and the disowned test report | `examples.toml` EX-16, EX-17 (organisations not named, unverified) |
+| Crisis grades I–IV, "the higher grade wins", red lines escalate at once, regrading on a schedule; "are the facts enough to characterise it?" sends a holding statement | planned: an event grade in the report; a holding-only gate and a "cannot commit" field in the drafting brief |
+| The issue-attention cycle; silence after the statement and evidence while the work goes on | planned: the timeline trigger kinds |
+
+| Left out | Why |
+|---|---|
+| Asking an AI a sharp question to gauge how sensitive an event is; judging whether a trending topic is genuine | Unreliable, changes by platform, and close to probing censorship. |
+| Apologising for "worry" so as never to apologise for a defect | Legal hedging the user decides on; APO-02 assesses the exposure. |
+| The "inclusive argument" debating move ("we want what you want") as a technique | Rhetoric without an action behind it is empty; kept as writing advice only. |
+| Lawyer's letters to the press, deleting posts to cool a topic, competitors buying trending slots, paid smears ("5000 a post") | Black or gray means: noted as counter-examples only (SOC-08, RBT-02, EXP-03). |
+| Market-cap and share-price figures | Not checked, and the cause is not established. |
+

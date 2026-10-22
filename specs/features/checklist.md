@@ -90,6 +90,10 @@ Feature: checklist
   Scenario: the items from the user's own notes are in the checklist
     When  the checklist loads
     Then  JOU-15 (answer the question asked), LEG-14 (no exoneration overclaim) and INT-08 (no blame on named staff) exist, and APO-01, SOC-10, JOU-06, SOC-07 and LEG-03 carry the amendments
+  @S-checklist-019
+  Scenario: the items from the brake-pedal commentary videos are in the checklist and credited
+    When  the checklist loads
+    Then  JOU-16 (a denial with an unexplained fix), JOU-17 (evidence others can check; fast actions, slow conclusions) and JOU-18 (one voice and an agreed split across a shared brand; who commissioned a cited test) exist, JOU-09 names when a defensive or compliance answer fits and STK-01 holds executives to the approved line off the record; the videos are credited in docs/REFERENCES.md by title and id, with no person named
 ```
 
 ## Revisions
@@ -105,3 +109,4 @@ Feature: checklist
 - 2026-10-22 · +S-checklist-016 items borrowed from wepr-growth-skills (user: 現在併進去) · decision: D-0003
 - 2026-10-22 · +S-checklist-017 items from med-political, med-news-reporter, ziyu, crisis-pr-response (user: 現在併進去) · decision: D-0003
 - 2026-10-22 · +S-checklist-018 items from the user's own reference notes (user: 讀過並整理借鏡，不收進 repo) · decision: D-0003
+- 2026-10-22 · +S-checklist-019 items from three brake-pedal crisis commentary videos (user: 按你建議) · decision: D-0003

@@ -168,3 +168,25 @@ part = "stance"
 lesson = "The commentary reads the published apology as self-defence aimed at repairing the writer's image rather than seeking forgiveness. It proposes a test: check a draft for hidden resistance, and first name exactly how the audience was hurt. Readers notice defensiveness before they take in the content."
 quote = "內容是否包含無意識的抵抗情緒"
 verified = false
+
+[[example]]
+id = "EX-16"
+date = ""
+org = "某汽車品牌"
+kind = "counter"
+posture = "rebut"
+part = "whole"
+lesson = "A test video shows a brake part breaking; the same-day statement says the system exceeds the national standard, no failure has occurred in real use and the test was extreme, then offers a free upgrade. A standard is a floor to the public, not an answer to a safety scare, and an upgrade offered next to 'no problem' reads as an admission. Give the risk boundary, evidence others can check and something owners can do."
+quote = "高于国家标准"
+verified = false
+
+[[example]]
+id = "EX-17"
+date = ""
+org = "某汽車品牌"
+kind = "counter"
+posture = "rebut"
+part = "facts"
+lesson = "A co-owned brand cites a third-party test report: one owner says the other commissioned it, the other says it does not know, and the lab says it vouches only for the samples it was sent. Co-owners disowning each other's evidence read as passing the blame. Agree one voice and who stands behind each piece of evidence before it is published."
+quote = "只对企业送来的样品负责"
+verified = false

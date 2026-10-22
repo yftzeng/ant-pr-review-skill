@@ -102,6 +102,11 @@ Feature: drafting
     Given the examples file
     When  the writer prompt is built for the posture clarify_apologize
     Then  it holds at most six examples of that posture, patterns and counters labelled, each marked unverified, and no example names a person
+
+  @S-drafting-016
+  Scenario: the brake-pedal cases are counter-examples for a rebuttal
+    When  the writer prompt is built for the posture rebut
+    Then  it holds the counter-examples of a safety scare answered with a standards claim and an unexplained upgrade, and of co-owners disowning a test report, both naming no organisation or person and marked unverified
 ```
 
 ## Must NOT
@@ -112,3 +117,4 @@ Feature: drafting
 - 2026-10-22 · created · decision: none -- no feature covers writing new text: every existing feature reviews a given target; drafting adds a brief, versions, a ranking and an export gate
 - 2026-10-22 · +S-drafting-001..015, +N-drafting-001..002 the brief, versions, register, checks, ranking and export (user: 固定問答＋可附素材; 2 版，同姿態不同做法; 擋下匯出，報告照樣產生) · decision: D-0005
 - 2026-10-22 · ~S-drafting-005,008,011 from the tier-3 review: questions cleaned and guarded; the export also blocked by a claim needing validation, a figure not in the version or brief, an escalate or no_go verdict and the guard's marker; an unaudited version disqualified · decision: D-0005
+- 2026-10-22 · +S-drafting-016 two counter-examples from the brake-pedal commentary videos (user: 按你建議) · decision: D-0005
