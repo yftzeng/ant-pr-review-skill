@@ -26,3 +26,9 @@
 @@ scripts/refs-drift.sh
 - echo "refs-drift: PASS -- $total pinned paths, none changed upstream; set 'Upstream last checked' to $(date +%F)"
 + echo "refs-drift: PASS -- $total pinned paths"; echo x >> "$refs"
+@@ tests/test_references.py
+-             if MOVING.search(ln) and not re.search(r"\bv\d+(?:\.\d+)*\b", ln)]
++             if MOVING.search(ln) and not re.search(r"\d", ln)]
+@@ tests/test_references.py
+- MOVING = re.compile(r"https?://[^\s)>`\"]*/(?:current|latest|stable)(?:[/#?][^\s)>`\"]*)?(?=[\s)>`\"]|$)")
++ MOVING = re.compile(r"https?://[^\s)>`\"]*/(?:latest|stable)(?:[/#?][^\s)>`\"]*)?(?=[\s)>`\"]|$)")
