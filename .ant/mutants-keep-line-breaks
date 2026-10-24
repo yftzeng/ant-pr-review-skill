@@ -1,0 +1,19 @@
+# single line breaks split paragraphs (S-source-acquisition-044)
+@@ src/ant_pr_review/sources/segments.py
+- _END = re.compile(r"[。！？!?.;；:：]$")
++ _END = re.compile(r"[!?.;:]$")
+@@ src/ant_pr_review/sources/segments.py
+-     return len(_CJK.findall(line)) < 25 if _CJK.search(line) else len(line) < 50
++     return len(line) < 50
+@@ src/ant_pr_review/sources/segments.py
+-     return a + b if _CJK.match(a[-1]) and _CJK.match(b[0]) else f"{a} {b}"
++     return f"{a} {b}"
+@@ src/ant_pr_review/sources/segments.py
+-         elif cur and not (_END.search(cur) or _short(cur) or _STARTS_BLOCK.match(line)
++         elif cur and not (_END.search(cur) or _short(cur)
+@@ src/ant_pr_review/sources/segments.py
+-                           or cur.startswith("#")):
++                           ):
+@@ src/ant_pr_review/sources/segments.py
+- _STARTS_BLOCK = re.compile(r"(?:#|[-*+•✓]\s|\d+[.)]\s)")
++ _STARTS_BLOCK = re.compile(r"(?:[-*+•✓]\s|\d+[.)]\s)")

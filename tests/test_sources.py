@@ -132,6 +132,37 @@ def test_segment_ids():
     assert segs[2]["sentences"][1]["text"] == "第二句？"
 
 
+
+# @S-source-acquisition-044
+def test_single_line_breaks_keep_lines():
+    from ant_pr_review.revision import render_text
+    page = ("事件說明\n10/04\n接獲通報，啟動盤查。\n- 更換密碼\n- 停用帳號\n"
+            "The review covers every order placed through the platform\nbefore 3 October.")
+    segs = segment(page, 1)
+    assert [p["text"] for p in segs] == [
+        "事件說明", "10/04", "接獲通報，啟動盤查。", "- 更換密碼", "- 停用帳號",
+        "The review covers every order placed through the platform before 3 October."]
+    assert all(p["kind"] == "para" and p["sentences"] for p in segs)
+    # a long CJK line without an ending is wrapped prose: joined with no space
+    wrapped = "我們已經完成第一階段的系統盤查並且確認了受影響的資料庫範圍與欄位\n其餘項目仍在調查中。"
+    assert [p["text"] for p in segment(wrapped, 1)] == [wrapped.replace("\n", "")]
+    # a long line ending a sentence still ends its paragraph
+    two = "我們已經完成第一階段的系統盤查並且確認了受影響的資料庫範圍與欄位。\n其餘項目仍在調查中。"
+    assert len(segment(two, 1)) == 2
+    # the next line starting a list item or a heading breaks a long line too
+    lst = "The following steps were taken by the response team over the weekend\n- reset keys"
+    assert len(segment(lst, 1)) == 2
+    hd = "The following steps were taken by the response team over the weekend\n# Next"
+    assert [p["kind"] for p in segment(hd, 1)] == ["para", "heading"]
+    long_hd = "# A long heading that goes on well past fifty characters in all\nBody text follows here."
+    assert [p["kind"] for p in segment(long_hd, 1)] == ["heading", "para"]
+    paras = {p["id"]: p for p in segs}
+    assert render_text(paras, {}).count("\n\n") == len(segs) - 1
+    # blank-line documents keep their ids
+    assert all_ids(segment("# Title\n\nFirst. Second!\n\n第一句。第二句？", 1)) == [
+        "D1.P01", "D1.P02.S1", "D1.P02.S2", "D1.P03.S1", "D1.P03.S2"]
+
+
 def _docx(path, paras):
     body = "".join(f'<w:p><w:r><w:t>{p}</w:t></w:r></w:p>' for p in paras)
     xml = ('<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/'

@@ -263,6 +263,14 @@ Feature: source acquisition
     Given a URL that serves a bot challenge and an archive snapshot from 2026-01-02
     When  the sources phase asks what to do and the user picks "use the archive copy"
     Then  the menu named the date 2026-01-02, and the item is read from the archive with via "archive"
+
+  @S-source-acquisition-044
+  Scenario: a text with single line breaks keeps its lines as paragraphs
+    Given a pasted page "事件說明\n10/04\n接獲通報，啟動盤查。\n- 更換密碼\n- 停用帳號\nThe review covers every order placed through the platform\nbefore 3 October."
+    When  it is segmented as document 1
+    Then  it has six paragraphs: "事件說明", "10/04", "接獲通報，啟動盤查。", "- 更換密碼", "- 停用帳號" and "The review covers every order placed through the platform before 3 October."
+    And   a line ends its paragraph when it ends a sentence (。！？!?.;；:：), is short (under 25 CJK characters or 50 other characters), or the next line starts a list item or a heading; a long line without an ending is wrapped prose and joins the next, with no space between two CJK characters
+    And   plan A's A.md, rebuilt from those paragraphs, keeps each one on its own line
 ```
 
 ## Must NOT
@@ -279,3 +287,5 @@ Feature: source acquisition
 - 2026-10-22 · ~S-source-acquisition-009 a profile user agent must still name ant-pr-review · decision: D-PR-15
 - 2026-10-22 · +S-source-acquisition-028..041 ~S-source-acquisition-021 · decision: D-0001 -- synced with ant-peer-review 3af9252: its page-quality checks, URL redaction and pacing (there S-020..023), and the fixes from the tier-3 review (sonnet, fable) of the same fallback code
 - 2026-10-22 · +S-source-acquisition-042..043 ~S-source-acquisition-025 ~S-source-acquisition-033 · decision: D-0001 -- user: a 403 or a bot challenge is a refusal; the archive only with consent (synced with ant-peer-review 1c00c7d)
+
+- 2026-10-24 · +S-source-acquisition-044 single line breaks split paragraphs, so a pasted page is no longer one paragraph and A.md / final.md keep its lines (user: 按你建議, after the 91APP final.md came out as one 7,475-character line) · decision: none -- blank lines alone lost the structure of pasted and converted pages

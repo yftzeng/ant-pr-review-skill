@@ -16,27 +16,53 @@ def split_sentences(text: str) -> list[str]:
     return parts or [text.strip()]
 
 
+_END = re.compile(r"[。！？!?.;；:：]$")
+_STARTS_BLOCK = re.compile(r"(?:#|[-*+•✓]\s|\d+[.)]\s)")
+_CJK = re.compile(r"[㐀-鿿]")
+
+
+def _short(line: str) -> bool:
+    return len(_CJK.findall(line)) < 25 if _CJK.search(line) else len(line) < 50
+
+
+def _join(a: str, b: str) -> str:
+    return a + b if _CJK.match(a[-1]) and _CJK.match(b[0]) else f"{a} {b}"
+
+
+def _blocks(markdown: str) -> list[str]:
+    """Blank lines separate blocks. A single line break ends one too, unless the line is
+    long, does not end a sentence and the next line does not start a list item or a
+    heading: then it is wrapped prose and joins the next (S-source-acquisition-044)."""
+    blocks, cur = [], ""
+    for line in markdown.splitlines():
+        line = " ".join(line.split())
+        if not line:
+            if cur:
+                blocks.append(cur)
+            cur = ""
+        elif cur and not (_END.search(cur) or _short(cur) or _STARTS_BLOCK.match(line)
+                          or cur.startswith("#")):
+            cur = _join(cur, line)
+        else:
+            if cur:
+                blocks.append(cur)
+            cur = line
+    if cur:
+        blocks.append(cur)
+    return blocks
+
+
 def segment(markdown: str, doc: int) -> list[dict]:
     """Return [{"id", "kind": "heading"|"para", "text", "sentences": [{"id","text"}]}]."""
-    blocks, cur = [], []
-    for line in markdown.splitlines():
-        if line.strip():
-            cur.append(line.strip())
-        elif cur:
-            blocks.append("\n".join(cur))
-            cur = []
-    if cur:
-        blocks.append("\n".join(cur))
     out = []
-    for i, block in enumerate(blocks, 1):
+    for i, block in enumerate(_blocks(markdown), 1):
         pid = f"D{doc}.P{i:02d}"
         if block.startswith("#"):
             out.append({"id": pid, "kind": "heading", "text": block, "sentences": []})
             continue
-        flat = " ".join(" ".join(ln.split()) for ln in block.split("\n"))
         sents = [{"id": f"{pid}.S{j}", "text": s}
-                 for j, s in enumerate(split_sentences(flat), 1)]
-        out.append({"id": pid, "kind": "para", "text": flat, "sentences": sents})
+                 for j, s in enumerate(split_sentences(block), 1)]
+        out.append({"id": pid, "kind": "para", "text": block, "sentences": sents})
     return out
 
 
