@@ -140,6 +140,17 @@ Feature: drafting
     Given a drafting run whose revision A.md contains a cannot-commit line
     When  the user decides plan A
     Then  final.md is written as chosen, the decision records the issues and the user is told them; an audit run's decision is unchanged
+
+  @S-drafting-023
+  Scenario: an intensifier without a figure is a readability hit
+    Given a paragraph saying "我們已第一時間全面覆核", one saying "我們已於 10 月 21 日 14:00 開始覆核", one saying "We acted immediately.", and one saying "全面性" in a sentence that is not about an action
+    When  the versions are checked
+    Then  W10 reports the first and the third and not the second (a time is the figure); "全面性" alone is not an intensifier
+
+  @S-drafting-024
+  Scenario: the writer scopes an absence and never presents the crisis as a starting point
+    When  the writer prompt is built
+    Then  it says a "no reports" or "no abnormality" sentence names its basis (which channel, since when, how many) and never reads as "no defect", that the independent check goes ahead whether or not the other side cooperates, and that the event is never presented as our starting point, a higher standard or a reason to thank the public
 ```
 
 ## Must NOT
@@ -154,3 +165,4 @@ Feature: drafting
 - 2026-10-22 · +S-drafting-017..021 a characterised-or-holding gate, cannot-commit lines checked in code, W9 vague quantities, fast actions and slow conclusions (from the brake-pedal videos; user: 按你建議) · decision: D-0005
 - 2026-10-22 · ~S-drafting-017,019,020 +S-drafting-022 from the tier-3 review: short lines refused, punctuation ignored, ranking and the plan A writer see the lines, W9 narrowed, decide checks its final file · decision: D-0005
 - 2026-10-22 · ~S-drafting-015 examples carry no quote of their source, only a paraphrased lesson, so the repo holds no third-party text (user: 兩個都做, after the licence check) · decision: D-0005
+- 2026-10-24 · +S-drafting-023..024 W10 intensifiers without a figure, a scoped absence, an unconditional independent check and no crisis-as-opportunity, from the unsent statement in the second brake-pedal video (user: 開工) · decision: D-0005

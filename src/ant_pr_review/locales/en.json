@@ -623,6 +623,7 @@
   "draft.issue.early_conclusion": "conclusion ahead of the facts",
   "draft.issue.commitment_crossed": "crosses a line we cannot commit to",
   "draft.w.W9": "vague quantity without a number",
+  "draft.w.W10": "intensifier without a time, number or scope",
   "brief.cannot_commit.short": "Too short to match safely ({lines}): give a key phrase of two CJK characters or three letters or more.",
   "draft.bounds_short": "crosses a cannot-commit line",
   "decide.final_issues": "final.md is written as you chose, but {n} item(s) would keep it from being ready to publish:",

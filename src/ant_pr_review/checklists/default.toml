@@ -396,7 +396,7 @@ id = "JOU-06"
 lens = "journalist"
 directions = ["outbound", "inbound"]
 dimension = "provability"
-text = "Cause, scope and blame: does it state a cause, a scope or a reassurance ('no sensitive data', 'only a few users', 'isolated', 'resolved', 'it will not happen again', 'no jobs are at risk') that is not yet confirmed, name a culprit ('a temporary worker', 'one franchise store', 'a supplier', 'our account was hacked') before the facts establish it, and separate what is confirmed from what is still under investigation? Does it imply a cause or culprit by how the facts are arranged, leaving readers to infer what we would not state?"
+text = "Cause, scope and blame: does it state a cause, a scope or a reassurance ('no sensitive data', 'only a few users', 'isolated', 'resolved', 'it will not happen again', 'no jobs are at risk') that is not yet confirmed, name a culprit ('a temporary worker', 'one franchise store', 'a supplier', 'our account was hacked') before the facts establish it, and separate what is confirmed from what is still under investigation? Does it imply a cause or culprit by how the facts are arranged, leaving readers to infer what we would not state? Does a 'no reports' or 'no abnormality' claim name its basis (which channel, since when, how many units)? No reports is not proof of no defect."
 
 [[item]]
 id = "JOU-07"
@@ -538,7 +538,7 @@ lens = "social"
 directions = ["outbound", "inbound"]
 postures = ["clarify_apologize", "rebut"]
 dimension = "backlash"
-text = "One objective: does a single message mix clarifying, apologising, rebutting and promoting (a product plug, brand slogan, achievement, company history, patents, awards, CSR or policy slogans in an apology or correction), so that the apology reads as advertising or the rebuttal as a denial?"
+text = "One objective: does a single message mix clarifying, apologising, rebutting and promoting (a product plug, brand slogan, achievement, company history, patents, awards, CSR or policy slogans in an apology or correction, or the crisis presented as our starting point, a higher standard or a reason to thank the public), so that the apology reads as advertising or the rebuttal as a denial?"
 
 [[item]]
 id = "INT-06"
@@ -643,7 +643,7 @@ lens = "journalist"
 directions = ["outbound", "inbound"]
 postures = ["clarify_apologize", "rebut"]
 dimension = "provability"
-text = "Verification: when the explanation rests on our own tests or internal review, can others check any of it (an accredited third party, the original tester invited to replicate or witness, sealed samples of the same batch, data we will publish)? Does it conclude on cause, safety or the other side's test method faster than that evidence allows, while naming fewer actions than conclusions? Fast actions, slow conclusions."
+text = "Verification: when the explanation rests on our own tests or internal review, can others check any of it (an accredited third party, the original tester invited to replicate or witness, sealed samples of the same batch, data we will publish)? Does it conclude on cause, safety or the other side's test method faster than that evidence allows, while naming fewer actions than conclusions? Does the independent check go ahead whether or not the accuser cooperates, rather than waiting on their data? Fast actions, slow conclusions."
 
 [[item]]
 id = "JOU-18"

@@ -1,0 +1,22 @@
+# W10, the writer rules and the amended items (S-checklist-020, S-drafting-023..024)
+@@ src/ant_pr_review/drafting.py
+-                  if not re.search(r"\d", s) for m in INTENSIFIER.finditer(s)]
++                  for m in INTENSIFIER.finditer(s)]
+@@ src/ant_pr_review/drafting.py
+- INTENSIFIER = re.compile(r"第一時間|第一时间|全面(?:覆核|复核|排查|檢查|检查|調查|调查|檢測|检测|清查)"
++ INTENSIFIER = re.compile(r"第一時間|第一时间|全面"
+@@ src/ant_pr_review/drafting.py
+-                          r"|\b(?:immediately|thoroughly|leave no stone unturned|full investigation"
++                          r"|\b(?:thoroughly|leave no stone unturned|full investigation"
+@@ src/ant_pr_review/prompts.py
+-             "independent check goes ahead whether or not the other side cooperates. Never "
++             "independent check goes ahead once the other side cooperates. Never "
+@@ src/ant_pr_review/prompts.py
+-             "(which channel, since when, how many) and never reads as 'no defect'. An "
++             "(which channel, since when, how many). An "
+@@ src/ant_pr_review/locales/zh-TW.json
+-   "draft.w.W10": "強調詞沒有時間、數字或範圍",
++ 
+@@ src/ant_pr_review/locales/zh-CN.json
+-   "draft.w.W10": "强调词没有时间、数字或范围",
++ 

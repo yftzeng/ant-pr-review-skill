@@ -482,7 +482,7 @@ def drafting_lines(t: T, d: dict) -> list[str]:
             out.append(f"- {t('draft.chosen_other', id=d['chosen'])}")
     for v in vs:
         if v.get("w"):
-            out += ["", f"**{v['id']} · W1-W9**", ""]
+            out += ["", f"**{v['id']} · W1-W10**", ""]
             out += [f"- {h['id']} {t('draft.w.' + h['id'])} {h['where']}: {safe(h['hit'])}"
                     for h in v["w"]]
     chosen = next((v for v in vs if v["id"] == d.get("chosen")), None)

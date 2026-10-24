@@ -94,6 +94,12 @@ Feature: checklist
   Scenario: the items from the brake-pedal commentary videos are in the checklist and credited
     When  the checklist loads
     Then  JOU-16 (a denial with an unexplained fix), JOU-17 (evidence others can check; fast actions, slow conclusions) and JOU-18 (one voice and an agreed split across a shared brand; who commissioned a cited test) exist, JOU-09 names when a defensive or compliance answer fits and STK-01 holds executives to the approved line off the record; the videos are credited in docs/REFERENCES.md by title and id, with no person named
+
+  @S-checklist-020
+  Scenario: the drafted-but-unsent statement in the second brake-pedal video sharpens three items
+    When  the catalogue is loaded
+    Then  JOU-17 asks whether the independent check goes ahead whether or not the accuser cooperates, JOU-06 asks what a "no reports" or "no abnormality" claim is based on (channel, period, how many units) and says no reports is not no defect, and SOC-10 counts a crisis presented as our starting point or a higher standard as promotion
+    And   docs/REFERENCES.md #24 credits the passage by video and time, with nothing quoted
 ```
 
 ## Revisions
@@ -110,3 +116,4 @@ Feature: checklist
 - 2026-10-22 · +S-checklist-017 items from med-political, med-news-reporter, ziyu, crisis-pr-response (user: 現在併進去) · decision: D-0003
 - 2026-10-22 · +S-checklist-018 items from the user's own reference notes (user: 讀過並整理借鏡，不收進 repo) · decision: D-0003
 - 2026-10-22 · +S-checklist-019 items from three brake-pedal crisis commentary videos (user: 按你建議) · decision: D-0003
+- 2026-10-24 · +S-checklist-020 JOU-06, JOU-17 and SOC-10 amended from the unsent statement at 24:17 of the second brake-pedal video (user: 開工) · decision: none -- paraphrased amendments of existing items

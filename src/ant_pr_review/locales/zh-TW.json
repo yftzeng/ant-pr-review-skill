@@ -623,6 +623,7 @@
   "draft.issue.early_conclusion": "結論快於事實",
   "draft.issue.commitment_crossed": "越過不可承諾的界線",
   "draft.w.W9": "模糊數量沒有給數字",
+  "draft.w.W10": "強調詞沒有時間、數字或範圍",
   "brief.cannot_commit.short": "太短，無法安全比對（{lines}）：請給至少兩個中文字或三個字母的關鍵詞。",
   "draft.bounds_short": "含不可承諾內容",
   "decide.final_issues": "已依你的選擇寫出 final.md，但有 {n} 項會讓它不能直接發布：",

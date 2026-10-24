@@ -623,6 +623,7 @@
   "draft.issue.early_conclusion": "结论快于事实",
   "draft.issue.commitment_crossed": "越过不可承诺的界线",
   "draft.w.W9": "模糊数量没有给数字",
+  "draft.w.W10": "强调词没有时间、数字或范围",
   "brief.cannot_commit.short": "太短，无法安全比对（{lines}）：请给至少两个中文字或三个字母的关键词。",
   "draft.bounds_short": "含不可承诺内容",
   "decide.final_issues": "已按你的选择写出 final.md，但有 {n} 项会让它不能直接发布：",

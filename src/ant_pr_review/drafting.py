@@ -191,6 +191,10 @@ NOMINAL = re.compile(r"進行\S{0,8}?(?:動作|作業)|进行\S{0,8}?(?:动作|�
                      r"|相關單位|相关单位|有關單位|有关单位|相關人員|相关人员"
                      r"|\bconduct(?:ed)? an? (?:review|investigation) of\b"
                      r"|\bthe relevant (?:departments|parties|authorities|units)\b", re.I)
+INTENSIFIER = re.compile(r"第一時間|第一时间|全面(?:覆核|复核|排查|檢查|检查|調查|调查|檢測|检测|清查)"
+                         r"|徹查|彻查|不放過任何|不放过任何|嚴肅處理|严肃处理"
+                         r"|\b(?:immediately|thoroughly|leave no stone unturned|full investigation"
+                         r"|comprehensive (?:review|investigation|inspection))\b", re.I)
 _COUNTED = (r"(?:車輛|车辆|車|车|產品|产品|批次|用戶|用户|門市|门市|單位|单位|客戶|客户|個案|个案|案例"
             r"|消費者|消费者|訂單|订单|商品|台|輛|辆|件|位)")
 VAGUE_QTY = re.compile(r"(?:個別|个别|少數|少数|少量|極少數|极少数|部分)" + _COUNTED +
@@ -214,7 +218,7 @@ def _long_para(s: str) -> bool:
 
 
 def w_checks(v: dict, posture: str) -> list[dict]:
-    """W1-W9: readability and accountability, never detection evasion."""
+    """W1-W10: readability and accountability, never detection evasion."""
     hits = []
     paras = [p for p in v.get("paragraphs", []) if p.get("text", "").strip()]
     for n, p in enumerate(paras, 1):
@@ -230,6 +234,8 @@ def w_checks(v: dict, posture: str) -> list[dict]:
             hits += [{"id": wid, "where": where, "hit": m.group(0)} for m in rx.finditer(text)]
         hits += [{"id": "W9", "where": where, "hit": m.group(0)} for s in sents
                  if not re.search(r"\d", _DATE.sub("", s)) for m in VAGUE_QTY.finditer(s)]
+        hits += [{"id": "W10", "where": where, "hit": m.group(0)} for s in sents
+                 if not re.search(r"\d", s) for m in INTENSIFIER.finditer(s)]
     if posture in ("clarify_apologize", "rebut"):
         have = {p.get("part") for p in paras}
         missing = [x for x in FOUR_PARTS if x not in have]
