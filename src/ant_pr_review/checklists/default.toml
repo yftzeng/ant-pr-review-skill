@@ -883,3 +883,17 @@ directions = ["outbound", "operation", "inbound"]
 roles = ["private_investors", "public_investors", "lenders"]
 dimension = "legal"
 text = "As an investor or creditor: are our holdings or exposure disclosed where required, do insider-trading and fair-disclosure rules limit what we may say or trade, and do covenants or confidentiality agreements apply?"
+
+[[item]]
+id = "LEG-15"
+lens = "legal"
+directions = ["outbound", "inbound"]
+dimension = "backlash"
+text = "Bully frame: when a larger party asserts a right against a smaller one (a trademark, a patent, a contract), does the statement say what is actually asked (stop using the mark, rename, damages), that the claim is proportionate, what transition or settlement is offered, and that the smaller party's staff and customers are not targeted? Without them the other side fills the gap with 'a giant crushing a small shop'."
+
+[[item]]
+id = "SOC-12"
+lens = "social"
+directions = ["outbound", "inbound"]
+dimension = "backlash"
+text = "Underdog prop: are vulnerable people (low-paid staff, families, a 'little guy') used as props to turn a commercial or legal dispute into 'us against them', in our text or in the text we answer? Does our answer address the dispute without raising that divide, and without attacking the people used as the symbol?"

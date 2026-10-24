@@ -95,6 +95,7 @@ Do not soften or upgrade the report's judgments. It is not legal advice. Say so 
   - `09-plans/A.diff` is the smallest safe edit (outbound only).
   - `09-plans/B.md` is the lawful alternative; for an operation plan it is "do not proceed" or a transparent alternative, and for inbound it is the response options.
   - `09-plans/C-kit.md` is the response kit.
+  - `09-plans/O.md` is the other side's case, simulated: their likely claims as a third-person summary, with what is true in each, our evidence and the principle of our answer. It is not text to publish.
   - `09-plans/T.md` is the timeline of means and, with black ticked, the black-PR excluded table.
   - `09-plans/ethics.json` lists what the guard removed.
 - Then run `ant-pr-review decide <run> --yes --choice A|B|manual|hold [--rule <j>:<red_line>=confirmed|dismissed] [--file <path>]`.

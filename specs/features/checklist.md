@@ -100,6 +100,13 @@ Feature: checklist
     When  the catalogue is loaded
     Then  JOU-17 asks whether the independent check goes ahead whether or not the accuser cooperates, JOU-06 asks what a "no reports" or "no abnormality" claim is based on (channel, period, how many units) and says no reports is not no defect, and SOC-10 counts a crisis presented as our starting point or a higher standard as promotion
     And   docs/REFERENCES.md #24 credits the passage by video and time, with nothing quoted
+
+  @S-checklist-021
+  Scenario: the trademark-suit commentary adds the bully frame and the underdog prop
+    When  the catalogue is loaded
+    Then  LEG-15 asks, when a larger party asserts a right against a smaller one, whether the statement says what is actually asked, that the claim is proportionate, what transition or settlement is offered and that the smaller party's staff are not targeted
+    And   SOC-12 asks whether vulnerable people are used as props to turn a commercial dispute into "us against them", in our text or in the text we answer, and whether our answer avoids raising that divide or attacking the people used as the symbol
+    And   docs/REFERENCES.md #25 credits the video by id, with no person named and nothing quoted
 ```
 
 ## Revisions
@@ -117,3 +124,4 @@ Feature: checklist
 - 2026-10-22 · +S-checklist-018 items from the user's own reference notes (user: 讀過並整理借鏡，不收進 repo) · decision: D-0003
 - 2026-10-22 · +S-checklist-019 items from three brake-pedal crisis commentary videos (user: 按你建議) · decision: D-0003
 - 2026-10-24 · +S-checklist-020 JOU-06, JOU-17 and SOC-10 amended from the unsent statement at 24:17 of the second brake-pedal video (user: 開工) · decision: none -- paraphrased amendments of existing items
+- 2026-10-24 · +S-checklist-021 LEG-15 the bully frame and SOC-12 the underdog prop, from a commentary on a trademark suit against a small shop (user: 開工) · decision: none -- defensive items; the attack plan the video criticises is not borrowed

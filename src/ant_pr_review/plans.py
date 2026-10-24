@@ -15,7 +15,8 @@ from .jsonio import read_json, write_json, write_text_atomic
 from .revision import apply_changes, diff_text, paragraphs, render_text
 from .review import article_view, load_records
 from .roster import vendor
-from .schemas import KIT, PLAN_A, PLAN_B, PLAN_B_OPERATION, REREVIEW, RESPONSE_OPTIONS
+from .schemas import (KIT, OPPONENT, OPPONENT_FIELDS, PLAN_A, PLAN_B, PLAN_B_OPERATION,
+                      REREVIEW, RESPONSE_OPTIONS)
 from .workspace import Run
 
 DIR = "09-plans"
@@ -320,6 +321,50 @@ def plan_c(run, backend, writer, lang, risks, article, intake):
     return text, rep
 
 
+_TAG = re.compile(r"[#＃@＠][^\s#＃@＠]")
+OPPONENT_MAX = 8
+
+
+def opponent_shape(data) -> tuple[list[dict], list[str]]:
+    """S-plans-041: the other side's case stays a short third-person summary. A field over
+    300 characters, a hashtag or an @handle reads as their copy: that claim is dropped."""
+    raw = (data or {}).get("claims") if isinstance(data, dict) else None
+    kept, warn = [], []
+    for n, c in enumerate(raw if isinstance(raw, list) else [], 1):
+        if not isinstance(c, dict):
+            continue
+        c = {k: str(c.get(k) or "").strip() for k in OPPONENT_FIELDS}
+        if any(len(v) > 300 for v in c.values()):
+            warn.append(f"opponent claim {n} dropped: a field is over 300 characters")
+        elif any(_TAG.search(v) for v in c.values()):
+            warn.append(f"opponent claim {n} dropped: it carries a hashtag or a handle")
+        elif c["claim"]:
+            kept.append(c)
+    return kept[:OPPONENT_MAX], warn
+
+
+def render_opponent(t: T, claims: list[dict]) -> str:
+    from .report import cell
+    head = "| # | " + " | ".join(t(f"plans.o.{k}") for k in OPPONENT_FIELDS) + " |"
+    rows = [f"| {n} | " + " | ".join(cell(c[k]) or "—" for k in OPPONENT_FIELDS) + " |"
+            for n, c in enumerate(claims, 1)]
+    body = "\n".join([head, "|---:|" + "---|" * len(OPPONENT_FIELDS), *rows]) if claims \
+        else t("plans.o.none")
+    return f"# {t('plans.o')}\n\n{t('plans.o.note')}\n\n{body}\n"
+
+
+def plan_o(run, backend, writer, lang, risks, article, intake):
+    data, rep = _guarded(backend, writer, task="opponent", system=prompts.opponent_system(lang),
+                         prompt=prompts.plan_prompt(risks, article, intake), schema=OPPONENT,
+                         check=_scan_all)
+    data = _redact_all(data, rep["final"]) if rep["final"] else data
+    rep["redacted"] = bool(rep["final"])
+    claims, warn = opponent_shape(data)
+    write_json(run.path(f"{DIR}/O.json"), {"claims": claims})
+    write_text_atomic(run.path(f"{DIR}/O.md"), render_opponent(T(lang), claims))
+    return rep, warn
+
+
 def run_plans(run: Run, backend: Backend, models: list[str], lang: str, *, say=print) -> dict:
     syn = read_json(run.path("06-synthesis.json"))
     intake = read_json(run.path("00-intake.json"))
@@ -347,6 +392,9 @@ def run_plans(run: Run, backend: Backend, models: list[str], lang: str, *, say=p
     c_text, rep = plan_c(run, backend, writer, lang, risks, article, intake)
     out["warnings"] += rep.pop("keyword_warnings", [])
     out["ethics"]["C"] = rep
+    say(f"  … O ({writer})")
+    rep, warn = plan_o(run, backend, writer, lang, risks, article, intake)
+    out["ethics"]["O"], out["warnings"] = rep, out["warnings"] + warn
     say(f"  … T ({writer})")
     unverified = [c["id"] for c in ledger
                   if c.get("status") in ("unsupported", "cannot_verify", "pending")]

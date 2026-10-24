@@ -414,6 +414,21 @@ def kit_system(lang: str, characterised: bool = False) -> str:
             + SHARED_RULES.format(lang_name=_lang(lang)) + "\n" + ETHICS_RULES)
 
 
+def opponent_system(lang: str) -> str:
+    return ("You anticipate the other side's case so that we can prepare our answer. The "
+            "other side is the party named in the material or on the card; when none is "
+            "named, our strongest critic. List at most eight claims they are likely to make, "
+            "strongest first. For each: the frame they would put on the matter, the claim "
+            "itself, the people or symbols it appeals to, the channel they would use, what is "
+            "true in it (concede it plainly; an empty answer means nothing is), our evidence "
+            "(fact ids such as C1 where the ledger has them) and the principle of our answer, "
+            "white means only. Describe their case in the third person ('they would say "
+            "that ...'): never their statement, post or copy, never a slogan, hashtag or "
+            "handle, never a private person, and no fact about them we do not hold. Each "
+            "field is at most 300 characters.\n\n"
+            + SHARED_RULES.format(lang_name=_lang(lang)) + "\n" + ETHICS_RULES)
+
+
 def plan_prompt(risks: list[dict], article: str, intake: dict) -> str:
     bounds = (intake.get("brief") or {}).get("cannot_commit") or [] \
         if intake.get("purpose") == "drafting" else []
@@ -433,8 +448,9 @@ The material:
 def timeline_system(lang: str, means: list[str]) -> str:
     black = ("Black means are never scheduled. List each black tactic that is relevant here - "
              "one the material uses or suggests, or one someone could use against us - in "
-             "excluded: why it is black, the law at stake, how such tactics are usually exposed "
-             "(at the level of a news report, never steps, never how to avoid detection), what "
+             "excluded: why it is black, the law at stake, the kind of public case that "
+             "exposed such tactics (a regulator ruling, a court judgment, a press "
+             "investigation, a platform report; never steps, never how to avoid detection), what "
              "to watch for if it is used against us, and the lawful alternative."
              if "black" in means else "Leave excluded empty.")
     return ("You are a senior PR planner writing the timeline of actions for this "

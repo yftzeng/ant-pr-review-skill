@@ -185,6 +185,12 @@ class FakeBackend(Backend):
                 "escalation": [{"trigger": "media call", "action": "route to PR lead",
                                 "owner": "PR lead"}], "do_not_say": ["no comment"]}
 
+    def _opponent(self, *a):
+        return {"claims": [{"frame": "[fake] a cover-up", "claim": "[fake] they would say we "
+                            "knew earlier", "appeal": "affected customers", "channel": "press",
+                            "true_part": "", "our_evidence": "the ledger", "response":
+                            "[fake] show the dates"}]}
+
     def _rereview(self, model, ids, paras, bias, prompt, schema):
         found = sorted(set(re.findall(r'"id": "(R\d+)"', prompt)))
         return {"verdicts": [{"issue": f, "verdict": "FULLY", "note": "fake"} for f in found]}

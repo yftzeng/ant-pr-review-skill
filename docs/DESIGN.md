@@ -135,7 +135,7 @@ runs/<YYYYMMDD-HHMM>-<slug>/
   04-reviews/<unit>/<model-slug>.json      05-debate/<unit>/<model-slug>.json
   factcheck/ledger.jsonl                   06-synthesis.json  07-jmerge/
   08-report.v<N>.md  08-report.v<N>.<j>.md  08-report.v<N>.json
-  09-plans/A.md A.diff B.md C-kit.md rereview.json ethics.json
+  09-plans/A.md A.diff B.md C-kit.md O.md T.md rereview.json ethics.json
   10-decision.json  final.md
 ```
 

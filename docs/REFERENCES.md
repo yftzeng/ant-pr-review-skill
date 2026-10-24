@@ -459,3 +459,18 @@ A brand professional's personal commentary on one automotive crisis, with the br
 | Lawyer's letters to the press, deleting posts to cool a topic, competitors buying trending slots, paid smears ("5000 a post") | Black or gray means: noted as counter-examples only (SOC-08, RBT-02, EXP-03). |
 | Market-cap and share-price figures | Not checked, and the cause is not established. |
 
+## 25. A commentary on a trademark suit against a small shop (YouTube zBdHYTw1SEo, from 01:16)
+
+A PR commentator reads out a critique of a black-PR plan that had been published under heavy disclaimers: a step-by-step plan for turning a luxury brand's trademark suit against a small shop into a public campaign. Read 2026-10-24 from an outline the user supplied; the video was not watched here. The video carries no open licence, so only ideas are paraphrased and nothing is quoted. The commentator is not named here.
+
+| Borrowed | Where here |
+|---|---|
+| A lawful claim by a larger party can be recast as bullying, so that the claim itself loses legitimacy; say what is asked, keep it proportionate and offer a way out | checklist LEG-15 (S-checklist-021) |
+| Vulnerable people used as symbols to turn a commercial dispute into "us against them" and to press on a court | checklist SOC-12 (S-checklist-021) |
+| Disclaimers around a step-by-step how-to do not make it safe | the black table's exposure column now names the kind of public case, never steps (S-plans-042) |
+| Prepare for the other side's case | the plans' "other side's case", a third-person summary per claim with what is true in it and our evidence, never their text (S-plans-040..041) |
+
+| Left out | Why |
+|---|---|
+| The attack plan the critique describes (the framing, the staged spread, the camera work) | Black means; recognising them is covered by LEG-09, SOC-12 and the black table's watch-for column. |
+| How a black-PR author avoids being found out | Detection evasion; the ethics guard refuses it in every stage. |

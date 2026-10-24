@@ -590,6 +590,10 @@ def _plans_sections(t: T, run: Run, scope: str | None) -> list[str]:
             v = after["consolidated"] if scope is None else after["jurisdictions"][scope]
             out += ["", f"{t('report.verdict')}: {t('verdict.' + v['verdict'])} "
                         f"({t('report.reaudit_provisional')})"]
+    o_p = run.path("09-plans/O.md")
+    if o_p.exists():
+        body = o_p.read_text(encoding="utf-8").splitlines()[1:]
+        out += ["", f"## {t('plans.o')}", *body]
     tl_p = run.path("09-plans/T.md")
     if tl_p.exists():
         body = tl_p.read_text(encoding="utf-8").splitlines()[1:]

@@ -201,6 +201,9 @@ AUDIENCES = ["affected", "staff", "partners", "investors", "regulators", "exchan
 
 # D-0002: the timeline of means and its independent labelling. `day` is relative to the
 # publish day (T0); `time` is HH:MM local to the first jurisdiction.
+OPPONENT_FIELDS = ("frame", "claim", "appeal", "channel", "true_part", "our_evidence", "response")
+OPPONENT = obj({"claims": arr(obj({k: STR for k in OPPONENT_FIELDS}))})
+
 TIMELINE = obj({
     "steps": arr(obj({"day": {"type": "integer"}, "time": STR, "action": STR,
                       "category": enum(["white", "gray", "black"]), "channel": STR, "notes": STR,

@@ -228,6 +228,24 @@ Feature: plans
     Given a timeline whose steps have stages and one step marked silence
     When  T.md is rendered
     Then  each step shows its issue-attention stage, only the first silence step is kept as the silence point and one at the pre-problem or alarmed stage carries a warning, the writer is told to mark where public statements stop while the work goes on, and a step without a stage renders a blank
+
+  @S-plans-040
+  Scenario: the plans anticipate the other side's case
+    Given a finished review
+    When  the plans are written
+    Then  09-plans/O.json and O.md hold at most eight claims the other side (the named party, or our strongest critic when none is named) is likely to make, each with its frame, the claim, the people or symbols it appeals to, the channel, what is true in it, our evidence and the principle of our answer
+    And   the report has a section "對方論述預判（模擬）" saying it is a simulation for preparing our answer, not text to publish
+
+  @S-plans-041
+  Scenario: the other side's case is described, never written as their text
+    When  the opponent prompt is built and its answer is checked
+    Then  the prompt asks for a third-person summary ("they would say that ..."), never their statement, post or copy, no slogan, hashtag or handle, no private person, no fact about them we do not hold, and what is true in their case conceded
+    And   a field over 300 characters, or one carrying a hashtag or an @handle, drops that claim with a warning; the ethics guard redacts the rest; with no claim left O.md says none was kept
+
+  @S-plans-042
+  Scenario: the excluded black tactics name the kind of public case, not how to avoid one
+    When  the timeline prompt is built and the excluded table is rendered
+    Then  the column is "公開被揭穿的案例類型" (en "kind of public case that exposed it") and the prompt asks for the kind of case (a regulator ruling, a court judgment, a press investigation, a platform report), never steps and never how to avoid detection
 ```
 
 ## Must NOT
@@ -248,3 +266,4 @@ Feature: plans
 - 2026-10-22 · +S-plans-037 plan C Q&A rules from the user's notes · decision: D-0003
 - 2026-10-22 · +S-plans-038..039 the kit's formal statement only when characterised; attention stages and a silence point (user: 開工) · decision: D-0006
 - 2026-10-22 · ~S-plans-038..039 from the tier-3 review: a withheld formal statement says so, tier-4 drafting is not characterised, one silence point with a warning when early · decision: D-0006
+- 2026-10-24 · +S-plans-040..042 the other side's case anticipated as a third-person summary, and the black table's exposure column narrowed to the kind of public case (user: 開工，「對方論述預判」也做) · decision: none -- a full opponent text would itself be a ready-to-post attack on a named organisation

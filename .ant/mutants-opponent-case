@@ -1,0 +1,28 @@
+# the other side's case and the narrowed exposure column (S-plans-040..042, S-checklist-021)
+@@ src/ant_pr_review/plans.py
+-         if any(len(v) > 300 for v in c.values()):
++         if any(len(v) > 301 for v in c.values()):
+@@ src/ant_pr_review/plans.py
+-         elif any(_TAG.search(v) for v in c.values()):
++         elif any(_TAG.search(v) for v in list(c.values())[:3]):
+@@ src/ant_pr_review/plans.py
+- OPPONENT_MAX = 8
++ OPPONENT_MAX = 10
+@@ src/ant_pr_review/plans.py
+-     data = _redact_all(data, rep["final"]) if rep["final"] else data
++     data = data
+@@ src/ant_pr_review/plans.py
+-     rep["redacted"] = bool(rep["final"])
++     rep["redacted"] = False
+@@ src/ant_pr_review/plans.py
+-     out["ethics"]["O"], out["warnings"] = rep, out["warnings"] + warn
++     out["ethics"]["O"] = rep
+@@ src/ant_pr_review/report.py
+-         out += ["", f"## {t('plans.o')}", *body]
++         out += ["", *body]
+@@ src/ant_pr_review/prompts.py
+-             "white means only. Describe their case in the third person ('they would say "
++             "white means only. Describe their case ('they would say "
+@@ src/ant_pr_review/prompts.py
+-             "exposed such tactics (a regulator ruling, a court judgment, a press "
++             "exposed such tactics (a regulator ruling, a press "
