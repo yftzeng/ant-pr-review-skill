@@ -55,8 +55,17 @@ def source_urls(sources: list[dict]) -> str:
         u = s["url"].strip().replace("|", "%7C").replace("<", "%3C").replace(">", "%3E") \
             .replace(" ", "%20")
         date = str(s.get("accessed_at", ""))[:10]
-        out.append(f"{u} ({date})" if date else u)
+        grade = f"[{s['grade']}] " if s.get("grade") in ("A", "B", "C") else ""
+        out.append(grade + (f"{u} ({date})" if date else u))
     return " ".join(out)
+
+
+def ledger_status(t: T, c: dict) -> str:
+    """The ledger's status cell: the reason when it could not be verified, else the
+    strength of its sources (S-factcheck-ledger-014)."""
+    if c["status"] == "cannot_verify":
+        return f"{c['status']} ({c['reason']})"
+    return c["status"] + (f" · {t('strength.' + c['strength'])}" if c.get("strength") else "")
 
 
 def latest_version(run: Run) -> int:
@@ -616,6 +625,8 @@ def _red_table_one(t: T, red: dict) -> list[str]:
                             for c in v["comments"])
         if v["evidence"]:
             comment += " " + "; ".join(f"{e['claim']}: {e['text']}" for e in v["evidence"])
+        if v.get("weak_evidence"):
+            comment += " " + "; ".join(f"⚠ {e['claim']}: {e['text']}" for e in v["weak_evidence"])
         dissent = "; ".join(f"{d['model']}: {d['evidence']}" for d in v["dissent"])
         status = t("report.rl." + v["status"]) + (" ✋" if v.get("human_ruling") else "")
         out.append(f"| {t('redline.' + k)} | {status} | {v['severity']} | "
@@ -826,7 +837,7 @@ def render(run: Run, syn: dict, *, lang: str, version: int, changelog: list[str]
           f"| ID | {t('report.location')} | {t('report.claim')} | {t('report.status')} | "
           f"{t('report.sources')} |", "|---|---|---|---|---|"]
     for c in ledger:
-        st = c["status"] + (f" ({c['reason']})" if c["status"] == "cannot_verify" else "")
+        st = ledger_status(t, c)
         L.append(f"| {c['id']} | {cell(c['anchor'])} | {cell(c['text'])} ({c['type']}) | {st} | "
                  f"{source_urls(c.get('sources', []))} |")
     if scan.get("flags"):

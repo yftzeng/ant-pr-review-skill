@@ -7,7 +7,7 @@ import json
 import re
 import unicodedata
 from datetime import date
-from urllib.parse import quote, urlsplit
+from urllib.parse import quote
 
 from . import prompts
 from .backends.base import Backend, BackendError
@@ -16,6 +16,7 @@ from .i18n import T
 from .roster import can_search
 from .schemas import PROFILE_SEARCH
 from .sources.crawler import FetchError
+from .sources.grade import OFFICIAL, host as _host, outlet as _outlet
 from .ui import checkbox, confirm
 
 GCIS = "https://data.gcis.nat.gov.tw/od/data/api/{ds}?$format=json&$filter={flt}&$skip=0&$top=1"
@@ -95,23 +96,7 @@ def registry_lookup(crawler, tax_id: str) -> dict:
                       "business_items": biz, "industries": sections}}
 
 
-_SUFFIX2 = {"co", "com", "org", "net", "gov", "edu", "ac", "or", "ne", "go", "idv", "gob"}
-OFFICIAL = re.compile(r"(?:^|\.)(?:gov|gov\.[a-z]{2}|go\.[a-z]{2}|gob\.[a-z]{2}|nat\.gov\.tw|"
-                      r"europa\.eu|twse\.com\.tw|tpex\.org\.tw|sec\.gov|sse\.com\.cn|"
-                      r"szse\.cn|hkex\.com\.hk)$")
 ROLES = ("direct", "indirect", "substitute", "benchmark")
-
-
-def _host(url: str) -> str:
-    return (urlsplit(url).hostname or "").lower().rstrip(".").removeprefix("www.")
-
-
-def _outlet(url: str) -> str:
-    """The registrable name without its suffix: bbc.co.uk and bbc.com are one outlet."""
-    parts = _host(url).split(".")
-    if len(parts) >= 3 and len(parts[-1]) == 2 and parts[-2] in _SUFFIX2:
-        return parts[-3]
-    return parts[-2] if len(parts) >= 2 else parts[0]
 
 
 def _clean_name(s) -> str:

@@ -7,6 +7,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from .sources.grade import SOURCE_KINDS
+
 _TYPES = {
     "object": dict, "array": list, "string": str, "boolean": bool,
     "integer": int, "number": (int, float), "null": type(None),
@@ -114,7 +116,8 @@ def review_schema() -> dict:
 FACTCHECK = obj({
     "status": enum(FACT_STATUS),
     "reason": STR,
-    "sources": arr(obj({"url": STR, "supporting_excerpt": STR})),
+    "sources": arr(obj({"url": STR, "supporting_excerpt": STR,
+                        "kind": enum(list(SOURCE_KINDS))})),
 })
 
 DEBATE = obj({

@@ -188,6 +188,13 @@ Feature: review matrix
   Scenario: the checklist is also subtotalled by the three control axes
     When  the report is written
     Then  the subtotals include predictability, explicability and influence, each with its pass-rate bar over its items and how many of its items this run asked, and the event assessment shows the three
+
+  @S-review-matrix-033
+  Scenario: only graded evidence outranks a dispute
+    Given one model flags fabrication_about_party and another disputes it
+    When  synthesis runs with an unsupported allegation whose sources are weak (only C)
+    Then  the red line is not confirmed by that claim: it needs a ruling, and the claim is listed as weak evidence in the red line's comment
+    And   with an unsupported allegation whose strength is strong, single or ungraded, the red line is "confirmed" with it as evidence, as before
 ```
 
 ## Must NOT
@@ -206,3 +213,4 @@ Feature: review matrix
 - 2026-10-22 · +S-review-matrix-030 disclaimer from the user's notes · decision: D-0003
 - 2026-10-22 · +S-review-matrix-031..032 the event assessment and the control-axis subtotals (user: 開工) · decision: D-0006
 - 2026-10-22 · ~S-review-matrix-031..032 from the tier-3 review: a latent red line in an unpublished text, a missing kit, drafting's characterised, axis coverage, the regrade path · decision: D-0006
+- 2026-10-26 · +S-review-matrix-033 · decision: none -- user: 按你建議 (a single C-grade page may no longer overturn a reviewer's dispute)

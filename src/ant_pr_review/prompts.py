@@ -253,7 +253,12 @@ def factcheck_system(lang: str) -> str:
             "prefer a fetched page for the supporting excerpt. For a legal citation, prefer the "
             "official law database of that jurisdiction and check the article number and its "
             "current wording. If nothing reliable is found, answer cannot_verify with reason "
-            "no_source.\n\n" + SHARED_RULES.format(lang_name=_lang(lang)))
+            "no_source. Give each source its kind: law_database, court, regulator, registry, "
+            "exchange_filing (official records), academic (a paper), independent (a news "
+            "outlet or analyst not paid by a party), company_claim (a party's own page or "
+            "release), aggregator (a site republishing others), or lead (a forum, social post "
+            "or anything else). Code checks the host: an official kind on an unofficial host "
+            "counts as a claim.\n\n" + SHARED_RULES.format(lang_name=_lang(lang)))
 
 
 def factcheck_prompt(claim: dict, context: str) -> str:

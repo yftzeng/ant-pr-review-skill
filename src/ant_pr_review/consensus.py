@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from .catalog import RED_LINES, VERDICT_RANK, item_index
 from .roster import slug, vendors
+from .sources.grade import is_evidence
 
 RL_SEV = {"none": 0, "low": 1, "medium": 2, "high": 3}
 VETO_MIN_SEV = RL_SEV["medium"]
@@ -188,10 +189,13 @@ def rule_red_line(key: str, parts: list[dict], ledger: list[dict], ruling: str |
     disputes = [d for p in parts for d in p["dissent"] if d["model"] not in flaggers]
     advisory = {m for p in parts for m in p["advisory"]}
     sev = max((p["severity"] for p in parts), default=0)
-    evidence = []
+    evidence, weak = [], []
     if key == "fabrication_about_party":
-        evidence = [{"claim": c["id"], "text": c["text"]} for c in ledger
-                    if c["type"] == "allegation" and c["status"] == "unsupported"]
+        for c in ledger:
+            if c["type"] == "allegation" and c["status"] == "unsupported":
+                # S-review-matrix-033: only C sources behind it cannot outrank a dispute
+                (evidence if is_evidence(c) else weak).append({"claim": c["id"],
+                                                               "text": c["text"]})
     if not supporters:
         status = "advisory" if advisory else "clear"
     elif evidence:
@@ -206,7 +210,7 @@ def rule_red_line(key: str, parts: list[dict], ledger: list[dict], ruling: str |
     return {"status": status, "supporters": supporters, "dissent": disputes,
             "severity": [s for s, v in RL_SEV.items() if v == sev][0],
             "comments": [c for p in parts for c in p["comments"]], "evidence": evidence,
-            "human_ruling": ruled}
+            "weak_evidence": weak, "human_ruling": ruled}
 
 
 def verdict_for(red: dict, risks: list[dict], items: list[dict], th: dict) -> dict:
