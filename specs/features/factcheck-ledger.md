@@ -75,6 +75,19 @@ Feature: fact-check ledger
   Scenario: every kept source records when it was accessed
     When  a claim is checked and keeps a source
     Then  the source has an accessed_at timestamp and the report shows its date next to the URL
+
+  @S-factcheck-ledger-012
+  Scenario: academic identifiers are checked only when asked, and never under embargo
+    Given a material citing "doi:10.1038/nature12373"
+    When  the fact-check phase runs without --academic, or with --academic on an embargoed run
+    Then  no request goes to doi.org, Crossref or arXiv; without --academic the ledger has no citation claim, and under embargo the citation claim is cannot_verify "embargo", retried once the embargo is lifted
+
+  @S-factcheck-ledger-013
+  Scenario: DOIs and arXiv ids are verified against doi.org, Crossref and arXiv, without a model
+    Given --academic and a material citing a resolvable DOI, an unknown DOI, arXiv 1706.03762, a retracted DOI and a DOI next to a quoted title that differs from its Crossref title
+    When  the fact-check phase runs
+    Then  the claims of type "citation" are supported (Crossref title and year), unsupported "identifier_not_found", supported (arXiv title), unsupported "retracted" and partly "title_mismatch"; an arXiv answer of HTTP 200 with no entry or an entry titled "Error" is "identifier_not_found"
+    And   each source has a doi.org or arxiv.org URL and an accessed_at time, the model checker skips citation claims, and a network failure leaves the claim retryable
 ```
 
 ## Must NOT
@@ -85,3 +98,4 @@ Feature: fact-check ledger
 - 2026-10-22 · +S-factcheck-ledger-010 · decision: none -- adversarial security review (sonnet) proved these by running
 - 2026-10-22 · +S-factcheck-ledger-011 · decision: none -- re-evaluated references: K-Dense source ledger keeps a verification date per source
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5; ~S-factcheck-ledger-001 ~S-factcheck-ledger-008 for the matrix and report names; ~S-factcheck-ledger-009 law citations and allegations replace the S-curve stage · decision: D-PR-8
+- 2026-10-26 · +S-factcheck-ledger-012..013 · decision: none -- user: 開工 (port ant-peer-review's opt-in DOI / arXiv checks; PR copy often cites "a study shows", and a retracted or mistitled paper is a clear risk); embargo keeps it offline

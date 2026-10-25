@@ -1,0 +1,16 @@
+# opt-in DOI / arXiv checks, offline under embargo (S-factcheck-ledger-012..013)
+@@ src/ant_pr_review/scholarly.py
+-         if blocked:  # S-factcheck-ledger-012: no request under embargo
++         if False:  # S-factcheck-ledger-012: no request under embargo
+@@ src/ant_pr_review/factcheck.py
+-             if not is_retryable(c) or c["type"] == "citation":  # citations: scholarly.py
++             if not is_retryable(c):  # citations: scholarly.py
+@@ src/ant_pr_review/intake.py
+-            "purpose": purpose, "fact_sources": ["academic"] if academic else []}
++            "purpose": purpose, "fact_sources": ["academic"]}
+@@ src/ant_pr_review/scholarly.py
+-         if ratio < 0.6:
++         if ratio < 0.0:
+@@ src/ant_pr_review/scholarly.py
+-     if not entries or title.lower() == "error":
++     if not entries:

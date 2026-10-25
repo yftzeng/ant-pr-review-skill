@@ -72,6 +72,8 @@ def factcheck_continue(run: Run, backend, models: list[str], thresholds: dict[st
     from .ui import radio
     t = T(lang)
     say = say or io.say
+    from .scholarly import verify_identifiers
+    verify_identifiers(run, say=say)
     summ = run_checks(run, backend, pick_checker(models, models), lang,
                       blocked=factcheck_blocked(run), say=say)
     if summ["left"]:

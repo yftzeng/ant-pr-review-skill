@@ -287,6 +287,8 @@ def ph_review(run: Run, ctx: Ctx) -> None:
 def ph_factcheck(run: Run, ctx: Ctx) -> None:
     ledger = build_ledger(load_records(run, "04-reviews"), read_ledger(run))
     write_ledger(run, ledger)
+    from .scholarly import verify_identifiers
+    verify_identifiers(run, ctx.options.get("api_crawler"), say=ctx.say)
     checker = pick_checker(ctx.models, ctx.models)
     summ = run_checks(run, ctx.backend, checker, ctx.lang, blocked=factcheck_blocked(run),
                       say=ctx.say)

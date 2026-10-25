@@ -328,7 +328,8 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
                            locked: list[str] | None = None, focus: str = "",
                            roles: list[str] | None = None, tax_id: str = "",
                            purpose: str = "audit", brief: dict | None = None,
-                           signals: str | None = None, characterised: bool = False) -> dict:
+                           signals: str | None = None, characterised: bool = False,
+                           academic: bool = False) -> dict:
     if direction not in DIRECTIONS:
         raise ValueError(f"direction must be one of {DIRECTIONS}")
     if purpose not in PURPOSES:
@@ -375,7 +376,7 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
            "roles": roles_of({"roles": {"identities": identities}}), "posture": posture,
            "means": [m for m in MEANS if m in chosen],
            "targets": [classify_target(x) for x in targets], "card": card, "lang": lang,
-           "purpose": purpose}
+           "purpose": purpose, "fact_sources": ["academic"] if academic else []}
     if purpose == "drafting":  # D-0005: the targets are material, read only to check facts
         out.update(brief=brief, materials=out["targets"], targets=[])
     return out

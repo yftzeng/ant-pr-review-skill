@@ -68,6 +68,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="a sentence plan A must not change (repeat)")
     n.add_argument("--focus", default="", help="what to look at most closely")
     n.add_argument("--embargo", action="store_true", help="no web calls at all (D-PR-9)")
+    n.add_argument("--academic", action="store_true",
+                   help="check DOIs and arXiv ids against doi.org, Crossref and arXiv")
     n.add_argument("--signals", help="observed event signals, comma list (D-0006): "
                    + ",".join(SIGNALS))
     n.add_argument("--characterised", action="store_true",
@@ -304,7 +306,8 @@ def cmd_new(args, io: IO, store: Store, cfg: Config) -> int:
                 background=args.background, locked=args.locked, focus=args.focus,
                 roles=args.role or None, tax_id=args.tax_id,
                 purpose="drafting" if args.brief and args.purpose == "audit" else args.purpose,
-                brief=brief, signals=args.signals, characterised=args.characterised)
+                brief=brief, signals=args.signals, characterised=args.characterised,
+                academic=args.academic)
         except ValueError as e:
             io.say(f"error: {e}")
             return EXIT_USAGE
@@ -366,6 +369,8 @@ def cmd_factcheck(args, io, store, cfg) -> int:
     if args.yes:
         from .factcheck import pick_checker, run_checks
         from .refresh import factcheck_blocked, finalize_factcheck
+        from .scholarly import verify_identifiers
+        verify_identifiers(run, say=io.say)
         s = run_checks(run, ctx.backend, pick_checker(ctx.models, ctx.models), ctx.lang,
                        blocked=factcheck_blocked(run), say=io.say)
         io.say(ctx.t("fc.summary", done=s["done"], total=s["total"], left=s["left"],

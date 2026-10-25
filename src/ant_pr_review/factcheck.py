@@ -169,7 +169,7 @@ def run_checks(run: Run, backend: Backend, checker: str | None, lang: str, *,
     reason = blocked or (None if checker else "no_search_backend")
     try:
         for i, c in enumerate(ledger):
-            if not is_retryable(c):
+            if not is_retryable(c) or c["type"] == "citation":  # citations: scholarly.py
                 continue
             if reason:
                 ledger[i] = dict(c, status="cannot_verify", reason=reason, sources=[])
