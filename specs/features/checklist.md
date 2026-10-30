@@ -107,6 +107,13 @@ Feature: checklist
     Then  LEG-15 asks, when a larger party asserts a right against a smaller one, whether the statement says what is actually asked, that the claim is proportionate, what transition or settlement is offered and that the smaller party's staff are not targeted
     And   SOC-12 asks whether vulnerable people are used as props to turn a commercial dispute into "us against them", in our text or in the text we answer, and whether our answer avoids raising that divide or attacking the people used as the symbol
     And   docs/REFERENCES.md #25 credits the video by id, with no person named and nothing quoted
+  @S-checklist-022
+  Scenario: the crisis core adds the business-head questions, knowing versus reporting, frontline wording and the press conference
+    When  the catalogue is loaded
+    Then  INT-09 asks whether the business head could sign each factual sentence, when we first knew internally and whether the text blurs it, whether an independent test or a records request would show something left out, the worst case for similar units not yet found, and what evidence the other side may hold
+    And   REG-07 asks whether each reporting deadline counted from when we first knew was met or is open, names it for counsel and never states it as met without a record
+    And   STK-08 asks whether the frontline has a version to read aloud that matches the public facts and where it refers questions
+    And   JOU-19 asks, for a press conference, for a trained single speaker, rehearsed hard questions, an announced length kept by a host, the core questions answered before leaving and a recording, and warns that a walk-out or a cut-off becomes the headline
 ```
 
 ## Revisions
@@ -125,3 +132,4 @@ Feature: checklist
 - 2026-10-22 · +S-checklist-019 items from three brake-pedal crisis commentary videos (user: 按你建議) · decision: D-0003
 - 2026-10-24 · +S-checklist-020 JOU-06, JOU-17 and SOC-10 amended from the unsent statement at 24:17 of the second brake-pedal video (user: 開工) · decision: none -- paraphrased amendments of existing items
 - 2026-10-24 · +S-checklist-021 LEG-15 the bully frame and SOC-12 the underdog prop, from a commentary on a trademark suit against a small shop (user: 開工) · decision: none -- defensive items; the attack plan the video criticises is not borrowed
+- 2026-10-30 · +S-checklist-022 INT-09, REG-07, STK-08, JOU-19 from the crisis checklist the user supplied; the one-way press exit and the 40/20/40 rule are not borrowed (user: 開工) · decision: D-0007

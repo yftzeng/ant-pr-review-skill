@@ -737,5 +737,6 @@
   "plans.frontline_qa": "Frontline Q&A (to read aloud)",
   "plans.t.warn_before_regulators": "no later than the first step for regulators or partners: they hear it first",
   "plans.t.pause_promo": "Pause scheduled posts, campaigns and paid ads — fixed step",
-  "plans.t.pause_promo_stop": "resume only after the stop point, with approval"
+  "plans.t.pause_promo_stop": "resume only after the stop point, with approval",
+  "brief.worst_case": "Worst case for similar units, batches or accounts not yet found (Enter to skip):"
 }

@@ -160,7 +160,7 @@ def test_report_names_the_bottom_line(tmp_path):
 
 def test_drafting_card_does_not_ask_characterised():
     answers = ["2", "", "", "", "",
-               "1", "A batch shipped with a faulty seal", "/done", "/done", "/done", "", "", "",
+               "1", "A batch shipped with a faulty seal", "/done", "/done", "/done", "", "", "", "",
                "buyers", "", "", "", "/done", "/done", "/done", "/done", "legal", "", "/done",
                "", "/done"]
     from test_context_card import FILL

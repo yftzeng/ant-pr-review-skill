@@ -1,0 +1,25 @@
+# crisis-core checklist items and the worst case (S-checklist-022, S-drafting-026)
+@@ src/ant_pr_review/intake.py
+-     raw["worst_case"] = ask_text(io, t("brief.worst_case")).strip()
++     raw["worst_case"] = ""
+@@ src/ant_pr_review/drafting.py
+-             "worst_case": " ".join(str(raw.get("worst_case") or "").split()),
++             "worst_case": "",
+@@ src/ant_pr_review/prompts.py
+-              "investigation'.\n" if holding else
++              "investigation'.\n" if holding else "" if True else
+@@ src/ant_pr_review/prompts.py
+-     shape += ("If the brief has a worst_case, the statement promises nothing beyond the worst "
++     shape += ("If the brief has a worst_case, the statement may go beyond the worst "
+@@ src/ant_pr_review/checklists/default.toml
+- id = "REG-07"
++ id = "REG-77"
+@@ src/ant_pr_review/checklists/default.toml
+- id = "JOU-19"
++ id = "JOU-99"
+@@ src/ant_pr_review/checklists/default.toml
+- id = "STK-08"
++ id = "STK-88"
+@@ src/ant_pr_review/checklists/default.toml
+- id = "INT-09"
++ id = "INT-99"

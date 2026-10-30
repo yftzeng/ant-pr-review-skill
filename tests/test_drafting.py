@@ -91,7 +91,7 @@ def test_purpose_first_and_drafting_asks_the_brief():
                "1",                                   # kind: the first
                "A batch shipped with a faulty seal", "/done",   # confirmed
                "/done", "How many units are in use", "/done",     # alleged, unknown
-               "", "", "",                             # the three times
+               "", "", "", "",                         # the three times, worst case
                "buyers of the March batch", "2",       # affected, emotion: the second
                "buyers get a replacement", "",         # outcome, decision: default
                "/done", "Sales stopped", "/done", "/done", "/done",  # prior, actions

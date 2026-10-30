@@ -65,6 +65,7 @@ def ask_brief(io: IO, t: T) -> dict:
         io.say(t("brief.need_fact"))
     for f in TIMES:
         raw[f] = ask_text(io, t(f"brief.{f}")).strip()
+    raw["worst_case"] = ask_text(io, t("brief.worst_case")).strip()
     raw["affected"] = ask_text(io, t("brief.affected")).strip()
     raw["emotion"] = radio(io, t, t("brief.emotion"),
                            [(e, t(f"brief.emotion.{e}")) for e in EMOTIONS], default=EMOTIONS[0])

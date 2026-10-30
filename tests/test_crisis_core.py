@@ -69,6 +69,7 @@ def test_brief_asks_times_and_owned_unknowns():
                      "Sales stopped", "/done", "/done",    # confirmed, alleged
                      "Units in use | QA lead | 18:00", "/done",
                      "2026-10-18", "2026-10-20", "",       # occurred, known, exposed
+                     "",                                   # worst case
                      "buyers", "", "fix", "",              # affected, emotion, outcome, decision
                      "/done", "/done", "/done", "/done",   # prior, actions
                      "", "",                               # approvers, characterised

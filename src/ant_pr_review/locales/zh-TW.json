@@ -737,5 +737,6 @@
   "plans.frontline_qa": "第一線問答（可照念）",
   "plans.t.warn_before_regulators": "早於或與主管機關／合作夥伴的第一步同時：應先告知他們",
   "plans.t.pause_promo": "暫停排程貼文、行銷活動與付費廣告——固定步驟",
-  "plans.t.pause_promo_stop": "停止發言點之後、經核准才恢復"
+  "plans.t.pause_promo_stop": "停止發言點之後、經核准才恢復",
+  "brief.worst_case": "最壞情況下，尚未發現的同類產品、批次或帳戶可能有多少（Enter 略過）："
 }

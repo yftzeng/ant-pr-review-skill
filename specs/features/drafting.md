@@ -156,6 +156,11 @@ Feature: drafting
     Given a brief file whose unknown facts are strings "what | owner role | due" or tables {text, owner, due}, with occurred_at, known_at and exposed_at; and the same answered interactively
     When  it is checked
     Then  each unknown fact U<n> keeps its text, owner and due (empty when not given), the three times are stored, and the writer prompt carries them; a confirmed or alleged fact with "|" keeps the whole line as its text
+  @S-drafting-026
+  Scenario: the brief records the worst case, and a formal statement gets a proportion hint, never a rule
+    Given a brief with worst_case "up to 5,000 units of the March batch", or none; answered interactively after the three times
+    When  it is checked and the writer prompt is built
+    Then  the brief keeps worst_case and the prompt says the statement promises nothing beyond it; when the facts characterise the event the prompt offers, as a guide only, about two fifths on what happened and our stance, one fifth on the cause and two fifths on the measures, with the facts setting the length; a holding-only draft gets no proportion hint
 ```
 
 ## Must NOT
@@ -172,3 +177,4 @@ Feature: drafting
 - 2026-10-22 · ~S-drafting-015 examples carry no quote of their source, only a paraphrased lesson, so the repo holds no third-party text (user: 兩個都做, after the licence check) · decision: D-0005
 - 2026-10-24 · +S-drafting-023..024 W10 intensifiers without a figure, a scoped absence, an unconditional independent check and no crisis-as-opportunity, from the unsent statement in the second brake-pedal video (user: 開工) · decision: D-0005
 - 2026-10-30 · +S-drafting-025 the three times and owned unknowns in the brief (user: 開工, the shared crisis core) · decision: D-0007
+- 2026-10-30 · +S-drafting-026 the worst case in the brief and the 40/20/40 proportion as a hint only (user: 開工, the shared crisis core) · decision: D-0007

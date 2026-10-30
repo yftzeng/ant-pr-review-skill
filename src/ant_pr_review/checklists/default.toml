@@ -526,6 +526,13 @@ dimension = "platform"
 text = "Notice routes: does each takedown or platform notice use the route that fits the right at stake (copyright for copying, trademark for source confusion, defamation for a false statement of fact, privacy for personal data), never copyright or trademark against criticism, and does any signed statement claim no more than what was checked? Could the notice be held a misrepresentation or manifestly unfounded in this jurisdiction?"
 
 [[item]]
+id = "REG-07"
+lens = "regulator"
+directions = ["outbound", "operation"]
+dimension = "timing"
+text = "Knowing versus reporting (D-0007): counted from when we first knew internally, was each reporting or notification deadline in this jurisdiction (regulator, data protection authority, exchange, product-safety recall, the people affected) met, or is it still open? Name each deadline for counsel to confirm, never state one as met without a record, and check that the text does not describe the timeline in a way that conflicts with when we first knew."
+
+[[item]]
 id = "JOU-12"
 lens = "journalist"
 directions = ["outbound", "operation"]
@@ -653,6 +660,13 @@ dimension = "stakeholder"
 text = "Shared brands and joint ventures: where two or more organisations own, make, operate or sell the product, are their statements, figures and commitments the same, is there one voice for the brand, and is the split of responsibility agreed before it is tested in public? Does any test or report we cite say who commissioned it, and does the tester stand behind more than the samples it was sent? Co-owners disowning each other's evidence read as passing the blame."
 
 [[item]]
+id = "JOU-19"
+lens = "journalist"
+directions = ["outbound", "operation"]
+dimension = "timing"
+text = "Press conference (D-0007): if one is held, is the speaker trained and the only one who speaks, are the hard questions rehearsed with answers, is the length announced in advance with a host keeping time, are the core questions answered before anyone leaves, and is the whole event recorded? A walk-out, a cut-off of questions or 'no comment' without a reason becomes the headline."
+
+[[item]]
 id = "LEG-14"
 lens = "legal"
 directions = ["outbound", "inbound"]
@@ -666,6 +680,13 @@ lens = "internal"
 directions = ["outbound", "operation"]
 dimension = "stakeholder"
 text = "Accountability direction: does a public statement, or a staff or discipline notice that could leak, name, number or penalise individual employees (names, staff IDs, pay cuts) for an organisational failure, or say leadership takes responsibility while every penalty falls on junior staff or an agency? Does it expose staff personal data?"
+
+[[item]]
+id = "INT-09"
+lens = "internal"
+directions = ["outbound", "operation"]
+dimension = "provability"
+text = "Questions for the business head before anything goes out (D-0007): could the business head sign each factual sentence? When did we first know internally, and does the text blur that date? Would an independent test, a records request or a regulator's file show something the text leaves out? What is the worst case for similar units, batches or accounts not yet found, and does the text promise beyond it? What evidence could the other side hold that we do not?"
 
 # ---- the stakeholder map (D-0003): one item per group, per jurisdiction ----
 
@@ -717,6 +738,13 @@ lens = "stakeholders"
 directions = ["outbound", "operation", "inbound"]
 dimension = "stakeholder"
 text = "Politics (the ruling and opposition parties, and the party and state organs listed for this jurisdiction): how could each use this (hearings, legislation, statements, rallying, state media lines), and does our content take a political side?"
+
+[[item]]
+id = "STK-08"
+lens = "stakeholders"
+directions = ["outbound", "operation", "inbound"]
+dimension = "stakeholder"
+text = "Frontline wording (D-0007): do the service desk, stores and sales have a version they can read aloud (what to say, what not to say, where to refer questions), and does it match the public statement on every fact? Would a frontline answer that goes beyond it, or a 'no idea' to a customer, become the story?"
 
 # ---- stress tests (D-0003; user, 2026-10-22): asked before a statement is final ----
 

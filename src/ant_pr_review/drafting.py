@@ -88,6 +88,7 @@ def check_brief(raw: dict) -> dict:
             "characterised": characterised,
             "cannot_commit": check_bounds(_texts(raw.get("cannot_commit"))),
             "tier4": list(dict.fromkeys(tier4)),
+            "worst_case": " ".join(str(raw.get("worst_case") or "").split()),
             **{f: " ".join(str(raw.get(f) or "").split()) for f in TIMES}}
 
 

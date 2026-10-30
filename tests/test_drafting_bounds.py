@@ -17,7 +17,7 @@ def writer_call(b):
 # @S-drafting-017
 def test_brief_asks_characterised_and_cannot_commit():
     answers = ["2", "", "", "", "",
-               "1", "A batch shipped with a faulty seal", "/done", "/done", "/done", "", "", "",
+               "1", "A batch shipped with a faulty seal", "/done", "/done", "/done", "", "", "", "",
                "buyers", "", "", "",
                "/done", "/done", "/done", "/done",
                "legal",
@@ -118,7 +118,7 @@ def test_short_lines_refused_and_spelling():
     assert drafting.check_brief(dict(BRIEF, characterized=True))["characterised"] is True
     assert drafting.check_brief(dict(BRIEF, cannot_commit=["召回。"]))["cannot_commit"] == ["召回"]
     answers = ["2", "", "", "", "",
-               "1", "A batch shipped with a faulty seal", "/done", "/done", "/done", "", "", "",
+               "1", "A batch shipped with a faulty seal", "/done", "/done", "/done", "", "", "", "",
                "buyers", "", "", "", "/done", "/done", "/done", "/done", "legal", "",
                "召", "/done",            # too short: asked again
                "召回", "/done", "", "/done"]

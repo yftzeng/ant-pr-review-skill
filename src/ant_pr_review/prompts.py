@@ -587,7 +587,12 @@ def draft_system(lang: str, intake: dict, *, tier4: bool, holding: bool = False)
              "The facts do not yet characterise the event (cause and scope unconfirmed): write "
              "holding statements only - what is confirmed, what we are doing now and when, what "
              "affected people should do, and when the next update comes; the cause is 'under "
-             "investigation'.\n" if holding else "")
+             "investigation'.\n" if holding else
+             "As a guide only, never a rule: a formal statement often gives about two fifths to "
+             "what happened and our stance, one fifth to the cause and two fifths to the "
+             "measures; let the facts set the length.\n")
+    shape += ("If the brief has a worst_case, the statement promises nothing beyond the worst "
+              "case: no scope, guarantee or all-clear wider than it.\n")
     return (f"You draft our public statement, in posture {p} ({POSTURE_TEXT[p]}). Write two "
             "versions that differ in approach (for example apology first vs action first, or "
             "short vs complete), not in wording; name each approach.\n" + shape +
