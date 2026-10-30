@@ -64,3 +64,4 @@ Feature: menus
 - 2026-10-22 · +S-menus-001..008 +N-menus-001 · decision: none -- user chose stdlib arrow menus (option B) over adding questionary/prompt_toolkit: keeps zero runtime deps and the in-list custom entry
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5; kept unchanged · decision: D-PR-1
 - 2026-10-22 · ~S-menus-008 the purpose question now comes first (drafting mode); the pty test takes audit and moves down the direction question · decision: D-0005
+- 2026-10-30 · S-menus-001 unchanged: the purpose menu now lists crisis, audit, drafting with audit the default, so Enter still keeps audit; the radio scenario stays generic (user: 就用 crisis，然後放在第一個) · decision: D-0007

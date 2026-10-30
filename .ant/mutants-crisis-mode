@@ -1,0 +1,73 @@
+# crisis mode: the purpose, no questions, the sheet and its checks (S-crisis-001..007, N-crisis-001..002)
+@@ src/ant_pr_review/intake.py
+-         means, characterised, embargo = "white", False, True
++         means, characterised, embargo = "white,gray", False, True
+@@ src/ant_pr_review/intake.py
+-         means, characterised, embargo = "white", False, True
++         means, characterised, embargo = "white", False, False
+@@ src/ant_pr_review/intake.py
+- PURPOSES = ["crisis", "audit", "drafting"]  # D-0007: crisis first, audit the default
++ PURPOSES = ["audit", "drafting", "crisis"]  # D-0007: crisis first, audit the default
+@@ src/ant_pr_review/intake.py
+-     if not targets and purpose in ("audit", "crisis"):
++     if not targets and purpose in ("audit",):
+@@ src/ant_pr_review/intake.py
+-         return build_intake_from_args("outbound", targets, lang=lang, purpose="crisis")
++         return dict(build_intake_from_args("outbound", targets, lang=lang, purpose="crisis"), card=ask_card(io, t, "outbound"))
+@@ src/ant_pr_review/cli.py
+-     if intake.get("purpose") in ("drafting", "crisis"):  # one brief, or one event
++     if intake.get("purpose") in ("drafting",):  # one brief, or one event
+@@ src/ant_pr_review/crisis.py
+-         if v == "false" and not ce:
++         if False:
+@@ src/ant_pr_review/crisis.py
+-                 "due": _s(p.get("due")) or BLANK}
++                 "due": _s(p.get("due"))}
+@@ src/ant_pr_review/crisis.py
+-         if _HANDLE.search(_s(m["outlet"])):
++         if False:
+@@ src/ant_pr_review/crisis.py
+-                                         if isinstance(x, str)) if x in SIGNALS]
++                                         if isinstance(x, str)) if x in SIGNALS or x]
+@@ src/ant_pr_review/crisis.py
+-     stake.sort(key=lambda s: PRIORITY.index(s["group"]) if s["group"] in PRIORITY else 99)
++     pass
+@@ src/ant_pr_review/crisis.py
+-     res = export.export_md(run.path("crisis.md"), lang, version=version, when=when)
++     res = {"pdf": None, "docx": None, "reasons": {}, "install": ""}
+@@ src/ant_pr_review/pipeline.py
+-     interactive = ctx.interactive and intake.get("purpose") != "crisis"
++     interactive = ctx.interactive
+@@ src/ant_pr_review/pipeline.py
+-         return phase in CRISIS_PHASES
++         return True
+@@ src/ant_pr_review/pipeline.py
+-     return phase != "crisis"
++     return True
+@@ src/ant_pr_review/crisis.py
+-     out = {k: (v if k in ("suggested_signals", "grade") else _no_contacts(v, hits))
++     out = {k: (v if True else _no_contacts(v, hits))
+@@ src/ant_pr_review/crisis.py
+-     return re.sub(r"^([-+*]|\d+[.)])(?=\s)", lambda m: "\\" + m.group(1), s) or BLANK
++     return s or BLANK
+@@ src/ant_pr_review/export.py
+-     return html.unescape(s).strip()  # report.cell() writes &lt; &gt; &amp;
++     return s.strip()  # report.cell() writes &lt; &gt; &amp;
+@@ src/ant_pr_review/workspace.py
+-             if entry.get("skipped") and entry["status"] == DONE:
++             if False:
+@@ src/ant_pr_review/crisis.py
+-     out = [f"{task}: the model refused; its part of the sheet is blank"] \
++     out = [] \
+@@ src/ant_pr_review/cli.py
+-     if not applies(args.phase, read_json(run.path("00-intake.json"), default={})):
++     if False:
+@@ src/ant_pr_review/workspace.py
+-                                          **({"skipped": True} if ph in NEVER_FOR_OLD else {})})
++                                          **({"skipped": True} if True else {})})
+@@ src/ant_pr_review/workspace.py
+-             entry.pop("skipped", None)
++             pass
+@@ src/ant_pr_review/crisis.py
+-         for s in stages if s["status"] not in ("ok", "skipped")]
++         for s in stages if False]

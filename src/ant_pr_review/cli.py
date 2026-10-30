@@ -38,8 +38,9 @@ def build_parser() -> argparse.ArgumentParser:
     sub = p.add_subparsers(dest="cmd")
 
     n = sub.add_parser("new", parents=[common], help="start a new run (default command)")
-    n.add_argument("--purpose", choices=["audit", "drafting"], default="audit",
-                   help="audit content we have (default) or draft our statement from --brief")
+    n.add_argument("--purpose", choices=["crisis", "audit", "drafting"], default="audit",
+                   help="audit content we have (default), draft our statement from --brief, or "
+                        "crisis: a printable response sheet from the event alone (D-0007)")
     n.add_argument("--brief", help="drafting: the brief as a .json or .toml file (D-0005); "
                                    "--target is then material read only to check facts")
     n.add_argument("--direction", choices=DIRECTIONS)
@@ -173,7 +174,7 @@ def split_feeds(io: IO, t: T, intake: dict, store: Store, *, interactive: bool,
     """Turn each RSS/Atom URL into chosen articles; every article becomes its own intake.
     Non-feed targets stay together in one intake, as before. A drafting run has no
     targets: its material stays with its one brief (D-0005)."""
-    if intake.get("purpose") == "drafting":
+    if intake.get("purpose") in ("drafting", "crisis"):  # one brief, or one event
         return [intake]
     from .sources.crawler import FetchError
     from .sources.feeds import FEED_TYPES, parse_feed
@@ -354,6 +355,10 @@ def cmd_resume(args, io, store, cfg) -> int:
 
 def cmd_rerun(args, io, store, cfg) -> int:
     run = find_run(store, args.run)
+    from .pipeline import applies
+    if not applies(args.phase, read_json(run.path("00-intake.json"), default={})):
+        io.say(f"error: phase {args.phase} does not apply to this run")
+        return EXIT_USAGE
     run.rerun_from(args.phase)
     order = PHASES.index(args.phase)
     for phase, folder in (("review", "04-reviews"), ("debate", "05-debate"),

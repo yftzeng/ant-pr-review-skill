@@ -37,7 +37,7 @@ def classify_target(s: str) -> dict:
     return {"kind": "text", "value": s}
 
 
-PURPOSES = ["audit", "drafting"]
+PURPOSES = ["crisis", "audit", "drafting"]  # D-0007: crisis first, audit the default
 
 
 def ask_purpose(io: IO, t: T) -> str:
@@ -47,7 +47,8 @@ def ask_purpose(io: IO, t: T) -> str:
 
 def purpose_of(intake: dict) -> str:
     """An intake written before D-0005 is an audit."""
-    return "drafting" if intake.get("purpose") == "drafting" else "audit"
+    p = intake.get("purpose")
+    return p if p in ("drafting", "crisis") else "audit"
 
 
 def ask_brief(io: IO, t: T) -> dict:
@@ -339,6 +340,11 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
         raise ValueError(f"direction must be one of {DIRECTIONS}")
     if purpose not in PURPOSES:
         raise ValueError(f"purpose must be one of {PURPOSES}")
+    if purpose == "crisis":  # D-0007: the event alone; nothing else is asked
+        if brief is not None:
+            raise ValueError("crisis takes no brief: give the event as --target")
+        means, characterised, embargo = "white", False, True
+        posture = DEFAULT_POSTURE
     if purpose == "drafting":
         if direction != "outbound":
             raise ValueError("drafting writes our own statement: the direction is outbound")
@@ -355,7 +361,7 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
     bad_means = [m for m in chosen if m not in MEANS]
     if bad_means:
         raise ValueError(f"unknown means {bad_means}; choose from {MEANS}")
-    if not targets and purpose == "audit":
+    if not targets and purpose in ("audit", "crisis"):
         raise ValueError("at least one --target is needed")
     jur = [j for j in split_list(jurisdictions or "")] or list(DEFAULT_JURISDICTIONS)
     bad = [j for j in jur if j not in JURISDICTIONS]
@@ -392,6 +398,9 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
 
 def run_intake_interactive(io: IO, t: T, lang: str) -> dict:
     purpose = ask_purpose(io, t)
+    if purpose == "crisis":  # N-crisis-001: the event, then nothing else is asked
+        targets = [x["value"] for x in collect_targets(io, t, help_key="crisis.targets")]
+        return build_intake_from_args("outbound", targets, lang=lang, purpose="crisis")
     direction = ask_direction(io, t) if purpose == "audit" else "outbound"
     standpoints = ask_standpoints(io, t)
     identities = ask_identities(io, t, standpoints)

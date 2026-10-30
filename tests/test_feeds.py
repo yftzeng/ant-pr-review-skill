@@ -165,3 +165,13 @@ def test_non_interactive_feed_limit(feed_env):
     cli.main(["new", "--yes", "--target", url, "--feed-limit", "2"], io=NoAskIO(), store=store)
     titles = sorted(i["targets"][0]["title"] for i in _intakes(store))
     assert titles == ["Day 2 - Beta", "Day 3 - Gamma"]
+
+
+# @S-crisis-001 @N-crisis-001 a feed in a crisis run is one target, never a pick list
+def test_crisis_keeps_a_feed_as_one_target(feed_env):
+    store, url = feed_env
+    io = ScriptedIO(["1", url, "/done"])          # crisis, the feed, then nothing is asked
+    cli.main([], io=io, store=store)
+    ins = _intakes(store)
+    assert len(ins) == 1 and ins[0]["purpose"] == "crisis"
+    assert ins[0]["targets"] == [{"kind": "url", "value": url}] and io.answers == []

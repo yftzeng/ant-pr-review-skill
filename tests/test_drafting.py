@@ -86,8 +86,8 @@ def draft(run, b, interactive=False, answers=()):
 
 # @S-drafting-001
 def test_purpose_first_and_drafting_asks_the_brief():
-    # purpose: drafting (2); role, identity, posture, means: defaults
-    answers = ["2", "", "", "", "",
+    # purpose: drafting (3, after crisis and audit); role, identity, posture, means: defaults
+    answers = ["3", "", "", "", "",
                "1",                                   # kind: the first
                "A batch shipped with a faulty seal", "/done",   # confirmed
                "/done", "How many units are in use", "/done",     # alleged, unknown

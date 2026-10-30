@@ -8,6 +8,7 @@ run's language. Missing packages or font: the markdown stays and the reason is r
 from __future__ import annotations
 
 import glob
+import html
 import os
 import re
 from datetime import datetime
@@ -56,7 +57,8 @@ def inline(s: str) -> str:
     s = re.sub(r"(?<![\w*])\*(?!\s)(.+?)(?<!\s)\*(?![\w*])", r"\1", s)
     s = re.sub(r"`([^`]*)`", r"\1", s)
     s = re.sub(r"<!--.*?-->", "", s)
-    return s.replace("\\|", "|").strip()
+    s = re.sub(r"\\([\\`*_{}\[\]()#+\-.!|>~])", r"\1", s)  # markdown escapes
+    return html.unescape(s).strip()  # report.cell() writes &lt; &gt; &amp;
 
 
 def _cells(line: str) -> list[str]:
@@ -218,7 +220,7 @@ def _write_pdf(blocks, out: Path, t: T, header: str, font: dict, signoff: bool) 
     def para(text, size=10.5, h=6, indent=0):
         pdf.set_font("cjk", size=size)
         pdf.set_x(pdf.l_margin + indent)
-        pdf.multi_cell(pdf.epw - indent, h, text, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        pdf.multi_cell(pdf.epw - indent, h, text, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
 
     def table(rows):
         width = max(len(r) for r in rows)

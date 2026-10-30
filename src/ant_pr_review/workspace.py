@@ -13,6 +13,7 @@ PHASES = [
     "intake",
     "profile",
     "sources",
+    "crisis",
     "context",
     "matrix",
     "draft",
@@ -33,6 +34,7 @@ PHASE_INPUTS: dict[str, list[str]] = {
     "intake": [],
     "profile": [],  # writes the card's industry and competitors; reads nothing it writes
     "sources": ["00-intake.json"],
+    "crisis": ["00-intake.json", "01-sources/segments.json"],  # D-0007; a no-op otherwise
     "context": ["00-intake.json"],
     "matrix": ["00-intake.json"],
     # D-0005: writes 01-sources (the chosen version) for the review; a no-op for an audit
@@ -50,6 +52,9 @@ PHASE_INPUTS: dict[str, list[str]] = {
 }
 
 PENDING, DONE, STALE, RUNNING = "pending", "done", "stale", "running"
+# Phases a run made before they existed can never use (its purpose had no such phase):
+# added to an old state as skipped, so they never go stale (D-0007).
+NEVER_FOR_OLD = {"crisis"}
 STATE_VERSION = 2
 # Phases whose inputs changed in a state version: a run finished under the earlier
 # inputs keeps its done phases (D-0002 migration), re-hashed once.
@@ -92,7 +97,8 @@ class Run:
         st = read_json(self.state_path)
         for ph in PHASES:  # a phase added after this run was created did not apply to it
             st["phases"].setdefault(ph, {"status": DONE, "inputs": self.input_hashes(ph),
-                                         "added_later": True})
+                                         "added_later": True,
+                                         **({"skipped": True} if ph in NEVER_FOR_OLD else {})})
         if st.get("version", 1) < STATE_VERSION:
             for v in range(st.get("version", 1) + 1, STATE_VERSION + 1):
                 for ph in REHASHED_IN.get(v, []):
@@ -123,6 +129,8 @@ class Run:
         st = self.state()
         entry = st["phases"][phase]
         entry["status"] = status
+        if status == RUNNING:  # it applies after all: it takes part in staleness again
+            entry.pop("skipped", None)
         entry["updated_at"] = datetime.now().isoformat(timespec="seconds")
         if status == DONE:
             entry["inputs"] = self.input_hashes(phase)
@@ -142,6 +150,8 @@ class Run:
                     entry["status"] = STALE
                     newly.append(ph)
                 continue
+            if entry.get("skipped") and entry["status"] == DONE:
+                continue  # D-0007: a phase that does not apply to this run never goes stale
             if entry["status"] == DONE and entry.get("inputs") != self.input_hashes(ph):
                 entry["status"] = STALE
                 newly.append(ph)

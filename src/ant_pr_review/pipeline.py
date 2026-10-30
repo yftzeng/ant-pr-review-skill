@@ -88,6 +88,8 @@ def ph_sources(run: Run, ctx: Ctx) -> None:
     material here, into its own folder: the review reads the chosen version (D-0005)."""
     intake = read_json(run.path("00-intake.json"))
     optional = intake.get("purpose") == "drafting"  # material only checks facts
+    # N-crisis-001: a crisis run asks nothing; it goes on with what could be read
+    interactive = ctx.interactive and intake.get("purpose") != "crisis"
     if optional:
         if not intake.get("materials"):
             return
@@ -119,13 +121,15 @@ def ph_sources(run: Run, ctx: Ctx) -> None:
             ctx.say(ctx.t("sources.blocked", url=b["value"], reason=b.get("reason")) + (
                 " " + ctx.t("sources.blocked_archive", date=b["archive_at"])
                 if b.get("archive_at") else ""))
-        if not ctx.interactive:
+        if not interactive:
             if any(b.get("archive_at") for b in blocked):
                 ctx.say(ctx.t("sources.blocked_hint"))
             if urls:
                 ctx.say(ctx.t("sources.paste_hint"))
             if ok_count or optional:
                 return
+            if not interactive and intake.get("purpose") == "crisis":
+                ctx.say(ctx.t("crisis.no_source"))  # resuming would fail the same way
             raise Stop("no source could be read")
         opts = [("retry", ctx.t("sources.retry"))]
         with_copy = [b for b in blocked if b.get("archive_at")]
@@ -341,6 +345,17 @@ def ph_plans(run: Run, ctx: Ctx) -> None:
             ctx.say(f"  ⚠ {ctx.t('plans.stage.not_reviewed', stage=s['stage'], reason=s['reason'])}")
 
 
+def ph_crisis(run: Run, ctx: Ctx) -> None:
+    from .crisis import run_crisis
+    out = run_crisis(run, ctx.backend, ctx.models, ctx.lang, say=ctx.say)
+    for w in out.get("warnings", []):
+        ctx.say(f"  · {w}")
+    for n in out.get("notes", []):
+        ctx.say(f"  {n}")
+    if out.get("status") == "done":
+        ctx.say(info(ctx.t("crisis.done", path=str(run.path("crisis.md")))))
+
+
 def ph_reaudit(run: Run, ctx: Ctx) -> None:
     st = run_reaudit(run, ctx.backend, ctx.models, ctx.lang, ctx.cfg.thresholds, say=ctx.say)
     ctx.say(ctx.t("reaudit.status", status=ctx.t("reaudit." + st["status"])))
@@ -355,17 +370,31 @@ def ph_decision(run: Run, ctx: Ctx) -> None:
 
 
 PHASE_FUNCS = {
-    "intake": ph_intake, "profile": ph_profile, "sources": ph_sources, "context": ph_context, "matrix": ph_matrix,
+    "intake": ph_intake, "profile": ph_profile, "sources": ph_sources, "crisis": ph_crisis,
+    "context": ph_context, "matrix": ph_matrix,
     "draft": ph_draft, "review": ph_review, "factcheck": ph_factcheck, "debate": ph_debate,
     "synthesis": ph_synthesis, "jmerge": ph_jmerge, "plans": ph_plans, "reaudit": ph_reaudit,
     "report": ph_report, "decision": ph_decision,
 }
 
 
+CRISIS_PHASES = ("intake", "sources", "crisis")
+
+
+def applies(phase: str, intake: dict) -> bool:
+    """D-0007: a crisis run has three phases; the crisis phase is not one of the others'."""
+    if intake.get("purpose") == "crisis":
+        return phase in CRISIS_PHASES
+    return phase != "crisis"
+
+
 def run_pipeline(run: Run, ctx: Ctx) -> str:
     """Returns 'done', 'paused' or 'interrupted'."""
     for ph in PHASES:
         if not run.needs_run(ph):
+            continue
+        if ph != "intake" and not applies(ph, read_json(run.path("00-intake.json"), default={})):
+            run.mark(ph, "done", skipped=True)
             continue
         ctx.say(phase_line(ctx.t("run.phase_start", phase=ctx.t("phase." + ph))))
         run.mark(ph, "running")

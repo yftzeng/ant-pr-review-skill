@@ -1,5 +1,7 @@
 """Markdown first, then PDF and DOCX in Python, in the run's language (D-0007)."""
 import re
+import shutil
+import subprocess
 import sys
 
 import pytest
@@ -39,8 +41,13 @@ def flat(s):
 
 
 def pdf_text(path):
+    """poppler's pdftotext when present (what viewers copy); pypdf 5 garbles some CJK pages."""
     from pypdf import PdfReader
     r = PdfReader(str(path))
+    if shutil.which("pdftotext"):
+        out = subprocess.run(["pdftotext", str(path), "-"], capture_output=True, text=True,
+                             check=True).stdout
+        return r, flat(out)
     return r, flat("".join(p.extract_text() for p in r.pages))
 
 

@@ -136,7 +136,7 @@ def test_slug_from_target(env):
 # @S-cli-009
 def test_abandoned_intake_leaves_no_run(env):
     env.save_config(__import__("ant_pr_review.store", fromlist=["Config"]).Config())
-    io = ScriptedIO(["1", "https://example.com/a", "/done", "Acme"])  # input ends in the card
+    io = ScriptedIO(["2", "https://example.com/a", "/done", "Acme"])  # audit; input ends in the card
     code = cli.main([], io=io, store=env)
     assert code == 130
     assert list_runs(env.runs_dir) == []

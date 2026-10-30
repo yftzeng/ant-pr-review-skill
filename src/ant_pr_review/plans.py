@@ -355,6 +355,7 @@ def plan_c(run, backend, writer, lang, risks, article, intake):
         data, gaps = holding_shape(kit_shape(data, known))
     text = render_kit(t, data) if data else ""
     write_text_atomic(run.path(f"{DIR}/C-kit.md"), text)
+    write_json(run.path(f"{DIR}/C-kit.json"), data or {})  # the parts, for the crisis sheet
     rep["keyword_warnings"] = (kit_keywords(data)[1] if data else []) + gaps
     return text, rep
 

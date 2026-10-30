@@ -271,3 +271,21 @@ DRAFT_REVIEW = obj({
 })
 
 DRAFT_REASON = obj({"reason": STR})
+
+# D-0007: the crisis fact sheet. Roles and counts, never names; code checks the rest.
+RUMOUR_VERDICTS = ["true", "partly", "false", "unverified"]
+CRISIS_FACTS = obj({
+    "summary": STR, "objective": STR,
+    "suggested_signals": arr(STR),
+    "w5h1": obj({k: STR for k in ("who", "what", "when", "where", "why", "how")}),
+    "times": obj({k: STR for k in ("occurred_at", "known_at", "exposed_at")}),
+    "verified": arr(obj({"fact": STR, "evidence": STR})),
+    "pending": arr(obj({"question": STR, "owner_role": STR, "due": STR})),
+    "rumours": arr(obj({"claim": STR, "verdict": enum(RUMOUR_VERDICTS),
+                        "counter_evidence": STR})),
+    "impact": obj({k: STR for k in ("people", "money", "batch_risk", "operations")}),
+    "minors": BOOL,
+    "stakeholders": arr(obj({"group": enum(AUDIENCES), "need": STR, "channel": STR})),
+    "media": arr(obj({"outlet": STR, "deadline": STR})),
+    "actions_done": arr(STR),
+})

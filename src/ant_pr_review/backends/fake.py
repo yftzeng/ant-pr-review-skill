@@ -194,6 +194,26 @@ class FakeBackend(Backend):
                 "escalation": [{"trigger": "media call", "action": "route to PR lead",
                                 "owner": "PR lead"}], "do_not_say": ["no comment"]}
 
+    def _crisis_facts(self, *a):
+        return {"summary": "[fake] Heaters from one batch overheated; no injury reported.",
+                "objective": "[fake] Keep buyers safe and tell them what to do today.",
+                "suggested_signals": ["social_spread", "complaints_surge"],
+                "w5h1": {"who": "[fake] buyers of the March batch", "what": "[fake] overheating",
+                         "when": "[fake] 28 October", "where": "", "why": "", "how": ""},
+                "times": {"occurred_at": "2026-10-28", "known_at": "", "exposed_at": ""},
+                "verified": [{"fact": "[fake] three reports", "evidence": "D1.P01.S1"}],
+                "pending": [{"question": "[fake] how many units are in use",
+                             "owner_role": "quality lead", "due": ""}],
+                "rumours": [{"claim": "[fake] a house fire", "verdict": "false",
+                             "counter_evidence": ""}],
+                "impact": {"people": "[fake] three reports, no injury", "money": "",
+                           "batch_risk": "[fake] the whole March batch", "operations": ""},
+                "minors": False,
+                "stakeholders": [{"group": "press", "need": "facts", "channel": "statement"},
+                                 {"group": "affected", "need": "safety", "channel": "SMS"}],
+                "media": [{"outlet": "[fake] Daily News", "deadline": "17:00"}],
+                "actions_done": ["[fake] sales stopped"]}
+
     def _opponent(self, *a):
         return {"claims": [{"frame": "[fake] a cover-up", "claim": "[fake] they would say we "
                             "knew earlier", "appeal": "affected customers", "channel": "press",
