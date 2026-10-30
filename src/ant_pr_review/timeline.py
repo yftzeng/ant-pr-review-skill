@@ -242,6 +242,8 @@ def render(t: T, d: dict) -> str:
     for s in d["steps"]:
         when = " ".join(x for x in (s["date"], s["time"]) if x) or "—"
         cat = t("means." + s["category"] + ".short")
+        if s["category"] == "gray":  # N-crisis-002: never without it
+            cat += f" — {t('plans.t.needs_approval')} □"
         if s["category"] != s["writer_category"]:
             cat += f" ({t('plans.t.relabelled')})"
         trig = " / ".join(x for x in (s["trigger"], s["stop"]) if x)

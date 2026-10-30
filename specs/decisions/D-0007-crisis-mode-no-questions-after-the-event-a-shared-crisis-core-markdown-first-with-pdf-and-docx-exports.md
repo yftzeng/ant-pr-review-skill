@@ -15,7 +15,7 @@
 
 - **A third purpose, `crisis`, first in the menu.** After it is chosen the only input is the event itself: pasted text, files or links. Nothing else is asked. The defaults are fixed:
   - not characterised, so a holding statement only;
-  - white means only;
+  - all three means: gray steps print as needing approval and black is assessed, never scheduled (amended 2026-10-30, was white only);
   - the configured jurisdictions and models, else Taiwan and the first model;
   - no web search;
   - every unknown becomes a blank to fill in on the printed sheet.
@@ -23,6 +23,7 @@
 - **A crisis run** reads its sources, makes a few calls with one model and writes `crisis.md`, then `crisis.pdf` and `crisis.docx` beside it. The calls are: the fact sheet and grade, the response kit, the operational periods and the other side's case.
   - Its fixed parts are made in code, never by a model: the team roles, the first 30 minutes, the five questions for the business head, the legal checklist, the update log and the sign-off.
   - It hands off: the formal statement goes to `drafting` once the facts characterise the event, and the holding statement can be reviewed by `audit`.
+- **The other side's gray and black tactics** (amended 2026-10-30): one more call lists the likely kinds, each with why it is likely here, early signs in the content, how to verify, what to do now, where to report and the law. Fixed lists for the first hour of security, impersonation, staff conduct and anonymous letters are made in code. Audit and drafting get the same at grade III or higher.
 - **The shared core goes into audit and drafting where it applies, never as a mandatory first stage**:
   - the three times (it happened, we first knew, it became public) on the card and in the brief;
   - unknown facts with an owner role and a due time;
@@ -53,4 +54,5 @@
 - A 40/20/40 split of the formal statement is a writing hint, never a rule; it has no evidence behind it.
 - No one-way press-conference exit and no cut-off of questions: the length is announced, and the core questions are answered before leaving.
 - A rumour is marked false only with a counter-evidence entry; without one it stays unverified.
-- Grey and black means are never used in crisis mode, since nobody was asked.
+- A black step is never scheduled, and a gray one never prints without "needs approval" (amended 2026-10-30; it was white only, and the user asked to weigh the gray and black tactics the other side uses).
+- The other side's tactics (astroturfing, intrusion, anonymous letters, false flags and others) are described for defence only: never how to run one, never how to avoid detection, never who is behind an account. Attribution is left to the police and platforms. No counter-astroturfing.

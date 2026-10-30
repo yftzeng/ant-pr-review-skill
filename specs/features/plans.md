@@ -269,6 +269,11 @@ Feature: plans
     Given the event assessment grades the run I, II or III
     When  the timeline is built
     Then  its first step, made in code and marked fixed, pauses scheduled posts, campaigns and paid ads, white, for staff, with resuming only after the stop point; at grade IV or ungraded there is no such step
+  @S-plans-047
+  Scenario: at grade III or higher the plans anticipate the other side's tactics
+    Given an audit or drafting run the event assessment grades I, II or III
+    When  the plans run
+    Then  a threats call writes 09-plans/TH.md with the same table and fixed lists as the crisis sheet, and the report shows it; at grade IV or ungraded there is no threats call
 ```
 
 ## Must NOT
@@ -291,3 +296,5 @@ Feature: plans
 - 2026-10-22 · ~S-plans-038..039 from the tier-3 review: a withheld formal statement says so, tier-4 drafting is not characterised, one silence point with a warning when early · decision: D-0006
 - 2026-10-24 · +S-plans-040..042 the other side's case anticipated as a third-person summary, and the black table's exposure column narrowed to the kind of public case (user: 開工，「對方論述預判」也做) · decision: none -- a full opponent text would itself be a ready-to-post attack on a named organisation
 - 2026-10-30 · +S-plans-043..046 the six-part holding statement and its channel versions, a frontline Q&A, regulators and partners before the press, pausing promotions at grade III or higher (user: 是不是也應該提供對外公關聲明稿…; 開工 on the shared crisis core) · decision: D-0007
+- 2026-10-30 · +S-plans-047 the other side's gray and black tactics and the defence, at grade III or higher (user: 開工，灰色開放但標需核准) · decision: D-0007
+- 2026-10-30 · S-plans-047 unchanged: the ethics guard's persona list gains 小號 (it had only 小号), found by the threats review · decision: D-0007

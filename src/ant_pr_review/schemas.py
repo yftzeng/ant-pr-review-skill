@@ -272,6 +272,14 @@ DRAFT_REVIEW = obj({
 
 DRAFT_REASON = obj({"reason": STR})
 
+# D-0007 (amended): the other side's gray and black tactics, for defence only
+THREAT_KINDS = ["astroturf", "intrusion", "anonymous_letter", "false_flag", "fabricated_media",
+                "review_bombing", "undisclosed_paid", "doxxing", "impersonation",
+                "insider_leak", "malicious_reports", "other"]
+THREAT_FIELDS = ("why", "signs", "verify", "defend", "report", "law")
+THREATS = obj({"tactics": arr(obj({"kind": enum(THREAT_KINDS),
+                                    **{k: STR for k in THREAT_FIELDS}}))})
+
 # D-0007: the crisis fact sheet. Roles and counts, never names; code checks the rest.
 RUMOUR_VERDICTS = ["true", "partly", "false", "unverified"]
 CRISIS_FACTS = obj({

@@ -608,6 +608,10 @@ def _plans_sections(t: T, run: Run, scope: str | None) -> list[str]:
     if o_p.exists():
         body = o_p.read_text(encoding="utf-8").splitlines()[1:]
         out += ["", f"## {t('plans.o')}", *body]
+    th_p = run.path("09-plans/TH.md")
+    if th_p.exists():
+        body = th_p.read_text(encoding="utf-8").splitlines()[1:]
+        out += ["", f"## {t('threats.title')}", *body]
     tl_p = run.path("09-plans/T.md")
     if tl_p.exists():
         body = tl_p.read_text(encoding="utf-8").splitlines()[1:]

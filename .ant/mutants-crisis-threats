@@ -1,0 +1,67 @@
+# gray needs approval, black assessed, the other side's tactics for defence (S-crisis-008..009, S-plans-047, N-crisis-002..003)
+@@ src/ant_pr_review/crisis.py
+-              s["action"] + (gray + (f" ({s['notes']})" if s.get("notes") else "")
++              s["action"] + ("" + (f" ({s['notes']})" if s.get("notes") else "")
+@@ src/ant_pr_review/threats.py
+-     if k in ACTION_FIELDS:
++     if False:
+@@ src/ant_pr_review/threats.py
+-         for rx in [*ethics._PE, *EXTRA_PERSONA]:
++         for rx in [*EXTRA_PERSONA]:
+@@ src/ant_pr_review/threats.py
+-                 if not ethics._negated(seg, len(seg)):
++                 if False:
+@@ src/ant_pr_review/ethics.py
+-    r"人頭帳號", r"人头账号", r"分身帳號", r"假帳號", r"假账号", r"小帳", r"小號", r"小号", r"馬甲", r"马甲",
++    r"人頭帳號", r"人头账号", r"分身帳號", r"假帳號", r"假账号", r"小帳", r"小号", r"馬甲", r"马甲",
+@@ src/ant_pr_review/crisis.py
+-     tl = dict(tl, steps=[dict(s, **c) for s, c in zip(tl["steps"], steps)])
++     pass
+@@ src/ant_pr_review/threats.py
+-                 e[k] = _cut(k, _s(e[k]))
++                 e = {x: ethics.MARK.format(cat="persona") for x in e}
+@@ src/ant_pr_review/threats.py
+-         excluded = _no_contacts(excluded, [0])  # watch_for is where an account gets named
++         pass  # watch_for is where an account gets named
+@@ src/ant_pr_review/threats.py
+-             continue  # one row per kind
++             pass  # one row per kind
+@@ src/ant_pr_review/timeline.py
+-             cat += f" — {t('plans.t.needs_approval')} □"
++             pass
+@@ src/ant_pr_review/plans.py
+-             run.path(f"{DIR}/{f}").unlink(missing_ok=True)
++             pass
+@@ src/ant_pr_review/threats.py
+-         if e.get("kind") not in THREAT_KINDS:
++         if False:
+@@ src/ant_pr_review/threats.py
+-     kept = _no_contacts(kept[:MAX], hits)
++     kept = kept[:MAX]
+@@ src/ant_pr_review/threats.py
+-     if excluded:
++     if False:
+@@ src/ant_pr_review/plans.py
+-     if grade in PAUSE_GRADES:  # S-plans-047
++     if True:  # S-plans-047
+@@ src/ant_pr_review/report.py
+-     if th_p.exists():
++     if False:
+@@ src/ant_pr_review/crisis.py
+-     threp, thwarn = plan_threats(run, backend, writer, lang, [], article, intake)
++     threp, thwarn = {}, []
+@@ src/ant_pr_review/intake.py
+-         means, characterised, embargo = "white,gray,black", False, True  # gray needs approval
++         means, characterised, embargo = "white", False, True  # gray needs approval
+@@ src/ant_pr_review/threats.py
+-     text = _s(text)  # the guard reads the text as it will print (security lens)
++     text = text  # the guard reads the text as it will print (security lens)
+@@ src/ant_pr_review/threats.py
+-                 seg = re.split(r"[,，:：]", v[:m.start()])[-1]  # a comma ends the clause here
++                 seg = v[:m.start()]  # a comma ends the clause here
+@@ src/ant_pr_review/threats.py
+-     ev = lambda v: ethics.redact(_s(v), ethics.scan_text(_s(v), ("evasion",)))
++     ev = lambda v: ethics.redact(str(v or ""), ethics.scan_text(str(v or ""), ("evasion",)))
+@@ src/ant_pr_review/crisis.py
+-         out += [f"- {_md(_no_contacts(x['action'], [0]))}: "
++         out += [f"- {_md(x['action'])}: "

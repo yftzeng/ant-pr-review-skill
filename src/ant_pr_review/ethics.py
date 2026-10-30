@@ -53,7 +53,7 @@ PERSONA = [
     r"alt(?:ernate)? accounts?", r"posing as (?:a |an )?(?:customer|user|fan|netizen|employee)",
     r"pretend(?:ing)? to be (?:a |an )?(?:customer|user|fan|independent)",
     r"as if (?:written|posted) by (?:a |an )?(?:customer|user|independent)",
-    r"人頭帳號", r"人头账号", r"分身帳號", r"假帳號", r"假账号", r"小帳", r"小号", r"馬甲", r"马甲",
+    r"人頭帳號", r"人头账号", r"分身帳號", r"假帳號", r"假账号", r"小帳", r"小號", r"小号", r"馬甲", r"马甲",
     r"水軍", r"水军", r"網軍", r"网军", r"假扮", r"冒充", r"偽裝成(?:網友|消費者|顧客|路人)",
     r"伪装成(?:网友|消费者|顾客|路人)", r"以(?:網友|网友|消費者|消费者|路人)(?:身分|身份|口吻)",
     r"帶風向", r"带节奏", r"带风向",

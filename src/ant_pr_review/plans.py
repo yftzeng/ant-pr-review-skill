@@ -434,12 +434,22 @@ def run_plans(run: Run, backend: Backend, models: list[str], lang: str, *, say=p
     say(f"  … O ({writer})")
     rep, warn = plan_o(run, backend, writer, lang, risks, article, intake)
     out["ethics"]["O"], out["warnings"] = rep, out["warnings"] + warn
+    from .grading import assess
+    from .timeline import PAUSE_GRADES
+    grade = assess(intake, syn)["grade"]
+    if grade in PAUSE_GRADES:  # S-plans-047
+        from .threats import plan_threats
+        say(f"  … TH ({writer})")
+        rep, warn = plan_threats(run, backend, writer, lang, risks, article, intake)
+        out["ethics"]["TH"], out["warnings"] = rep, out["warnings"] + warn
+    else:  # a lower grade on a rerun: an earlier threats file no longer applies
+        for f in ("TH.md", "TH.json"):
+            run.path(f"{DIR}/{f}").unlink(missing_ok=True)
     say(f"  … T ({writer})")
     unverified = [c["id"] for c in ledger
                   if c.get("status") in ("unsupported", "cannot_verify", "pending")]
-    from .grading import assess
     tl, rep, tl_stages = timeline.plan_t(backend, writer, checker, lang, risks, article, intake,
-                                         _guarded, unverified, grade=assess(intake, syn)["grade"])
+                                         _guarded, unverified, grade=grade)
     out["ethics"]["T"] = rep
     write_json(run.path(f"{DIR}/T.json"), tl)
     write_text_atomic(run.path(f"{DIR}/T.md"), timeline.render(T(lang), tl))

@@ -214,6 +214,17 @@ class FakeBackend(Backend):
                 "media": [{"outlet": "[fake] Daily News", "deadline": "17:00"}],
                 "actions_done": ["[fake] sales stopped"]}
 
+    def _threats(self, *a):
+        return {"tactics": [{"kind": "astroturf", "why": "[fake] a heated topic",
+                             "signs": "[fake] identical phrasing posted within minutes",
+                             "verify": "[fake] preserve and compare", "defend":
+                             "[fake] one official channel; answer facts once",
+                             "report": "[fake] platform report", "law": "[fake] fair trade law"},
+                            {"kind": "intrusion", "why": "[fake] customer data at stake",
+                             "signs": "[fake] sign-ins from new places", "verify": "[fake] logs",
+                             "defend": "[fake] reset privileged passwords",
+                             "report": "[fake] police cybercrime unit", "law": ""}]}
+
     def _opponent(self, *a):
         return {"claims": [{"frame": "[fake] a cover-up", "claim": "[fake] they would say we "
                             "knew earlier", "appeal": "affected customers", "channel": "press",

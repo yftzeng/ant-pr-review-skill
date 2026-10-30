@@ -15,7 +15,7 @@ Feature: crisis
   @S-crisis-001
   Scenario: crisis is first in the purpose menu and asks nothing after the event
     When  an interactive intake answers "1" at the purpose question, then pastes the event text and /done
-    Then  no other question is shown, the purpose is "crisis", the means are white only, the posture clarify_apologize, the card not characterised and under embargo (no web calls), the jurisdictions the default
+    Then  no other question is shown, the purpose is "crisis", the means are white, gray and black (gray needs approval, black is assessed and never scheduled), the posture clarify_apologize, the card not characterised and under embargo (no web calls), the jurisdictions the default
     And   an Enter at the purpose question still keeps "audit"
 
   @S-crisis-002
@@ -53,12 +53,27 @@ Feature: crisis
     Given the export packages cannot be imported
     When  the crisis phase runs
     Then  crisis.md is written, no PDF or DOCX exists, and the run says why with the install command
+  @S-crisis-008
+  Scenario: gray steps need approval, black tactics are assessed and never scheduled
+    Given a crisis timeline with a white step, a gray step with its disclosure and a black step
+    When  the sheet is built
+    Then  the white step is listed plainly, the gray step is listed with "needs approval" and an approval box, the black step is not scheduled and appears under "assessed, not used" with the law, what to watch for and the lawful alternative
+
+  @S-crisis-009
+  Scenario: the sheet anticipates the other side's gray and black tactics and how to defend
+    Given a threats answer naming astroturfing, an intrusion, an anonymous letter, a false flag and an unknown kind, one entry whose text advises avoiding detection and one naming a person's handle
+    When  the sheet is built
+    Then  a section lists each known kind with why it is likely here, early signs in the content, how to verify, what to do now, where to report and the law; the unknown kind is dropped, the evasion text is removed by the guard, the handle is removed, and at most ten entries are kept
+    And   fixed lists made in code follow: the first hour of security (reset privileged passwords, multi-factor sign-in, sign-in logs, keep the logs), one official channel against impersonation, what staff must not do (answer, contact the source, hit back from personal or alt accounts) and how to handle an anonymous letter (do not pass it on, do not answer its details, preserve it, give it to counsel)
+    And   the prompt says defence only, never how to run a tactic or avoid detection, never who is behind an account, signs from the content only
 ```
 
 ## Must NOT
 - @N-crisis-001 Once crisis is chosen, no question is asked: not in the intake, the sources, the matrix or the plans.
-- @N-crisis-002 A crisis run never schedules a gray or black step: its means are white only.
+- @N-crisis-002 A crisis run never schedules a black step, and never prints a gray step without "needs approval".
+- @N-crisis-003 The other side's tactics are described for defence only: never how to run one, never how to avoid detection, never who is behind an account. The prompt is the control; the guard is pattern-limited (ethics.py): evasion in every field, and in what we do (verify, defend, report) any persona word unless negated, so those columns say "suspicious accounts".
 
 ## Revisions
 - 2026-10-30 · created · decision: none -- no feature runs without questions from the event alone; audit and drafting both ask an intake, a card or a brief
 - 2026-10-30 · +S-crisis-001..007, +N-crisis-001..002 the crisis purpose, its sheet and its checks (user: 就用 crisis，然後放在第一個 … 選 crisis 時不會再問用戶任何問題，直接生成 printable a4 pdf，含所有相關素材; 開工) · decision: D-0007
+- 2026-10-30 · ~S-crisis-001 ~N-crisis-002 +S-crisis-008..009 +N-crisis-003 gray steps need approval, black is assessed, and the other side's gray and black tactics are anticipated for defence (user: 我認為應該考慮灰色與黑色手段，因為這是從政治及商業競爭對手會採用的攻擊手法 …; 開工，灰色開放但標需核准) · decision: D-0007

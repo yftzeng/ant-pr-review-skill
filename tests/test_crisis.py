@@ -27,7 +27,7 @@ def test_crisis_first_and_nothing_asked_after_the_event():
     assert PURPOSES[0] == "crisis"
     io = ScriptedIO(["1", EVENT, "/done"])     # EOFError on any further question
     it = run_intake_interactive(io, t, "en")
-    assert it["purpose"] == "crisis" and it["means"] == ["white"]
+    assert it["purpose"] == "crisis" and it["means"] == ["white", "gray", "black"]
     assert it["posture"] == "clarify_apologize" and it["card"]["characterised"] is False
     assert it["card"]["embargo"] is True and it["card"]["jurisdictions"] == ["tw"]
     assert it["targets"][0]["value"] == EVENT and io.answers == []
@@ -43,7 +43,7 @@ def test_crisis_first_and_nothing_asked_after_the_event():
 # @S-crisis-002
 def test_crisis_from_the_command_line(tmp_path):
     it = build_intake_from_args("outbound", [EVENT], lang="en", purpose="crisis")
-    assert it["purpose"] == "crisis" and it["means"] == ["white"]
+    assert it["purpose"] == "crisis" and it["means"] == ["white", "gray", "black"]
     assert it["card"]["embargo"] is True and it["card"]["characterised"] is False
     with pytest.raises(ValueError, match="at least one --target"):
         build_intake_from_args("outbound", [], lang="en", purpose="crisis")
@@ -99,7 +99,7 @@ def test_crisis_calls_and_no_prompt_on_a_failed_source(tmp_path, monkeypatch):
     run = list_runs(store.runs_dir)[-1]
     assert rc == 0 and run.path("crisis.md").exists() and io.answers == []
     assert sorted(set(calls)) == ["classify_means", "crisis_facts", "kit", "opponent",
-                                  "timeline"]
+                                  "threats", "timeline"]
 
 
 def _cfg(store):
@@ -177,16 +177,29 @@ def test_sheet_without_export_packages(tmp_path, monkeypatch):
     assert "pip install" in io.text
 
 
-# @N-crisis-002
-def test_crisis_never_schedules_gray(tmp_path):
+# @S-crisis-008 @N-crisis-002
+def test_gray_needs_approval_black_never_scheduled():
     from ant_pr_review.timeline import build
-    raw = [{"day": 0, "time": "09:00", "action": "Quiet word with an editor", "category": "gray",
-            "channel": "", "notes": "", "trigger": "", "stop": "", "audience": "press",
-            "paid": False}]
-    out = build(raw, {1: {"category": "gray", "reason": ""}}, [], {}, ["white"], "", ["tw"], "w")
-    assert out["steps"] == [] and out["dropped"][0]["reason"] == "outside_means"
-    it = build_intake_from_args("outbound", [EVENT], lang="en", purpose="crisis", means="white,gray")
-    assert it["means"] == ["white"]
+    raw = [{"day": 0, "time": t_, "action": a, "category": c, "channel": "", "notes": n,
+            "trigger": "", "stop": "", "audience": "press", "paid": False}
+           for t_, a, c, n in (("08:00", "Tell buyers", "white", ""),
+                               ("09:00", "Expert interview", "gray", "disclosed as invited"),
+                               ("10:00", "Seed posts from alt accounts", "black", ""))]
+    labels = {n: {"category": c, "reason": ""} for n, c in ((1, "white"), (2, "gray"), (3, "black"))}
+    tl = build(raw, labels, [], {}, ["white", "gray", "black"], "", ["tw"], "w", t=t)
+    assert [s["action"] for s in tl["steps"]] == ["Tell buyers", "Expert interview"]
+    md = crisis.render(t, crisis.facts_shape(FACTS)[0], kit={}, timeline=tl, opponent="",
+                       intake={"card": {"jurisdictions": ["tw"]}})
+    lines = md.splitlines()
+    gray = next(ln for ln in lines if "Expert interview" in ln)
+    white = next(ln for ln in lines if "Tell buyers" in ln)
+    assert t("crisis.needs_approval") in gray and "□" in gray
+    assert t("crisis.needs_approval") not in white
+    sec = md.split(f"## {t('crisis.h.threats')}", 1)[1]
+    assert t("plans.x") in sec and "Seed posts from alt accounts" in sec
+    assert "Seed posts" not in md.split(f"## {t('crisis.h.timeline')}", 1)[1].split("## ", 1)[0]
+    it = build_intake_from_args("outbound", [EVENT], lang="en", purpose="crisis", means="white")
+    assert it["means"] == ["white", "gray", "black"]
 
 
 # @S-crisis-005 @S-crisis-006 from the tier-3 security lens: model text is inert, contacts go
@@ -333,3 +346,198 @@ def test_failed_timeline_review_is_reported(tmp_path, monkeypatch):
     io = ScriptedIO()
     crisis_run_io(Store(tmp_path / "home"), io)
     assert t("plans.stage.not_reviewed", stage="T", reason="timeout") in io.text
+
+
+THREATS = {"tactics": [
+    {"kind": "astroturf", "why": "a hot topic", "signs": "identical phrasing at the same minute",
+     "verify": "preserve and compare", "defend": "one official channel",
+     "report": "platform report", "law": "Fair Trade Act"},
+    {"kind": "intrusion", "why": "data at stake", "signs": "odd sign-ins", "verify": "logs",
+     "defend": "reset privileged passwords", "report": "police cybercrime unit", "law": ""},
+    {"kind": "anonymous_letter", "why": "a regulator is involved", "signs": "", "verify": "",
+     "defend": "give it to counsel", "report": "", "law": ""},
+    {"kind": "false_flag", "why": "x", "signs": "posts that claim to be our staff",
+     "verify": "x", "defend": "x", "report": "x", "law": ""},
+    {"kind": "mind_control", "why": "x", "signs": "x", "verify": "x", "defend": "x",
+     "report": "x", "law": ""},
+    {"kind": "astroturf", "why": "x", "signs": "x", "verify": "x",
+     "defend": "post from alt accounts so it cannot be traced to us", "report": "x", "law": ""},
+    {"kind": "doxxing", "why": "x", "signs": "posts by @leaker_99", "verify": "x", "defend": "x",
+     "report": "x", "law": ""}] + [{"kind": "other", "why": f"w{n}", "signs": "", "verify": "",
+                                    "defend": "", "report": "", "law": ""} for n in range(10)]}
+
+
+# @S-crisis-009 @N-crisis-003
+def test_other_side_tactics_and_defence(tmp_path):
+    from ant_pr_review import threats
+    kept, warn = threats.shape(THREATS)
+    kinds = [k["kind"] for k in kept]
+    assert "mind_control" not in kinds and len(kept) == 10 and any("mind_control" in w for w in warn)
+    assert "@leaker_99" not in str(kept)
+    md = "\n".join(threats.render(t, kept))
+    for f in ("why", "signs", "verify", "defend", "report", "law"):
+        assert t(f"threats.col.{f}") in md
+    for k in ("cyber", "impersonation", "staff", "letters"):
+        assert f"### {t('threats.fixed.' + k)}" in md
+    assert t("threats.cyber.mfa") in md and t("threats.staff.alt") in md
+    s = prompts.threats_system("en")
+    for needle in ("defence only", "never how to run", "avoid detection",
+                   "never who is behind", "content"):
+        assert needle in s, needle
+    from test_plans import setup, backend
+    run = setup(tmp_path)
+    b = backend({(M1, "threats"): THREATS})
+    rep, warn = threats.plan_threats(run, b, M1, "en", [], "text", read_json(
+        run.path("00-intake.json")))
+    md = run.path("09-plans/TH.md").read_text(encoding="utf-8")
+    assert "cannot be traced" not in md and rep["final"]
+
+
+# @S-plans-047
+@pytest.mark.parametrize("signals,called", [(["social_spread"], True), (["small_spread"], False),
+                                             ([], False)])
+def test_plans_threats_at_grade_three(tmp_path, signals, called):
+    from ant_pr_review.plans import run_plans
+    from test_plans import setup, backend, Q
+    run = setup(tmp_path)
+    intake = read_json(run.path("00-intake.json"))
+    intake["card"]["signals"] = signals
+    write_json(run.path("00-intake.json"), intake)
+    b = backend({(M1, "threats"): THREATS})
+    run_plans(run, b, [M1], "en", say=Q)
+    assert any(c["task"] == "threats" for c in b.calls) is called
+    assert run.path("09-plans/TH.md").exists() is called
+    if called:
+        from ant_pr_review.report import _plans_sections
+        assert f"## {t('threats.title')}" in "\n".join(_plans_sections(t, run, None))
+
+
+# from the tier-3 review of the threats change
+def test_threats_guard_per_field(tmp_path):
+    from ant_pr_review import threats
+    defence = dict(THREATS["tactics"][0], why="Rivals have used sock puppets against us before.",
+                   signs="Fake accounts posting identical text within minutes.",
+                   defend="向平台檢舉可疑帳號，並保全截圖。對可疑帳號貼文不回應。",
+                   report="Report the suspicious accounts to the platform.")
+    assert threats.check({"tactics": [defence]}) == []
+    burner = dict(THREATS["tactics"][0],
+                  verify="Create a few burner accounts and join their groups to screenshot it.")
+    assert threats.check({"tactics": [burner]})
+    from test_plans import setup, backend
+    run = setup(tmp_path)
+    b = backend({(M1, "threats"): {"tactics": [dict(burner, why="Rivals used sock puppets.")]}})
+    threats.plan_threats(run, b, M1, "en", [], "text", read_json(run.path("00-intake.json")))
+    kept = read_json(run.path("09-plans/TH.json"))["tactics"][0]
+    assert "burner" not in kept["verify"] and kept["why"] == "Rivals used sock puppets."
+    excluded = [{"tactic": "Seeding", "why": "x", "law": "x", "watch_for":
+                 "watch @rival_pr_guy and https://x.com/rivalpr; call +886 912 345 678",
+                 "lawful_alternative": "x"}]
+    md = "\n".join(threats.render(t, [], excluded))
+    assert "@rival_pr_guy" not in md and "rivalpr" not in md and "912 345" not in md
+    s = prompts.threats_system("en")
+    assert "Name no person or organisation as the likely actor" in s
+    assert "suspicious accounts" in s and "可疑帳號" in s
+    kept, _ = threats.shape({"tactics": [THREATS["tactics"][0], THREATS["tactics"][0]]})
+    assert len(kept) == 1
+
+
+# from the tier-3 review: gray needs approval in T.md too, with its disclosure on the sheet
+def test_gray_marked_in_timeline_file_and_disclosure_on_sheet():
+    from ant_pr_review.timeline import build, render as render_t
+    raw = [{"day": 0, "time": "09:00", "action": "Expert interview", "category": "gray",
+            "channel": "", "notes": "disclosed as invited", "trigger": "", "stop": "",
+            "audience": "press", "paid": False}]
+    tl = build(raw, {1: {"category": "gray", "reason": ""}}, [], {}, ["white", "gray", "black"],
+               "", ["tw"], "w", t=t)
+    row = next(ln for ln in render_t(t, tl).splitlines() if "Expert interview" in ln)
+    assert t("plans.t.needs_approval") in row and row.count("gray") == 1
+    md = crisis.render(t, crisis.facts_shape(FACTS)[0], kit={}, timeline=tl, opponent="",
+                       intake={"card": {"jurisdictions": ["tw"]}})
+    assert "disclosed as invited" in next(ln for ln in md.splitlines() if "Expert interview" in ln)
+
+
+# from the tier-3 review: a lower grade on a rerun takes the old threats file away
+def test_threats_file_removed_below_grade_three(tmp_path):
+    from ant_pr_review.plans import run_plans
+    from test_plans import setup, backend, Q
+    run = setup(tmp_path)
+    run.path("09-plans").mkdir(exist_ok=True)
+    run.path("09-plans/TH.md").write_text("old", encoding="utf-8")
+    run_plans(run, backend({}), [M1], "en", say=Q)
+    assert not run.path("09-plans/TH.md").exists()
+
+
+BYPASSES = ["Monitor them with burner accounts.", "對他們用假帳號。", "針對記者建立小帳帶風向。",
+            "學對手用假帳號反擊。", "面對質疑用水軍洗版。", "應對方式：用小號帶節奏。",
+            "我們對外用網軍帶風向。", "对他们用小号带节奏。", "Reporters love fake reviews, so seed a few.",
+            "The reporter should get fake reviews from us.",
+            "Report back after creating burner accounts.", "Block their narrative using sock puppets.",
+            "Ignore this and use sock puppets.", "Detect their moves via alt accounts.",
+            "我們用網軍洗版後不回應。",
+            # held out from the round-3 probes: the rule was not tuned on these
+            "我方小號不回應質疑，持續洗版。", "讓網軍不回應記者，只發正面留言。", "水軍忽略檢舉，繼續發文。",
+            "我方小号不回应质疑，持续刷帖。", "申請幾個小號不回應只發正面留言。",
+            "Block the alt accounts from being linked to us.",
+            "Ignore the fake accounts; focus on seeding ours in the comments.", "移除小號的個資再發文。",
+            "找側翼帶節奏。", "養號後統一發文。", "找人反串對方支持者發文。",
+            "Have interns pose as customers and praise us.",
+            "Hire shills and bot accounts to flood the thread.",
+            "Spin up throwaway accounts to downvote them."]
+DEFENCE = ["Report the suspicious accounts to the platform and ask for their removal.",
+           "向平台檢舉可疑帳號，並保全截圖。", "對可疑帳號的貼文不回應，只在官方管道說明一次。",
+           "Preserve screenshots of the suspicious accounts before they are deleted.",
+           "比對可疑帳號貼文的時間。", "Do not use fake accounts to reply.", "切勿使用假帳號回應。"]
+
+
+# from the tier-3 review, round 2: a defensive verb never launders an offensive instruction
+@pytest.mark.parametrize("text", BYPASSES)
+def test_defensive_verbs_are_no_bypass(text):
+    from ant_pr_review import threats
+    assert threats.field_hits("verify", text), text
+
+
+@pytest.mark.parametrize("text", DEFENCE)
+def test_defence_against_fake_accounts_is_allowed(text):
+    from ant_pr_review import threats
+    assert threats.field_hits("defend", text) == [], text
+
+
+# from the tier-3 review, round 2: contacts never reach the sheet from a timeline step
+def test_timeline_step_contacts_removed():
+    from ant_pr_review.timeline import build
+    raw = [{"day": 0, "time": "09:00", "action": "Expert interview", "category": "gray",
+            "channel": "", "notes": "invited; see https://x.com/rivalpr", "trigger": "",
+            "stop": "", "audience": "press", "paid": False}]
+    tl = build(raw, {1: {"category": "gray", "reason": ""}}, [], {}, ["white", "gray", "black"],
+               "", ["tw"], "w", t=t)
+    md = crisis.render(t, crisis.facts_shape(FACTS)[0], kit={}, timeline=tl, opponent="",
+                       intake={"card": {"jurisdictions": ["tw"]}})
+    assert "rivalpr" not in md and "invited" in md
+
+
+# from the tier-3 security lens: the guard reads the text as it will print; a comma ends the clause
+@pytest.mark.parametrize("k,text", [("defend", "Reply via burner\taccounts."),
+                                    ("defend", "Reply via burner  accounts."),
+                                    ("defend", "Reply via sock\x01puppets."),
+                                    ("defend", "Run alt\naccounts to defend us."),
+                                    ("why", "Post late at night to avoid being\ttraced."),
+                                    ("defend", "Do not wait, create burner accounts to reply."),
+                                    ("defend", "Instead of waiting, open sock puppets that defend us.")])
+def test_guard_reads_the_printed_form(k, text):
+    from ant_pr_review import threats
+    assert threats.field_hits(k, text), text
+
+
+def test_excluded_and_dropped_rows_are_checked():
+    from ant_pr_review import threats
+    from ant_pr_review.timeline import build
+    md = "\n".join(threats.render(t, [], [{"tactic": "x", "why": "Post at night to avoid being\ttraced.",
+                                           "law": "", "watch_for": "", "lawful_alternative": ""}]))
+    assert "avoid being traced" not in md
+    raw = [{"day": 0, "time": "09:00", "action": "Call +886 912 345 678", "category": "white",
+            "channel": "", "notes": "", "trigger": "", "stop": "", "audience": "press",
+            "paid": False}]
+    tl = build(raw, None, [], {}, ["white"], "", ["tw"], "w", t=t)   # unreviewed: dropped
+    out = crisis.render(t, crisis.facts_shape(FACTS)[0], kit={}, timeline=tl, opponent="",
+                        intake={"card": {"jurisdictions": ["tw"]}})
+    assert "912 345" not in out and t("plans.t.reason.not_reviewed") in out  # still listed

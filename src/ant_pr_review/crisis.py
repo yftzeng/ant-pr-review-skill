@@ -21,7 +21,8 @@ from .workspace import Run
 BLANK = plans.BLANK
 DIR = "09-plans"  # the kit, timeline and other side's case land where plans put them
 SECTIONS = ("bluf", "objective", "team", "first30", "facts", "damage", "holding", "qa",
-            "do_not_say", "timeline", "notify", "legal", "questions", "opponent", "press",
+            "do_not_say", "timeline", "notify", "legal", "questions", "opponent", "threats",
+            "press",
             "log", "signoff", "next")
 TEAM = ("lead", "spokesperson", "legal", "pr", "frontline", "operations", "it")
 FIRST30 = ("team", "gag", "pause", "evidence", "safety", "log")
@@ -142,23 +143,29 @@ def _demote(md: str) -> list[str]:
 
 def _timeline(t: T, tl: dict) -> list[str]:
     """The timeline in six columns, narrow enough for A4."""
-    if not isinstance(tl, dict) or not tl.get("steps"):
+    if not isinstance(tl, dict) or not (tl.get("steps") or tl.get("dropped")):
         return [BLANK]
-    rows = [[timeline_rel(s["day"]), s.get("time") or "", s["action"],
+    gray = f" — {t('crisis.needs_approval')} □"  # S-crisis-008: never without it
+    steps = _no_contacts([{k: s.get(k) for k in ("action", "notes", "trigger", "stop")}
+                          for s in tl["steps"]], [0])  # every printed step field
+    tl = dict(tl, steps=[dict(s, **c) for s, c in zip(tl["steps"], steps)])
+    rows = [[timeline_rel(s["day"]), s.get("time") or "",
+             s["action"] + (gray + (f" ({s['notes']})" if s.get("notes") else "")
+                            if s.get("category") == "gray" else ""),
              t("crisis.audience." + s["audience"]) if s.get("audience") in AUDIENCES else "",
              " / ".join(x for x in (s.get("trigger"), s.get("stop")) if x),
              "; ".join(s.get("warnings") or [])] for s in tl["steps"]]
     out = _table([t("plans.t.rel"), t("plans.t.when"), t("plans.t.action"),
-                  t("crisis.col.group"), t("plans.t.trigger"), "⚠"], rows)
+                  t("crisis.col.group"), t("plans.t.trigger"), "⚠"], rows) if rows else [BLANK]
     if tl.get("dropped"):
         out += ["", f"### {t('plans.t.dropped')}", ""]
-        out += [f"- {_md(x['action'])}: {t('plans.t.reason.' + x['reason'])}"
-                for x in tl["dropped"]]
+        out += [f"- {_md(_no_contacts(x['action'], [0]))}: "
+                f"{t('plans.t.reason.' + x['reason'])}" for x in tl["dropped"]]
     return out
 
 
 def render(t: T, d: dict, *, kit: dict | str, timeline: dict, opponent: str, intake: dict,
-           version: str = "v1", when: str = "") -> str:
+           version: str = "v1", when: str = "", threats: list | None = None) -> str:
     card = intake.get("card") or {}
     h = lambda k: ["", f"## {t('crisis.h.' + k)}", ""]
     L = [f"# {t('crisis.title')}", "",
@@ -218,6 +225,9 @@ def render(t: T, d: dict, *, kit: dict | str, timeline: dict, opponent: str, int
         [f"- [ ] {t('crisis.legal.' + k)}" for k in LEGAL]
     L += h("questions") + [f"- [ ] {t('crisis.q.' + k)}" for k in QUESTIONS]
     L += h("opponent") + (_demote(opponent) or [BLANK])
+    from .threats import render as render_threats
+    L += h("threats") + render_threats(t, threats or [], (timeline or {}).get("excluded")
+                                       if isinstance(timeline, dict) else None)
     L += h("press") + [f"- [ ] {t('crisis.press.' + k)}" for k in PRESS]
     L += h("log") + _table([t("export.version"), t("export.time"), t("crisis.col.change"),
                             t("crisis.col.approved")],
@@ -288,6 +298,10 @@ def run_crisis(run: Run, backend: Backend, models: list[str], lang: str, *, say=
     say(f"  … O ({writer})")
     orep, owarn = plans.plan_o(run, backend, writer, lang, [], article, intake)
     warnings += owarn + _refusals("opponent", orep)
+    say(f"  … TH ({writer})")
+    from .threats import plan_threats
+    threp, thwarn = plan_threats(run, backend, writer, lang, [], article, intake)
+    warnings += thwarn + _refusals("threats", threp)
     say(f"  … T ({writer})")
     tl, trep, stages = timeline.plan_t(backend, writer, writer, lang, [], article, intake,
                                        plans._guarded, [], grade=facts["grade"])
@@ -300,6 +314,7 @@ def run_crisis(run: Run, backend: Backend, models: list[str], lang: str, *, say=
     write_text_atomic(run.path(f"{DIR}/T.md"), tl_md)
     when = datetime.now().strftime("%Y-%m-%d %H:%M")
     md = render(t, facts, kit=kit, timeline=tl,
+                threats=read_json(run.path(f"{DIR}/TH.json"), default={}).get("tactics", []),
                 opponent=run.path(f"{DIR}/O.md").read_text(encoding="utf-8"),
                 intake=intake, version=version, when=when)
     write_text_atomic(run.path("crisis.md"), md)

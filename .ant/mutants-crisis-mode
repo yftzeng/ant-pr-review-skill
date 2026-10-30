@@ -1,10 +1,7 @@
 # crisis mode: the purpose, no questions, the sheet and its checks (S-crisis-001..007, N-crisis-001..002)
 @@ src/ant_pr_review/intake.py
--         means, characterised, embargo = "white", False, True
-+         means, characterised, embargo = "white,gray", False, True
-@@ src/ant_pr_review/intake.py
--         means, characterised, embargo = "white", False, True
-+         means, characterised, embargo = "white", False, False
+-         means, characterised, embargo = "white,gray,black", False, True  # gray needs approval
++         means, characterised, embargo = "white,gray,black", False, False  # gray needs approval
 @@ src/ant_pr_review/intake.py
 - PURPOSES = ["crisis", "audit", "drafting"]  # D-0007: crisis first, audit the default
 + PURPOSES = ["audit", "drafting", "crisis"]  # D-0007: crisis first, audit the default

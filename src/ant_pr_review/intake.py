@@ -343,7 +343,7 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
     if purpose == "crisis":  # D-0007: the event alone; nothing else is asked
         if brief is not None:
             raise ValueError("crisis takes no brief: give the event as --target")
-        means, characterised, embargo = "white", False, True
+        means, characterised, embargo = "white,gray,black", False, True  # gray needs approval
         posture = DEFAULT_POSTURE
     if purpose == "drafting":
         if direction != "outbound":

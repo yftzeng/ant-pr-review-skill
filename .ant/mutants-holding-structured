@@ -30,5 +30,5 @@
 -     _order_warnings([s for s in kept if not s.get("fixed")], posture, t, unverified or [])
 +     _order_warnings(kept, posture, t, unverified or [])
 @@ src/ant_pr_review/plans.py
--                                          _guarded, unverified, grade=assess(intake, syn)["grade"])
+-                                          _guarded, unverified, grade=grade)
 +                                          _guarded, unverified, grade=None)
