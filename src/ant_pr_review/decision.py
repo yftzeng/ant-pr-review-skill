@@ -58,6 +58,9 @@ def write_final(run: Run, choice: str, manual_path: str | None = None) -> str:
             shutil.copyfile(run.path("09-plans/A.md"), final)
     elif src:
         shutil.copyfile(run.path(src), final)
+    from . import export
+    if final.exists():
+        export.export_if_asked(run, "final.md")
     return str(final)
 
 

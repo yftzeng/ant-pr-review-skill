@@ -96,6 +96,10 @@ Feature: context card
   Scenario: the card records observed event signals and whether the facts characterise the event
     When  the card is filled interactively, and from --signals and --characterised
     Then  signals are a checkbox of the grade I-IV signals and the bottom lines (none by default) and characterised is a yes/no (no by default); an unknown signal is refused with the allowed values named; a drafting run does not ask characterised on the card because its brief does, and --characterised with --brief is refused
+  @S-context-card-019
+  Scenario: the card records when it happened, when we first knew and when it became public
+    When  the card is filled interactively (three optional text fields, Enter skips) and from --occurred-at, --known-at and --exposed-at
+    Then  the card has occurred_at, known_at and exposed_at, each shown on the card summary and passed to every model with the card; an empty one is "not given", never guessed
 ```
 
 ## Must NOT
@@ -110,3 +114,4 @@ Feature: context card
 - 2026-10-22 · ~S-context-card-015 party identities refused where the ruling party is a party organ (second tier-3 review) · decision: D-0003
 - 2026-10-22 · +S-context-card-018 event signals and characterised on the card (user: 開工) · decision: D-0006
 - 2026-10-22 · ~S-context-card-018 --characterised refused for drafting (tier-3 review) · decision: D-0006
+- 2026-10-30 · +S-context-card-019 the three times of an event on the card (user: 開工, the shared crisis core) · decision: D-0007

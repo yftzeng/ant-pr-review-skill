@@ -15,7 +15,7 @@ from . import prompts
 from .backends.base import Backend, BackendError
 from .consensus import VERDICT_ORDER
 from .i18n import T
-from .intake import posture_of
+from .intake import TIMES, posture_of
 from .jsonio import read_json, sha256_bytes, write_json, write_text_atomic
 from .plans import _guarded, _redact_all, _scan_all, pick_writer_checker
 from .reaudit import audit_text
@@ -64,7 +64,9 @@ def check_brief(raw: dict) -> dict:
     facts = []
     for status, prefix in FACT_STATUS.items():
         facts += [{"id": f"{prefix}{i}", "status": status, "text": x}
-                  for i, x in enumerate(_texts(raw.get(status)), 1)]
+                  for i, x in enumerate(_texts(raw.get(status)), 1)] if status != "unknown" \
+            else [dict(owned(x), id=f"{prefix}{i}", status=status)
+                  for i, x in enumerate(_owned(raw.get(status)), 1)]
     if not any(f["status"] in ("confirmed", "alleged") for f in facts):
         raise ValueError("the brief needs at least one confirmed or alleged fact")
     tier4 = _texts(raw.get("tier4"))
@@ -85,7 +87,23 @@ def check_brief(raw: dict) -> dict:
             "approvers": _texts(raw.get("approvers")),
             "characterised": characterised,
             "cannot_commit": check_bounds(_texts(raw.get("cannot_commit"))),
-            "tier4": list(dict.fromkeys(tier4))}
+            "tier4": list(dict.fromkeys(tier4)),
+            **{f: " ".join(str(raw.get(f) or "").split()) for f in TIMES}}
+
+
+def _owned(v) -> list:
+    v = [v] if isinstance(v, (str, dict)) else (v if isinstance(v, list) else [])
+    return [x for x in v if (x.get("text") if isinstance(x, dict) else str(x)).strip()]
+
+
+def owned(x) -> dict:
+    """D-0007: an unknown fact names who checks it by when: "what | owner | due" or a table."""
+    if isinstance(x, dict):
+        parts = [x.get("text"), x.get("owner"), x.get("due")]
+    else:
+        parts = re.split(r"\s*[|｜]\s*", str(x), maxsplit=2)
+    text, owner, due = ([" ".join(str(p or "").split()) for p in parts] + ["", ""])[:3]
+    return {"text": text, "owner": owner, "due": due}
 
 
 def _bnorm(s: str) -> str:

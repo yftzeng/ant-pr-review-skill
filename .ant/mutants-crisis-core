@@ -1,0 +1,49 @@
+# the three times, owned unknowns, markdown to PDF and DOCX (S-context-card-019, S-drafting-025, S-export-001..005)
+@@ src/ant_pr_review/intake.py
+-         raw[f] = ask_text(io, t(f"brief.{f}")).strip()
++         raw[f] = ""
+@@ src/ant_pr_review/intake.py
+-             "occurred_at": occurred_at.strip(), "known_at": known_at.strip(),
++             "occurred_at": "", "known_at": known_at.strip(),
+@@ src/ant_pr_review/intake.py
+-            **({"export": True} if export else {})}
++            **({"export": True} if True else {})}
+@@ src/ant_pr_review/drafting.py
+-         parts = re.split(r"\s*[|｜]\s*", str(x), maxsplit=2)
++         parts = [str(x)]
+@@ src/ant_pr_review/drafting.py
+-             **{f: " ".join(str(raw.get(f) or "").split()) for f in TIMES}}
++             **{f: "" for f in TIMES}}
+@@ src/ant_pr_review/export.py
+-             out.append(("p", inline(" ".join(para) if not _cjk_join(para) else "".join(para))))
++             out.append(("p", " ".join(para)))
+@@ src/ant_pr_review/export.py
+-             marker = ("■" if box.lower() == "x" else "□") if box is not None \
++             marker = ("□" if box.lower() == "x" else "□") if box is not None \
+@@ src/ant_pr_review/export.py
+-     files = ([env] if env and os.path.isfile(env) else []) + _files()
++     files = _files()
+@@ src/ant_pr_review/export.py
+-                 if re.search(rf"(?<![A-Za-z]){re.escape(w)}(?![A-Za-z])", fam, re.I):
++                 if True:
+@@ src/ant_pr_review/export.py
+-         bits.append(f"{t('export.version')} {version}")
++         bits.append(version)
+@@ src/ant_pr_review/export.py
+-         if not _importable("fpdf" if fmt == "pdf" else "docx"):
++         if False:
+@@ src/ant_pr_review/export.py
+-                     res["reasons"][fmt] = "font"
++                     res["reasons"][fmt] = "packages"
+@@ src/ant_pr_review/export.py
+-             tmp.unlink(missing_ok=True)
++             pass
+@@ src/ant_pr_review/export.py
+-     if not intake.get("export"):
++     if False:
+@@ src/ant_pr_review/report.py
+-         export.drop_exports(run, "10-final.md")  # with its printable copies
++         pass  # with its printable copies
+@@ src/ant_pr_review/decision.py
+-         export.export_if_asked(run, "final.md")
++         pass

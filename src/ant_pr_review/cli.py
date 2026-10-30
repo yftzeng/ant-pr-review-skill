@@ -74,6 +74,11 @@ def build_parser() -> argparse.ArgumentParser:
                    + ",".join(SIGNALS))
     n.add_argument("--characterised", action="store_true",
                    help="the cause and scope are confirmed (an audit; drafting uses its brief)")
+    n.add_argument("--occurred-at", default="", help="when the event happened (D-0007)")
+    n.add_argument("--known-at", default="", help="when we first knew internally")
+    n.add_argument("--exposed-at", default="", help="when it first became public")
+    n.add_argument("--export", action="store_true",
+                   help="also write PDF and DOCX of the final text (needs the export extra)")
     n.add_argument("--context-scan", action="store_true",
                    help="with --yes: run the web context scan without asking")
     n.add_argument("--merger", help="the model that merges jurisdictions (default: first)")
@@ -307,7 +312,8 @@ def cmd_new(args, io: IO, store: Store, cfg: Config) -> int:
                 roles=args.role or None, tax_id=args.tax_id,
                 purpose="drafting" if args.brief and args.purpose == "audit" else args.purpose,
                 brief=brief, signals=args.signals, characterised=args.characterised,
-                academic=args.academic)
+                academic=args.academic, occurred_at=args.occurred_at, known_at=args.known_at,
+                exposed_at=args.exposed_at, export=args.export)
         except ValueError as e:
             io.say(f"error: {e}")
             return EXIT_USAGE

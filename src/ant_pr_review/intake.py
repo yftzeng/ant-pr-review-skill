@@ -22,7 +22,8 @@ LEGACY_STAKEHOLDERS = {"consumers": ["victims", "bystanders"], "employees": "sta
                        "communities": "community_leaders"}
 CARD_FIELDS = ["org", "parties", "jurisdictions", "channels", "stakeholders", "publish_at",
                "keywords", "embargo", "speaker", "background", "locked", "focus", "signals",
-               "characterised"]
+               "characterised", "occurred_at", "known_at", "exposed_at"]
+TIMES = ("occurred_at", "known_at", "exposed_at")  # D-0007: it happened, we knew, it went public
 URL_RE = re.compile(r"^https?://\S+$", re.I)
 
 
@@ -62,6 +63,8 @@ def ask_brief(io: IO, t: T) -> dict:
         if raw["confirmed"] or raw["alleged"]:
             break
         io.say(t("brief.need_fact"))
+    for f in TIMES:
+        raw[f] = ask_text(io, t(f"brief.{f}")).strip()
     raw["affected"] = ask_text(io, t("brief.affected")).strip()
     raw["emotion"] = radio(io, t, t("brief.emotion"),
                            [(e, t(f"brief.emotion.{e}")) for e in EMOTIONS], default=EMOTIONS[0])
@@ -329,7 +332,8 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
                            roles: list[str] | None = None, tax_id: str = "",
                            purpose: str = "audit", brief: dict | None = None,
                            signals: str | None = None, characterised: bool = False,
-                           academic: bool = False) -> dict:
+                           academic: bool = False, occurred_at: str = "", known_at: str = "",
+                           exposed_at: str = "", export: bool = False) -> dict:
     if direction not in DIRECTIONS:
         raise ValueError(f"direction must be one of {DIRECTIONS}")
     if purpose not in PURPOSES:
@@ -365,6 +369,8 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
             "embargo": bool(embargo), "speaker": speaker or "", "background": background or "",
             "locked": [x.strip() for x in (locked or []) if x.strip()], "focus": focus or "",
             "signals": parse_signals(signals), "characterised": bool(characterised),
+            "occurred_at": occurred_at.strip(), "known_at": known_at.strip(),
+            "exposed_at": exposed_at.strip(),
             **({"tax_id": tax_id.strip()} if tax_id and tax_id.strip() else {})}
     identities = check_identities(roles or [DEFAULT_IDENTITY])
     from .catalog import POLITICAL_IDENTITIES, state_ruled
@@ -376,7 +382,8 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
            "roles": roles_of({"roles": {"identities": identities}}), "posture": posture,
            "means": [m for m in MEANS if m in chosen],
            "targets": [classify_target(x) for x in targets], "card": card, "lang": lang,
-           "purpose": purpose, "fact_sources": ["academic"] if academic else []}
+           "purpose": purpose, "fact_sources": ["academic"] if academic else [],
+           **({"export": True} if export else {})}
     if purpose == "drafting":  # D-0005: the targets are material, read only to check facts
         out.update(brief=brief, materials=out["targets"], targets=[])
     return out
@@ -397,8 +404,10 @@ def run_intake_interactive(io: IO, t: T, lang: str) -> dict:
         targets: list[dict] = []
     else:
         targets = collect_targets(io, t)
-    # D-0006: drafting asks whether the facts characterise the event in its brief
-    card = ask_card(io, t, direction, skip=("characterised",) if purpose == "drafting" else ())
+    # D-0006, D-0007: drafting asks whether the facts characterise the event and the three
+    # times in its brief
+    card = ask_card(io, t, direction,
+                    skip=("characterised", *TIMES) if purpose == "drafting" else ())
     return {"direction": direction, "roles": roles_of({"roles": {"identities": identities}}),
             "posture": posture, "means": means, "targets": targets, "card": card, "lang": lang,
             **extra}

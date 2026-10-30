@@ -160,11 +160,11 @@ def test_report_names_the_bottom_line(tmp_path):
 
 def test_drafting_card_does_not_ask_characterised():
     answers = ["2", "", "", "", "",
-               "1", "A batch shipped with a faulty seal", "/done", "/done", "/done",
+               "1", "A batch shipped with a faulty seal", "/done", "/done", "/done", "", "", "",
                "buyers", "", "", "", "/done", "/done", "/done", "/done", "legal", "", "/done",
                "", "/done"]
     from test_context_card import FILL
-    io = ScriptedIO(answers + FILL[:-1] + [""])
+    io = ScriptedIO(answers + FILL[:-4] + [""])  # no characterised, no times
     it = run_intake_interactive(io, t, "en")
     assert t("card.characterised.label") not in io.text and "characterised" not in it["card"]
 

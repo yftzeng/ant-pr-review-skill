@@ -519,11 +519,13 @@ def export_final(run: Run) -> dict:
     clean: a placeholder or internal note; a claim still needing validation; a figure the
     revision added that neither the chosen version nor the brief has. Whenever no clean
     export is written, an earlier one is removed."""
+    from . import export
     final = run.path("10-final.md")
     intake = read_json(run.path("00-intake.json"), default={})
     d = read_json(run.path("08-drafts/summary.json"), default={})
     if intake.get("purpose") != "drafting" or d.get("status") != "done":
         final.unlink(missing_ok=True)  # no finished draft, no export
+        export.drop_exports(run, "10-final.md")
         return {"applies": False}
     chosen = f"08-drafts/{d['chosen']}.md"
     src = "09-plans/A.md" if run.path("09-plans/A.md").exists() else chosen
@@ -531,9 +533,12 @@ def export_final(run: Run) -> dict:
     issues = final_issues(run, intake, d, text)
     if issues:
         final.unlink(missing_ok=True)  # not clean: an earlier export goes
+        export.drop_exports(run, "10-final.md")  # with its printable copies
         return {"applies": True, "written": False, "source": src, "issues": issues}
     write_text_atomic(final, text)
-    return {"applies": True, "written": True, "source": src, "issues": []}
+    res = export.export_if_asked(run, "10-final.md")
+    return {"applies": True, "written": True, "source": src, "issues": [],
+            **({"printable": export.notes(T(intake.get("lang") or "en"), res)} if res else {})}
 
 
 def final_issues(run: Run, intake: dict, d: dict, text: str) -> list[dict]:

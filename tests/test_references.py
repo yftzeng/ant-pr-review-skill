@@ -52,6 +52,7 @@ def _upstream(tmp_path, change_b):
     return pin, _git(work, "rev-parse", "HEAD")
 
 
+# @N-references-001 the drift check never edits the file it reads
 def _drift(tmp_path, pin, repo="r"):
     refs = tmp_path / "REFERENCES.md"
     refs.write_text(

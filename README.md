@@ -32,6 +32,8 @@ uv tool install .        # or: pipx install .
 ant-pr-review            # interactive
 ```
 
+Printable PDF and Word copies: `uv tool install '.[export]'` (fpdf2, python-docx) and a CJK font on the machine; set `ANT_PR_REVIEW_FONT` to a .ttf, .otf or .ttc file if none is found.
+
 JavaScript-rendered pages: `uv tool install '.[render]'` and `playwright install chromium`. A failed fetch falls back to retries with backoff, then the headless browser, then the AMP version, then a dated Wayback Machine copy, and finally asks you to paste the text. The crawler never disguises itself as a browser.
 
 Python 3.11+. You need the `claude` CLI for Claude models, and keys for the other vendors: `OPENAI_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`, `OPENROUTER_API_KEY`. No runtime dependencies.

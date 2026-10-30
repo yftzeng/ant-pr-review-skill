@@ -91,6 +91,7 @@ def test_purpose_first_and_drafting_asks_the_brief():
                "1",                                   # kind: the first
                "A batch shipped with a faulty seal", "/done",   # confirmed
                "/done", "How many units are in use", "/done",     # alleged, unknown
+               "", "", "",                             # the three times
                "buyers of the March batch", "2",       # affected, emotion: the second
                "buyers get a replacement", "",         # outcome, decision: default
                "/done", "Sales stopped", "/done", "/done", "/done",  # prior, actions
@@ -98,7 +99,7 @@ def test_purpose_first_and_drafting_asks_the_brief():
                "",                                     # tier-4 flags: none
                "/done"]                                # material: none
     from test_context_card import FILL
-    io = ScriptedIO(answers + FILL + [""])
+    io = ScriptedIO(answers + FILL[:-3] + [""])
     intake = run_intake_interactive(io, t, "en")
     assert intake["purpose"] == "drafting" and intake["direction"] == "outbound"
     assert "What are we reviewing?" not in io.text

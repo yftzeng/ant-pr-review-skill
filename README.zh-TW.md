@@ -48,6 +48,8 @@ uv tool install .        # 或 pipx install .
 ant-pr-review            # 互動模式
 ```
 
+可列印的 PDF 與 Word 版本：`uv tool install '.[export]'`（fpdf2、python-docx），並需要系統有中文字型；找不到時可用 `ANT_PR_REVIEW_FONT` 指定 .ttf、.otf 或 .ttc 檔。
+
 JavaScript 渲染的網頁：`uv tool install '.[render]'`，再執行 `playwright install chromium`。抓取失敗時的順序是：退避重試 → 無頭瀏覽器 → AMP 版本 → 標註日期的 Wayback Machine 存檔 → 請你貼上內文。爬蟲不會偽裝成瀏覽器。
 
 需要 Python 3.11 以上。使用 Claude 模型需要 `claude` CLI；使用其他廠商需設定對應的 key：`OPENAI_API_KEY`、`GEMINI_API_KEY`、`XAI_API_KEY`、`OPENROUTER_API_KEY`。沒有任何 runtime 相依套件。

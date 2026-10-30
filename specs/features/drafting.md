@@ -151,6 +151,11 @@ Feature: drafting
   Scenario: the writer scopes an absence and never presents the crisis as a starting point
     When  the writer prompt is built
     Then  it says a "no reports" or "no abnormality" sentence names its basis (which channel, since when, how many) and never reads as "no defect", that the independent check goes ahead whether or not the other side cooperates, and that the event is never presented as our starting point, a higher standard or a reason to thank the public
+  @S-drafting-025
+  Scenario: the brief records the three times and who checks each unknown fact by when
+    Given a brief file whose unknown facts are strings "what | owner role | due" or tables {text, owner, due}, with occurred_at, known_at and exposed_at; and the same answered interactively
+    When  it is checked
+    Then  each unknown fact U<n> keeps its text, owner and due (empty when not given), the three times are stored, and the writer prompt carries them; a confirmed or alleged fact with "|" keeps the whole line as its text
 ```
 
 ## Must NOT
@@ -166,3 +171,4 @@ Feature: drafting
 - 2026-10-22 · ~S-drafting-017,019,020 +S-drafting-022 from the tier-3 review: short lines refused, punctuation ignored, ranking and the plan A writer see the lines, W9 narrowed, decide checks its final file · decision: D-0005
 - 2026-10-22 · ~S-drafting-015 examples carry no quote of their source, only a paraphrased lesson, so the repo holds no third-party text (user: 兩個都做, after the licence check) · decision: D-0005
 - 2026-10-24 · +S-drafting-023..024 W10 intensifiers without a figure, a scoped absence, an unconditional independent check and no crisis-as-opportunity, from the unsent statement in the second brake-pedal video (user: 開工) · decision: D-0005
+- 2026-10-30 · +S-drafting-025 the three times and owned unknowns in the brief (user: 開工, the shared crisis core) · decision: D-0007
