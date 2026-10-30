@@ -246,6 +246,29 @@ Feature: plans
   Scenario: the excluded black tactics name the kind of public case, not how to avoid one
     When  the timeline prompt is built and the excluded table is rendered
     Then  the column is "公開被揭穿的案例類型" (en "kind of public case that exposed it") and the prompt asks for the kind of case (a regulator ruling, a court judgment, a press investigation, a platform report), never steps and never how to avoid detection
+  @S-plans-043
+  Scenario: the holding statement is six parts checked in code, with a version per channel
+    Given a kit answer with the holding statement as acknowledge, confirmed, doing, affected_action, contact and next_update, and versions for the website, social posts, phone answers to the press, the frontline (service desk, stores, sales) and a direct notice to affected people
+    When  the kit is rendered
+    Then  C-kit.md shows the six parts as one statement and each channel version under its own heading; an empty part prints as the blank 〔　　〕 with a warning naming the part
+    And   a next update with no figure or with a vague time word (as soon as possible, shortly, 盡快, 儘速) is replaced by the blank 〔　　〕 with a warning; a kit in the earlier single-text form renders as before
+
+  @S-plans-044
+  Scenario: the kit adds a frontline Q&A to read aloud
+    When  the kit prompt is built and a kit answer has frontline_qa
+    Then  the prompt asks for short questions the service desk, stores and sales hear, each answered in plain spoken words consistent with the holding statement and never beyond it, and C-kit.md lists them under their own heading
+
+  @S-plans-045
+  Scenario: the timeline speaks to regulators and partners before the press
+    Given a timeline where a press or public step comes no later than the first step for regulators or partners
+    When  it is built
+    Then  that press or public step carries the warning that regulators and partners hear it first; with no regulator or partner step there is no such warning
+
+  @S-plans-046
+  Scenario: at grade III or higher the timeline starts by pausing promotions
+    Given the event assessment grades the run I, II or III
+    When  the timeline is built
+    Then  its first step, made in code and marked fixed, pauses scheduled posts, campaigns and paid ads, white, for staff, with resuming only after the stop point; at grade IV or ungraded there is no such step
 ```
 
 ## Must NOT
@@ -267,3 +290,4 @@ Feature: plans
 - 2026-10-22 · +S-plans-038..039 the kit's formal statement only when characterised; attention stages and a silence point (user: 開工) · decision: D-0006
 - 2026-10-22 · ~S-plans-038..039 from the tier-3 review: a withheld formal statement says so, tier-4 drafting is not characterised, one silence point with a warning when early · decision: D-0006
 - 2026-10-24 · +S-plans-040..042 the other side's case anticipated as a third-person summary, and the black table's exposure column narrowed to the kind of public case (user: 開工，「對方論述預判」也做) · decision: none -- a full opponent text would itself be a ready-to-post attack on a named organisation
+- 2026-10-30 · +S-plans-043..046 the six-part holding statement and its channel versions, a frontline Q&A, regulators and partners before the press, pausing promotions at grade III or higher (user: 是不是也應該提供對外公關聲明稿…; 開工 on the shared crisis core) · decision: D-0007

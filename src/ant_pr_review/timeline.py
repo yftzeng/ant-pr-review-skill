@@ -22,6 +22,7 @@ STEP_FIELDS = ("action", "channel", "notes", "trigger", "stop")
 EARLY = {"press", "public"}  # must not come before the first step for affected parties
 EX_FIELDS = ("tactic", "why", "law", "exposure", "watch_for", "lawful_alternative")
 MAX_STEPS = 30
+PAUSE_GRADES = ("I", "II", "III")  # D-0007: pause scheduled promotions first
 
 
 def timeline_hits(d: dict) -> list[dict]:
@@ -84,6 +85,11 @@ def _order_warnings(kept: list[dict], posture: str, t: T, unverified: list[str])
         for s in kept:
             if s["promotional"] and (not affected or key(s, True) <= min(affected)):
                 s["warnings"].append(t("plans.t.warn_promo_first"))
+    first_reg = [key(s, False) for s in kept if s["audience"] in ("regulators", "partners")]
+    if first_reg:  # D-0007: affected, staff, regulators and partners, then the press
+        for s in public:
+            if key(s, True) <= min(first_reg):
+                s["warnings"].append(t("plans.t.warn_before_regulators"))
     filings = [key(s, False) for s in kept if s["audience"] == "exchange"]
     if filings:
         for s in public:
@@ -118,7 +124,7 @@ def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict
           flags: dict[int, str], means: list[str], publish_at: str,
           jurisdictions: list[str], withheld: str, unreviewed: str = "not reviewed",
           t: T | None = None, posture: str = "clarify_apologize",
-          unverified: list[str] | None = None) -> dict:
+          unverified: list[str] | None = None, grade: str | None = None) -> dict:
     """labels: 1-based step number -> {category, reason}, or None when the review did not
     run (every step is then not_reviewed)."""
     kept, dropped, black = [], [], []
@@ -156,6 +162,15 @@ def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict
                      "category": cat, "writer_category": wcat, "reviewer_category": ccat,
                      "reviewer_reason": _clean(lab.get("reason", ""))})
     kept.sort(key=lambda s: (s["day"], s["time"] or "99:99", s["order"]))
+    t = t or T("en")
+    if grade in PAUSE_GRADES:  # S-plans-046: made in code, before anything else
+        kept.insert(0, {"action": t("plans.t.pause_promo"), "channel": "", "notes": "",
+                        "trigger": "", "stop": t("plans.t.pause_promo_stop"), "order": 0,
+                        "audience": "staff", "paid": False, "promotional": False, "poll": False,
+                        "stage": "", "silence": False,
+                        "day": min([0] + [s["day"] for s in kept]), "time": "",
+                        "category": "white", "writer_category": "white",
+                        "reviewer_category": "white", "reviewer_reason": "", "fixed": True})
     first = next((s for s in kept if s["silence"]), None)
     for s in kept:  # one silence point: the first
         s["silence"] = s is first
@@ -176,8 +191,7 @@ def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict
         s["warnings"] = [f"{d['date']} {d['note']} ({d['jurisdiction']})"
                          for d in sensitive_dates_near(jurisdictions, s["date"], days=1)] \
             if s["date"] else []
-    t = t or T("en")
-    _order_warnings(kept, posture, t, unverified or [])
+    _order_warnings([s for s in kept if not s.get("fixed")], posture, t, unverified or [])
     for s in kept:
         if s["paid"] and not s["stop"].strip():
             s["warnings"].append(t("plans.t.warn_paid_stop"))
@@ -259,7 +273,8 @@ def render(t: T, d: dict) -> str:
 
 def plan_t(backend: Backend, writer: str, checker: str, lang: str, risks: list[dict],
            article: str, intake: dict, guarded,
-           unverified: list[str] | None = None) -> tuple[dict, dict, list[dict]]:
+           unverified: list[str] | None = None,
+           grade: str | None = None) -> tuple[dict, dict, list[dict]]:
     """Returns (timeline, ethics report, stage reviews)."""
     t = T(lang)
     means = means_of(intake)
@@ -310,7 +325,7 @@ def plan_t(backend: Backend, writer: str, checker: str, lang: str, risks: list[d
     card = intake.get("card", {})
     out = build(steps, labels, excluded, flags, means, card.get("publish_at", ""),
                 card.get("jurisdictions", []), t("plans.x.withheld"),
-                t("plans.x.unreviewed"), t, posture_of(intake), unverified)
+                t("plans.x.unreviewed"), t, posture_of(intake), unverified, grade)
     stricter = sum(1 for s in out["steps"] if s["category"] != s["writer_category"])
     black = sum(1 for n in range(1, len(steps) + 1)
                 if (labels or {}).get(n, {}).get("category") == "black")

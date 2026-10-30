@@ -4,7 +4,7 @@
 |---|---|
 | Status | accepted |
 | Decided | 2026-10-30 |
-| Features | crisis, export, context-card, drafting, plans, checklist, menus |
+| Features | export, context-card, drafting, plans, checklist, menus |
 | Glossary term | |
 | Authority | user, 2026-10-30: "就用 crisis，然後放在第一個 … 選 crisis 時不會再問用戶任何問題，直接生成 printable a4 pdf，含所有相關素材"; "PDF 還需依賴太多軟體，考慮先生成 markdown 然後額外提供用 python 轉成的 pdf 及 docx，output 同語系選擇生成對應的語言"; "之前列的內容，也請一併考慮摘出值得的部分，合併至 audit 及 drafting"; then "開工" on the proposed four-step order |
 | Guard | tests/test_export.py, tests/test_crisis_core.py, tests/test_crisis.py |

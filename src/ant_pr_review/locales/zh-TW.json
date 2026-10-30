@@ -727,5 +727,15 @@
   "export.written": "可列印版本：{files}",
   "export.skipped.packages": "未產生 {fmt}：尚未安裝匯出套件（{install}）",
   "export.skipped.font": "未產生 {fmt}：找不到中文字型（可用 ANT_PR_REVIEW_FONT 指定 .ttf、.otf 或 .ttc 檔）",
-  "export.skipped.error": "未產生 {fmt}：{error}"
+  "export.skipped.error": "未產生 {fmt}：{error}",
+  "plans.channels": "各通路版本",
+  "plans.channel.web": "官網／新聞稿",
+  "plans.channel.social": "社群貼文",
+  "plans.channel.phone": "媒體來電口頭回覆",
+  "plans.channel.frontline": "第一線（客服、門市、業務）",
+  "plans.channel.direct": "直接通知受影響者",
+  "plans.frontline_qa": "第一線問答（可照念）",
+  "plans.t.warn_before_regulators": "早於或與主管機關／合作夥伴的第一步同時：應先告知他們",
+  "plans.t.pause_promo": "暫停排程貼文、行銷活動與付費廣告——固定步驟",
+  "plans.t.pause_promo_stop": "停止發言點之後、經核准才恢復"
 }

@@ -1,0 +1,34 @@
+# six-part holding statement, channels, frontline Q&A, audience order, pausing promotions (S-plans-043..046)
+@@ src/ant_pr_review/plans.py
+-         if not h[k] or vague:
++         if not h[k]:
+@@ src/ant_pr_review/plans.py
+-                                                  or not re.search(r"\d", h[k]))
++                                                  )
+@@ src/ant_pr_review/plans.py
+-             h[k] = BLANK
++             pass
+@@ src/ant_pr_review/plans.py
+-         return " ".join(h.get(k) or BLANK for k in HOLDING_FIELDS)
++         return ""
+@@ src/ant_pr_review/plans.py
+-             + (f"## {t('plans.frontline_qa')}\n\n{fqa}\n\n" if fqa else "")
++             + ("" if fqa else "")
+@@ src/ant_pr_review/plans.py
+-     rep["keyword_warnings"] = (kit_keywords(data)[1] if data else []) + gaps
++     rep["keyword_warnings"] = (kit_keywords(data)[1] if data else [])
+@@ src/ant_pr_review/timeline.py
+-             if key(s, True) <= min(first_reg):
++             if key(s, True) < min(first_reg):
+@@ src/ant_pr_review/timeline.py
+- PAUSE_GRADES = ("I", "II", "III")  # D-0007: pause scheduled promotions first
++ PAUSE_GRADES = ("I", "II")  # D-0007: pause scheduled promotions first
+@@ src/ant_pr_review/timeline.py
+-                         "day": min([0] + [s["day"] for s in kept]), "time": "",
++                         "day": 0, "time": "",
+@@ src/ant_pr_review/timeline.py
+-     _order_warnings([s for s in kept if not s.get("fixed")], posture, t, unverified or [])
++     _order_warnings(kept, posture, t, unverified or [])
+@@ src/ant_pr_review/plans.py
+-                                          _guarded, unverified, grade=assess(intake, syn)["grade"])
++                                          _guarded, unverified, grade=None)

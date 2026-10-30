@@ -727,5 +727,15 @@
   "export.written": "可打印版本：{files}",
   "export.skipped.packages": "未生成 {fmt}：尚未安装导出套件（{install}）",
   "export.skipped.font": "未生成 {fmt}：找不到中文字体（可用 ANT_PR_REVIEW_FONT 指定 .ttf、.otf 或 .ttc 文件）",
-  "export.skipped.error": "未生成 {fmt}：{error}"
+  "export.skipped.error": "未生成 {fmt}：{error}",
+  "plans.channels": "各渠道版本",
+  "plans.channel.web": "官网／新闻稿",
+  "plans.channel.social": "社交媒体帖文",
+  "plans.channel.phone": "媒体来电口头回复",
+  "plans.channel.frontline": "一线（客服、门店、销售）",
+  "plans.channel.direct": "直接通知受影响者",
+  "plans.frontline_qa": "一线问答（可照念）",
+  "plans.t.warn_before_regulators": "早于或与监管机构／合作伙伴的第一步同时：应先告知他们",
+  "plans.t.pause_promo": "暂停排程帖文、营销活动与付费广告——固定步骤",
+  "plans.t.pause_promo_stop": "停止发言点之后、经核准才恢复"
 }

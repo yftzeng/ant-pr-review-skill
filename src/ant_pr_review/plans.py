@@ -15,8 +15,8 @@ from .jsonio import read_json, write_json, write_text_atomic
 from .revision import apply_changes, diff_text, paragraphs, render_text
 from .review import article_view, load_records
 from .roster import vendor
-from .schemas import (KIT, OPPONENT, OPPONENT_FIELDS, PLAN_A, PLAN_B, PLAN_B_OPERATION,
-                      REREVIEW, RESPONSE_OPTIONS)
+from .schemas import (CHANNEL_FIELDS, HOLDING_FIELDS, KIT, OPPONENT, OPPONENT_FIELDS, PLAN_A,
+                      PLAN_B, PLAN_B_OPERATION, REREVIEW, RESPONSE_OPTIONS)
 from .workspace import Run
 
 DIR = "09-plans"
@@ -271,9 +271,43 @@ def kit_keywords(d: dict) -> tuple[list[dict], list[str]]:
     return kept, warn
 
 
+BLANK = "〔　　〕"  # a part the user fills in by hand
+
+
+def holding_shape(d: dict) -> tuple[dict, list[str]]:
+    """S-plans-043: every part of the holding statement is there, and the next update names
+    a time; an empty part or a vague next update becomes a blank to fill in. A kit in the
+    earlier single-text form is left as it is."""
+    from .drafting import VAGUE_TIME
+    h = d.get("holding")
+    if not isinstance(h, dict):
+        return d, []
+    h = {k: " ".join(str(h.get(k) or "").split()) for k in HOLDING_FIELDS}
+    warn = []
+    for k in HOLDING_FIELDS:
+        vague = k == "next_update" and h[k] and (VAGUE_TIME.search(h[k])
+                                                 or not re.search(r"\d", h[k]))
+        if not h[k] or vague:
+            warn.append(f"holding statement part {k} is {'vague' if h[k] else 'empty'}: "
+                        f"left as a blank to fill in")
+            h[k] = BLANK
+    return dict(d, holding=h), warn
+
+
+def holding_text(d: dict) -> str:
+    h = d.get("holding")
+    if isinstance(h, dict):
+        return " ".join(h.get(k) or BLANK for k in HOLDING_FIELDS)
+    return str(d.get("holding_statement") or "")
+
+
 def render_kit(t: T, d: dict) -> str:
     from .report import cell
     qa = "\n".join(f"- **{q['question']}**\n  {q['answer']}" for q in d.get("qa", []))
+    fqa = "\n".join(f"- **{q['question']}**\n  {q['answer']}" for q in d.get("frontline_qa", []))
+    ch = d.get("channels") if isinstance(d.get("channels"), dict) else {}
+    channels = "".join(f"### {t('plans.channel.' + k)}\n\n{ch[k]}\n\n" for k in CHANNEL_FIELDS
+                       if str(ch.get(k) or "").strip())
     kws, _ = kit_keywords(d)
     by_kind: dict[str, list[str]] = {}
     for k in kws:
@@ -286,8 +320,11 @@ def render_kit(t: T, d: dict) -> str:
               if str(d.get("formal_statement") or "").strip() else
               f"## {t('plans.formal')}\n\n{t('plans.formal_withheld')}\n\n"
               if d.get("formal_withheld") else "")
-    return (f"# {t('plans.c')}\n\n## {t('plans.holding')}\n\n{d.get('holding_statement', '')}\n\n"
-            f"{formal}## Q&A\n\n{qa}\n\n## {t('plans.monitor')}\n\n"
+    return (f"# {t('plans.c')}\n\n## {t('plans.holding')}\n\n{holding_text(d)}\n\n"
+            + (f"## {t('plans.channels')}\n\n{channels}" if channels else "")
+            + f"{formal}## Q&A\n\n{qa}\n\n"
+            + (f"## {t('plans.frontline_qa')}\n\n{fqa}\n\n" if fqa else "")
+            + f"## {t('plans.monitor')}\n\n"
             + "\n".join(f"- {t('kw.' + kind)}: {', '.join(v)}" for kind, v in by_kind.items())
             + f"\n\n## {t('plans.escalation')}\n\n| trigger | action | owner |\n|---|---|---|\n{esc}"
             + f"\n\n## {t('plans.do_not_say')}\n\n"
@@ -313,11 +350,12 @@ def plan_c(run, backend, writer, lang, risks, article, intake):
     if rep["final"]:
         data = _redact_all(data, rep["final"])
         rep["redacted"] = True
+    gaps: list[str] = []
     if data:
-        data = kit_shape(data, known)
+        data, gaps = holding_shape(kit_shape(data, known))
     text = render_kit(t, data) if data else ""
     write_text_atomic(run.path(f"{DIR}/C-kit.md"), text)
-    rep["keyword_warnings"] = kit_keywords(data)[1] if data else []
+    rep["keyword_warnings"] = (kit_keywords(data)[1] if data else []) + gaps
     return text, rep
 
 
@@ -398,8 +436,9 @@ def run_plans(run: Run, backend: Backend, models: list[str], lang: str, *, say=p
     say(f"  … T ({writer})")
     unverified = [c["id"] for c in ledger
                   if c.get("status") in ("unsupported", "cannot_verify", "pending")]
+    from .grading import assess
     tl, rep, tl_stages = timeline.plan_t(backend, writer, checker, lang, risks, article, intake,
-                                         _guarded, unverified)
+                                         _guarded, unverified, grade=assess(intake, syn)["grade"])
     out["ethics"]["T"] = rep
     write_json(run.path(f"{DIR}/T.json"), tl)
     write_text_atomic(run.path(f"{DIR}/T.md"), timeline.render(T(lang), tl))

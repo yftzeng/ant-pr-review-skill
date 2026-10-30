@@ -178,9 +178,18 @@ class FakeBackend(Backend):
                                 "alone.", "addresses": ["R01"]}], "alternative": "", "notes": "fake"}
 
     def _kit(self, *a):
-        return {"holding_statement": "[fake] We are aware and will update.",
+        return {"holding": {"acknowledge": "[fake] We know the March batch overheated.",
+                            "confirmed": "[fake] Three reports on 28 October.",
+                            "doing": "[fake] Sales stopped; returned units are tested.",
+                            "affected_action": "[fake] Stop using the unit.",
+                            "contact": "[fake] Service line 0800-000-000",
+                            "next_update": "[fake] Next update at 18:00 on 30 October."},
+                "channels": {k: f"[fake] {k} version." for k in
+                             ("web", "social", "phone", "frontline", "direct")},
                 "formal_statement": "[fake] What happened, the cause and what we do.",
                 "qa": [{"question": "What happened?", "answer": "[fake] Only provable facts."}],
+                "frontline_qa": [{"question": "Is my unit safe?",
+                                  "answer": "[fake] Stop using it and call us."}],
                 "monitoring_keywords": [{"term": "fake", "kind": "brand", "platforms": ["PTT"]}],
                 "escalation": [{"trigger": "media call", "action": "route to PR lead",
                                 "owner": "PR lead"}], "do_not_say": ["no comment"]}

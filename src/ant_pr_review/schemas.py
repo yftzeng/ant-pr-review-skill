@@ -180,10 +180,17 @@ RESPONSE_OPTIONS = obj({
 KEYWORD_KINDS = ["brand", "variant", "product", "officer", "issue", "competitor", "exclusion"]
 RELEVANCE = ["none", "low", "high"]
 
+# D-0007: the holding statement in six parts, checked in code, and a version per channel
+HOLDING_FIELDS = ("acknowledge", "confirmed", "doing", "affected_action", "contact",
+                  "next_update")
+CHANNEL_FIELDS = ("web", "social", "phone", "frontline", "direct")
+
 KIT = obj({
-    "holding_statement": STR,
+    "holding": obj({k: STR for k in HOLDING_FIELDS}),
+    "channels": obj({k: STR for k in CHANNEL_FIELDS}),
     "formal_statement": STR,
     "qa": arr(obj({"question": STR, "answer": STR})),
+    "frontline_qa": arr(obj({"question": STR, "answer": STR})),
     "monitoring_keywords": arr(obj({"term": STR, "kind": enum(KEYWORD_KINDS),
                                      "platforms": arr(STR)})),
     "escalation": arr(obj({"trigger": STR, "action": STR, "owner": STR})),

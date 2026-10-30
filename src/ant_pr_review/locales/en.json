@@ -727,5 +727,15 @@
   "export.written": "Printable copies: {files}",
   "export.skipped.packages": "{fmt} not written: the export packages are not installed ({install})",
   "export.skipped.font": "{fmt} not written: no CJK font found (set ANT_PR_REVIEW_FONT to a .ttf, .otf or .ttc file)",
-  "export.skipped.error": "{fmt} not written: {error}"
+  "export.skipped.error": "{fmt} not written: {error}",
+  "plans.channels": "Versions by channel",
+  "plans.channel.web": "Website or press release",
+  "plans.channel.social": "Social post",
+  "plans.channel.phone": "Phone answer to the press",
+  "plans.channel.frontline": "Frontline (service desk, stores, sales)",
+  "plans.channel.direct": "Direct notice to affected people",
+  "plans.frontline_qa": "Frontline Q&A (to read aloud)",
+  "plans.t.warn_before_regulators": "no later than the first step for regulators or partners: they hear it first",
+  "plans.t.pause_promo": "Pause scheduled posts, campaigns and paid ads — fixed step",
+  "plans.t.pause_promo_stop": "resume only after the stop point, with approval"
 }

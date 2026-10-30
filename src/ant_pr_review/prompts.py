@@ -398,9 +398,20 @@ def kit_system(lang: str, characterised: bool = False) -> str:
               "owners and dates, what affected people should do, and the next update. "
               if characterised else
               "The facts do not yet characterise the event: write the holding statement only "
-              "(what is confirmed, what we are doing now, the next update) and leave "
-              "formal_statement empty. ")
-    return (formal + "You prepare a response kit in case the material, or the issue, draws attention: a "
+              "and leave formal_statement empty. ")
+    holding = ("The holding statement comes in six parts: acknowledge (what we know has "
+               "happened, the event only, no cause), confirmed (only confirmed facts, no "
+               "unconfirmed scope), doing (concrete actions now, never 'taking it seriously'), "
+               "affected_action (what affected people should do now), contact (an official line "
+               "or address, never a person's own number or account) and next_update (a clock "
+               "time or date for the next update, never 'as soon as possible'; leave it empty "
+               "if unknown). channels rewrites the same facts for the website, a social post, a "
+               "phone answer to the press, the frontline (service desk, stores, sales) and a "
+               "direct notice to affected people: the same facts, never more. frontline_qa "
+               "lists the short questions the service desk, stores and sales hear, each answered "
+               "in plain words they can read aloud, consistent with the holding statement and "
+               "never beyond it. ")
+    return (formal + holding + "You prepare a response kit in case the material, or the issue, draws attention: a "
             "holding statement using only provable facts, likely questions with answers, "
             "keywords to monitor (each a term with its kind - brand, variant (misspellings, "
             "homophones, traditional/simplified forms), product, officer (our own public "
