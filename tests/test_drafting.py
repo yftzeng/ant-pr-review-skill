@@ -651,3 +651,14 @@ def test_stray_block_characters(tmp_path):
     run.path("08-drafts/V1.md").write_text("We replace it from 1 November.█\n", encoding="utf-8")
     assert export_final(run)["written"] is True
     assert run.path("10-final.md").read_text(encoding="utf-8") == "We replace it from 1 November.\n"
+
+
+# @S-drafting-028
+def test_regional_usage_of_chinese():
+    v = version(paras=[para("我們會更新軟件並發佈視頻說明，「網友說的视频」不代表事實。", "stance")])
+    w12 = [h["hit"] for h in drafting.w_checks(v, "promote", lang="zh-TW") if h["id"] == "W12"]
+    assert w12 == ["軟件 → 軟體", "視頻 → 影片"]
+    cn = version(paras=[para("我们会更新軟體。", "stance")])
+    assert [h["hit"] for h in drafting.w_checks(cn, "promote", lang="zh-CN") if h["id"] == "W12"] == ["軟體"]
+    assert all(h["id"] != "W12" for h in drafting.w_checks(v, "promote", lang="en"))
+    assert all(h["id"] != "W12" for h in drafting.w_checks(v, "promote"))

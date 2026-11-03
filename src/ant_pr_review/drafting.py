@@ -11,7 +11,7 @@ import unicodedata
 from difflib import SequenceMatcher
 from pathlib import Path
 
-from . import prompts
+from . import outlang, prompts
 from .backends.base import Backend, BackendError
 from .consensus import VERDICT_ORDER
 from .i18n import T
@@ -239,8 +239,8 @@ def _long_para(s: str) -> bool:
     return len(_CJK.findall(s)) > 250 if _CJK.search(s) else len(s.split()) > 120
 
 
-def w_checks(v: dict, posture: str) -> list[dict]:
-    """W1-W11: readability and accountability, never detection evasion (D-PR-7)."""
+def w_checks(v: dict, posture: str, lang: str | None = None) -> list[dict]:
+    """W1-W12: readability and accountability, never detection evasion (D-PR-7)."""
     hits = []
     paras = [p for p in v.get("paragraphs", []) if p.get("text", "").strip()]
     for n, p in enumerate(paras, 1):
@@ -259,6 +259,8 @@ def w_checks(v: dict, posture: str) -> list[dict]:
         hits += [{"id": "W10", "where": where, "hit": m.group(0)} for s in sents
                  if not re.search(r"\d", s) for m in INTENSIFIER.finditer(s)]
         hits += [{"id": "W11", "where": where, "hit": m.group(0)} for m in BLOCKS.finditer(text)]
+        hits += [{"id": "W12", "where": where, "hit": i["detail"]}           # S-drafting-028
+                 for i in outlang.check(text, lang)]
     if posture in ("clarify_apologize", "rebut"):
         have = {p.get("part") for p in paras}
         missing = [x for x in FOUR_PARTS if x not in have]
@@ -463,7 +465,7 @@ def run_draft(run: Run, backend: Backend, models: list[str], lang: str,
         write_text_atomic(run.path(f"{DIR}/{v['id']}.md"), text)
         v["claims"], v["disqualified"] = register(v.get("claims", []), brief, text)
         v["placeholders"] = deliverable_issues(text)
-        v["w"] = w_checks(v, posture)
+        v["w"] = w_checks(v, posture, lang)
         v["bounds"] = bound_hits(v, brief.get("cannot_commit", []))
     stage = _review_stage(backend, writer, checker, lang, brief, versions, say)
     for v in versions:

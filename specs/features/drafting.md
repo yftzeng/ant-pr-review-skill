@@ -169,6 +169,14 @@ Feature: drafting
     Then  W11 reports "▋" (block characters U+2580-U+259F, ■ and ▮ are broken glyphs a reader sees), and 10-final.md holds
           "We replace it from 1 November." without it
     And   dashes, colons and lists of words models favour stay unchecked (D-PR-7: machine-authorship tells, not readers)
+
+  @S-drafting-028
+  Scenario: a Chinese version in the other region's script or terms is a readability hit
+    Given a zh-TW run whose version says "我們會更新軟件並發佈視頻說明" and quotes 「網友說的视频」
+    When  the versions are checked
+    Then  W12 reports "视" and "频" are not reported (they are inside a quote), "軟件 → 軟體" and "視頻 → 影片";
+          a zh-CN run reports Traditional-only characters and Taiwan terms the same way; English runs have no W12
+    And   the text is never changed by the check, and political naming is left to the sovereign red line
 ```
 
 ## Must NOT
@@ -187,3 +195,4 @@ Feature: drafting
 - 2026-10-30 · +S-drafting-025 the three times and owned unknowns in the brief (user: 開工, the shared crisis core) · decision: D-0007
 - 2026-10-30 · +S-drafting-026 the worst case in the brief and the 40/20/40 proportion as a hint only (user: 開工, the shared crisis core) · decision: D-0007
 - 2026-11-03 · +S-drafting-027 · decision: none -- per D-PR-7 in docs/DESIGN.md; from ant-peer-review's writing gate only what serves the reader: a block character is a broken glyph in a published statement; its dash and stock-phrase rules stay out, as D-PR-7 and docs/REFERENCES.md #12 recorded
+- 2026-11-03 · +S-drafting-028 · decision: none -- ported from ant-peer-review's output-language check (script and regional terms): a Taiwan statement with mainland terms, or the reverse, tells readers where it was written; checked, not rewritten
