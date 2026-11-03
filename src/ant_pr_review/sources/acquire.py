@@ -22,7 +22,7 @@ from .feeds import FEED_TYPES
 from .quality import page_problem
 from .urls import redact
 from .htmlmd import html_to_markdown
-from .injection import scan
+from .injection import categorize, scan
 from .agentready import first_heading, github_raw, html_blocks_to_text, jsonld
 from .render import RenderError
 from .segments import segment
@@ -412,7 +412,7 @@ def run_sources(run: Run, crawler: Crawler, *, on_progress=None, renderer=None,
         items.append(entry)
         if on_progress:
             on_progress(entry)
-    manifest = {"items": items}
+    manifest = {"items": items, "cited": _cited(run, crawler, intake, manifest.get("cited", []))}
     write_json(manifest_path, manifest)
 
     segs: dict[str, list[dict]] = {}
@@ -428,6 +428,89 @@ def run_sources(run: Run, crawler: Crawler, *, on_progress=None, renderer=None,
     flat = [s for doc in segs.values() for s in doc]
     write_json(run.path("01-sources/injection-scan.json"), scan(flat, hidden_all))
     return manifest
+
+
+MAX_CITED = 3
+_CITED_RE = re.compile(r"https?://[^\s<>\"'，。、；：！？「」『』（）()\[\]]+", re.I)
+
+
+def cited_urls(intake: dict) -> list[str]:
+    """S-source-acquisition-050: URLs written inside text targets, not already targets."""
+    from ..factcheck import norm_url
+    seen = {norm_url(t["value"]) for t in intake["targets"] if t["kind"] in ("url", "feed_item")}
+    out = []
+    for t in intake["targets"]:
+        if t["kind"] != "text":
+            continue
+        for u in _CITED_RE.findall(t["value"]):
+            u = u.rstrip(".,;:!?")
+            n = norm_url(u)
+            if n and n not in seen:
+                seen.add(n)
+                out.append(u)
+    return out[:MAX_CITED]
+
+
+def _cited(run: Run, crawler: Crawler, intake: dict, prior: list[dict]) -> list[dict]:
+    """Each cited URL fetched once into 01-sources/cited/R<n>.md: a reference for the
+    fact-check and the share analysis, never a document under review. No fallbacks and no
+    questions: a failure is recorded and the run goes on."""
+    if crawler is None:        # text-only runs in tests: nothing to fetch with
+        return []
+    if (intake.get("card") or {}).get("embargo"):   # D-PR-9: nothing reaches the web
+        return [{"url": redact(u), "id": f"R{n}", "status": "skipped", "reason": "embargo"}
+                for n, u in enumerate(cited_urls(intake), 1)]
+    done = {c["url"]: c for c in prior if c.get("status") == "ok"}
+    out = []
+    for n, url in enumerate(cited_urls(intake), 1):
+        if url in done and run.path(done[url]["file"]).exists():
+            out.append(done[url])
+            continue
+        rid, entry = f"R{n}", {"url": redact(url)}
+        try:
+            raw = github_raw(url)
+            if raw:
+                res = crawler.fetch(raw, types=("text/plain", "text/markdown"))
+                md, title, ext = html_blocks_to_text(res.body.decode("utf-8", "replace")), "", "md"
+                title = first_heading(md)
+            else:
+                res = crawler.fetch(url)
+                if res.content_type in FEED_TYPES:
+                    raise FetchError("is_feed", redact(url))
+                md, _, title, ext, problem = _convert(res)
+                if problem:
+                    raise FetchError(problem, redact(res.final_url))
+            file = f"01-sources/cited/{rid}.md"
+            _store_raw(run, f"{rid}.{ext}", res.body)
+            write_text_atomic(run.path(file), md.strip() + "\n")
+            entry.update(id=rid, status="ok", file=file, title=title or redact(url),
+                         chars=len(md.strip()))
+            flags = sorted({c for p in _paragraphs(md) for c in categorize(p)})
+            if flags:          # a cited page that steers the checker is itself a finding
+                entry["injection"] = flags
+        except (FetchError, ConvertError) as e:
+            entry.update(id=rid, status="failed", reason=e.reason)
+        out.append(entry)
+    return out
+
+
+def _paragraphs(md: str) -> list[str]:
+    return [p.strip() for p in re.split(r"\n\s*\n", md) if p.strip()]
+
+
+def cited_sources(run: Run) -> list[dict]:
+    """The cited sources that were read, with their text; a paragraph that tries to steer
+    a reviewer or checker is withheld, as in the article itself."""
+    m = read_json(run.path("01-sources/manifest.json"), default={})
+    out = []
+    for c in m.get("cited", []):
+        if c.get("status") != "ok" or not run.path(c["file"]).exists():
+            continue
+        paras = _paragraphs(run.path(c["file"]).read_text(encoding="utf-8"))
+        text = "\n\n".join(f"[withheld: {', '.join(categorize(p))}]" if categorize(p) else p
+                            for p in paras)
+        out.append(dict(c, text=text))
+    return out
 
 
 def failed_items(manifest: dict) -> list[dict]:

@@ -261,13 +261,16 @@ def factcheck_system(lang: str) -> str:
             "counts as a claim.\n\n" + SHARED_RULES.format(lang_name=_lang(lang)))
 
 
-def factcheck_prompt(claim: dict, context: str) -> str:
+def factcheck_prompt(claim: dict, context: str, cited: str = "") -> str:
+    extra = ("\nSources the article itself cites, fetched by this run (the author's own pick, "
+             "not neutral evidence; you may cite their URLs, and fetch them for more):\n"
+             + untrusted(cited) + "\n") if cited else ""
     return f"""Check this claim. Status: supported, partly (some parts wrong or overstated),
 unsupported (contradicted by reliable sources), or cannot_verify.
 Claim type: {claim['type']}
 Claim and its context (untrusted):
 {untrusted(claim['text'] + chr(10) + chr(10) + 'Context: ' + context)}
-"""
+{extra}"""
 
 
 def debate_system(lang: str, unit: dict) -> str:

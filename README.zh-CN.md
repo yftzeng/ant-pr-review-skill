@@ -51,7 +51,7 @@ ant-pr-review            # 交互模式
 
 可打印的 PDF 与 Word 版本：`uv tool install '.[export]'`（fpdf2、python-docx），并需要系统有中文字体；找不到时可用 `ANT_PR_REVIEW_FONT` 指定 .ttf、.otf 或 .ttc 文件。
 
-JavaScript 渲染的网页：`uv tool install '.[render]'`，再执行 `playwright install chromium`。会先用给程序读的格式：GitHub 链接直接读原始 README；每次请求都先要 Markdown；网页抽不出足够正文时才用 JSON-LD 的 `articleBody`。抓取失败或内容太少时的顺序是：重试一次（仅限 429／503）→ 无头浏览器 → AMP 版本 → 标注日期的 Wayback Machine 存档 → 请你粘贴正文。时间上限：连接 5 秒、10 秒没收到数据、单页 30 秒、每个网址含所有退路 90 秒（config.toml 的 `[fetch]`）。爬虫不会伪装成浏览器。
+JavaScript 渲染的网页：`uv tool install '.[render]'`，再执行 `playwright install chromium`。会先用给程序读的格式：GitHub 链接直接读原始 README；每次请求都先要 Markdown；网页抽不出足够正文时才用 JSON-LD 的 `articleBody`。抓取失败或内容太少时的顺序是：重试一次（仅限 429／503）→ 无头浏览器 → AMP 版本 → 标注日期的 Wayback Machine 存档 → 请你粘贴正文。时间上限：连接 5 秒、10 秒没收到数据、单页 30 秒、每个网址含所有退路 90 秒（config.toml 的 `[fetch]`）。爬虫不会伪装成浏览器。粘贴的文字里附的网址（最多 3 个，例如指控文附的“证据”链接）会作为引用出处抓取：事实核查会拿到其中相关的段落，并标注为作者自己挑选的资料；这些出处不会被当作审查对象，试图操控核查的段落会被扣下，禁发布（embargo）时一律不抓。
 
 需要 Python 3.11 以上。使用 Claude 模型需要 `claude` CLI；使用其他厂商需设置对应的 key：`OPENAI_API_KEY`、`GEMINI_API_KEY`、`XAI_API_KEY`、`OPENROUTER_API_KEY`。没有任何 runtime 依赖。
 

@@ -301,6 +301,18 @@ Feature: source acquisition
   Scenario: a page title reads as text
     Given a <title> and a JSON-LD headline "Read &amp; write &#8212; a &quot;test&quot;"
     Then  both read 'Read & write — a "test"'
+
+  @S-source-acquisition-049
+  Scenario: a URL written inside a text target is fetched as a cited source, not as material under review
+    Given an inbound text that cites "https://blog.example/post/" as its evidence, and a second URL target
+    When  the sources are read
+    Then  the URL is fetched once, through the same crawler and its address checks, into 01-sources/cited/R1.md and listed under
+          "cited" in the manifest; it is not segmented and not reviewed
+    And   at most 3 cited URLs are fetched, a URL that is already a target is not fetched again, and a failure (an internal
+          address included) is recorded without asking anything
+    And   a paragraph of a cited page that tries to steer a reviewer or checker is listed under "injection" and withheld from
+          the checker as "[withheld: <category>]"
+    And   under embargo no cited URL is fetched: each is "skipped" for "embargo"
 ```
 
 ## Must NOT
@@ -320,3 +332,4 @@ Feature: source acquisition
 
 - 2026-10-24 · +S-source-acquisition-044 single line breaks split paragraphs, so a pasted page is no longer one paragraph and A.md / final.md keep its lines (user: 按你建議, after the 91APP final.md came out as one 7,475-character line) · decision: none -- blank lines alone lost the structure of pasted and converted pages
 - 2026-11-03 · ~S-source-acquisition-020 +S-source-acquisition-045..048 · decision: none -- ported from ant-peer-review (c2f820c, 761a335, 1f359f1, 0774309, 04811b0): a dead link held a run for minutes; the first <article> won even as a teaser card or a BibTeX box; titles kept &amp;; programs' forms (GitHub raw, Markdown, JSON-LD) were never asked for
+- 2026-11-03 · +S-source-acquisition-049 · decision: none -- ported from ant-peer-review (0774309): an allegation's own evidence link was never read; here the injection scan and the embargo apply to cited pages too

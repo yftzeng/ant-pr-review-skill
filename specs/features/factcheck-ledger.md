@@ -96,6 +96,13 @@ Feature: fact-check ledger
     Then  the grades are A, C (an official kind on a host that is not official), B, C and C; doi.org and arxiv.org sources from the identifier checks are A, an academic kind on another host is B
     And   the claim's strength is strong with one A or two B from different outlets, single with one B, weak with only C, and ungraded when no source has a kind (a ledger from before this change)
     And   the report's ledger shows each source's grade and the claim's strength
+
+  @S-factcheck-ledger-015
+  Scenario: the checker gets the cited sources
+    Given a cited source R1 whose paragraph says "MATH-500 rose from 7.9% to 48.1%"
+    When  the claim "MATH-500 從 7.9% 提升到 48.1%" is checked
+    Then  the prompt holds the paragraphs of R1 that share the claim's numbers and terms, labelled as the author's own source,
+          not neutral evidence, and a source the checker cites with that URL is kept because the run fetched it
 ```
 
 ## Must NOT
@@ -108,3 +115,4 @@ Feature: fact-check ledger
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5; ~S-factcheck-ledger-001 ~S-factcheck-ledger-008 for the matrix and report names; ~S-factcheck-ledger-009 law citations and allegations replace the S-curve stage · decision: D-PR-8
 - 2026-10-26 · +S-factcheck-ledger-012..013 · decision: none -- user: 開工 (port ant-peer-review's opt-in DOI / arXiv checks; PR copy often cites "a study shows", and a retracted or mistitled paper is a clear risk); embargo keeps it offline
 - 2026-10-26 · +S-factcheck-ledger-014 · decision: none -- user: 按你建議 (grade claim sources as the company profile grades competitor evidence: the checker names the kind, code checks the host, one outlet is one source)
+- 2026-11-03 · +S-factcheck-ledger-015 · decision: none -- with S-source-acquisition-049
