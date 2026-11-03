@@ -638,3 +638,16 @@ def test_malformed_model_output_is_tolerated():
     brief = drafting.check_brief(BRIEF)
     reg, _ = drafting.register([{"text": "x", "basis": None, "class": "public"}], brief, "x")
     assert reg[0]["class"] == "needs_validation"
+
+
+# @S-drafting-027
+def test_stray_block_characters(tmp_path):
+    from ant_pr_review.report import export_final
+    v = version(paras=[para("我們已暫停出貨▋", "stance")])
+    assert [h for h in drafting.w_checks(v, "promote") if h["id"] == "W11"][0]["hit"] == "▋"
+    assert all(h["id"] != "W11" for h in drafting.w_checks(version(paras=[para("A — B: list", "stance")]), "promote"))
+    run = drafting_run(tmp_path)
+    write_json(run.path("08-drafts/summary.json"), {"status": "done", "chosen": "V1"})
+    run.path("08-drafts/V1.md").write_text("We replace it from 1 November.█\n", encoding="utf-8")
+    assert export_final(run)["written"] is True
+    assert run.path("10-final.md").read_text(encoding="utf-8") == "We replace it from 1 November.\n"

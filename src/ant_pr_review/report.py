@@ -491,7 +491,7 @@ def drafting_lines(t: T, d: dict) -> list[str]:
             out.append(f"- {t('draft.chosen_other', id=d['chosen'])}")
     for v in vs:
         if v.get("w"):
-            out += ["", f"**{v['id']} · W1-W10**", ""]
+            out += ["", f"**{v['id']} · W1-W11**", ""]
             out += [f"- {h['id']} {t('draft.w.' + h['id'])} {h['where']}: {safe(h['hit'])}"
                     for h in v["w"]]
     chosen = next((v for v in vs if v["id"] == d.get("chosen")), None)
@@ -529,7 +529,8 @@ def export_final(run: Run) -> dict:
         return {"applies": False}
     chosen = f"08-drafts/{d['chosen']}.md"
     src = "09-plans/A.md" if run.path("09-plans/A.md").exists() else chosen
-    text = run.path(src).read_text(encoding="utf-8")
+    from .drafting import BLOCKS
+    text = BLOCKS.sub("", run.path(src).read_text(encoding="utf-8"))   # S-drafting-027
     issues = final_issues(run, intake, d, text)
     if issues:
         final.unlink(missing_ok=True)  # not clean: an earlier export goes

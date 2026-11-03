@@ -161,6 +161,14 @@ Feature: drafting
     Given a brief with worst_case "up to 5,000 units of the March batch", or none; answered interactively after the three times
     When  it is checked and the writer prompt is built
     Then  the brief keeps worst_case and the prompt says the statement promises nothing beyond it; when the facts characterise the event the prompt offers, as a guide only, about two fifths on what happened and our stance, one fifth on the cause and two fifths on the measures, with the facts setting the length; a holding-only draft gets no proportion hint
+
+  @S-drafting-027
+  Scenario: stray block characters are a readability hit and never reach the ready-to-publish file
+    Given a version whose paragraph holds "我們已暫停出貨▋" and a final text "We replace it from 1 November.█"
+    When  the versions are checked and the final text is exported
+    Then  W11 reports "▋" (block characters U+2580-U+259F, ■ and ▮ are broken glyphs a reader sees), and 10-final.md holds
+          "We replace it from 1 November." without it
+    And   dashes, colons and lists of words models favour stay unchecked (D-PR-7: machine-authorship tells, not readers)
 ```
 
 ## Must NOT
@@ -178,3 +186,4 @@ Feature: drafting
 - 2026-10-24 · +S-drafting-023..024 W10 intensifiers without a figure, a scoped absence, an unconditional independent check and no crisis-as-opportunity, from the unsent statement in the second brake-pedal video (user: 開工) · decision: D-0005
 - 2026-10-30 · +S-drafting-025 the three times and owned unknowns in the brief (user: 開工, the shared crisis core) · decision: D-0007
 - 2026-10-30 · +S-drafting-026 the worst case in the brief and the 40/20/40 proportion as a hint only (user: 開工, the shared crisis core) · decision: D-0007
+- 2026-11-03 · +S-drafting-027 · decision: none -- per D-PR-7 in docs/DESIGN.md; from ant-peer-review's writing gate only what serves the reader: a block character is a broken glyph in a published statement; its dash and stock-phrase rules stay out, as D-PR-7 and docs/REFERENCES.md #12 recorded

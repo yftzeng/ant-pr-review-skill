@@ -228,6 +228,9 @@ SUPERLATIVE = re.compile(r"最好|最佳|最安全|第一品牌|唯一|頂尖|�
                          r"|#1", re.I)
 
 
+BLOCKS = re.compile(r"[\u2580-\u259f\u25a0\u25ae]")   # ▋ █ ■ ▮: broken glyphs a reader sees
+
+
 def _long_sentence(s: str) -> bool:
     return len(_CJK.findall(s)) > 90 if _CJK.search(s) else len(s.split()) > 35
 
@@ -237,7 +240,7 @@ def _long_para(s: str) -> bool:
 
 
 def w_checks(v: dict, posture: str) -> list[dict]:
-    """W1-W10: readability and accountability, never detection evasion."""
+    """W1-W11: readability and accountability, never detection evasion (D-PR-7)."""
     hits = []
     paras = [p for p in v.get("paragraphs", []) if p.get("text", "").strip()]
     for n, p in enumerate(paras, 1):
@@ -255,6 +258,7 @@ def w_checks(v: dict, posture: str) -> list[dict]:
                  if not re.search(r"\d", _DATE.sub("", s)) for m in VAGUE_QTY.finditer(s)]
         hits += [{"id": "W10", "where": where, "hit": m.group(0)} for s in sents
                  if not re.search(r"\d", s) for m in INTENSIFIER.finditer(s)]
+        hits += [{"id": "W11", "where": where, "hit": m.group(0)} for m in BLOCKS.finditer(text)]
     if posture in ("clarify_apologize", "rebut"):
         have = {p.get("part") for p in paras}
         missing = [x for x in FOUR_PARTS if x not in have]
