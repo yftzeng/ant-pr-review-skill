@@ -36,6 +36,9 @@ def default_home() -> Path:
     return home
 
 
+FETCH_KEYS = ("connect", "read", "page", "url_budget")
+
+
 @dataclass
 class Config:
     lang: str = "en"
@@ -43,6 +46,7 @@ class Config:
     models: list[str] = field(default_factory=lambda: list(DEFAULT_MODELS))
     thresholds: dict[str, float] = field(default_factory=lambda: dict(DEFAULT_THRESHOLDS))
     style_guide_min_repeats: int = 3
+    fetch: dict[str, float] = field(default_factory=dict)   # connect, read, page, url_budget
     configured: bool = False
 
 
@@ -92,6 +96,8 @@ class Store:
                                if k in DEFAULT_THRESHOLDS})
         cfg.style_guide_min_repeats = int(data.get("style_guide_min_repeats",
                                                    cfg.style_guide_min_repeats))
+        cfg.fetch = {k: float(v) for k, v in (data.get("fetch") or {}).items()
+                     if k in FETCH_KEYS and isinstance(v, (int, float)) and v > 0}
         cfg.configured = True
         return cfg
 
@@ -109,4 +115,6 @@ class Store:
         ]
         for k, v in cfg.thresholds.items():
             lines.append(f"{k} = {float(v)}")
+        if cfg.fetch:
+            lines += ["", "[fetch]"] + [f"{k} = {float(v)}" for k, v in cfg.fetch.items()]
         write_text_atomic(self.config_path, "\n".join(lines) + "\n")

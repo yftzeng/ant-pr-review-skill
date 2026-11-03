@@ -283,6 +283,8 @@
   "via.amp": "AMP version",
   "via.archive": "Wayback Machine copy",
   "via.paste": "pasted by the user",
+  "via.github_readme": "GitHub README (raw)",
+  "via.jsonld": "JSON-LD articleBody",
   "report.source": "Source",
   "sources.paste": "Paste the text myself",
   "sources.paste_for": "Paste the text of {url} (end with /done or two empty lines):",

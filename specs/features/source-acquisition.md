@@ -130,7 +130,8 @@ Feature: source acquisition
   Scenario: a 429 or 503 is retried with backoff, honouring Retry-After, within the deadline
     Given a server that answers 429 with "Retry-After: 2", then 200
     When  the page is fetched
-    Then  it waited 2 seconds once and succeeded; a server that keeps answering 503 fails as "http_status" after 2 retries
+    Then  it waited 2 seconds once and succeeded; a server that keeps answering 503 fails as "http_status" after 1 retry;
+          Retry-After is capped at 10 s and a 502 or 504 is not retried
 
   @S-source-acquisition-021
   Scenario: robots, a site-profile block, internal addresses and a login or paywall never fall back
@@ -271,6 +272,35 @@ Feature: source acquisition
     Then  it has six paragraphs: "事件說明", "10/04", "接獲通報，啟動盤查。", "- 更換密碼", "- 停用帳號" and "The review covers every order placed through the platform before 3 October."
     And   a line ends its paragraph when it ends a sentence (。！？!?.;；:：), is short (under 25 CJK characters or 50 other characters), or the next line starts a list item or a heading; a long line without an ending is wrapped prose and joins the next, with no space between two CJK characters
     And   plan A's A.md, rebuilt from those paragraphs, keeps each one on its own line
+
+  @S-source-acquisition-045
+  Scenario: fetch limits: 5 s to connect, 10 s idle, 30 s a page, 90 s a URL
+    When  a crawler is made with no settings
+    Then  its connect, read, page and per-URL limits are 5, 10, 30 and 90 seconds, and config.toml [fetch] (connect, read, page,
+          url_budget) overrides them and survives a save
+    And   once a URL's 90 s are spent no further fallback is tried: a thin page is kept with "url_budget_exceeded", a failed one fails
+
+  @S-source-acquisition-046
+  Scenario: forms meant for programs are read first
+    When  a GitHub repository link is a target
+    Then  its README is read from raw.githubusercontent.com with HTML blocks turned into text ("GitHub README (raw)"),
+          and the page as before when there is none
+    And   every request asks for text/markdown first and the rest at q=0.9
+    And   a page that yields too little text uses its JSON-LD articleBody before the browser, labelled "JSON-LD articleBody",
+          and a page with enough text never does
+
+  @S-source-acquisition-047
+  Scenario: the article body is the <article> with the most text, and a sliver of the page does not count
+    Given a page whose first <article> is a teaser card, one whose only <article> is a short comment beside a post-content div,
+          and a Distill page whose only <article> is its BibTeX citation
+    When  each is converted
+    Then  each yields its story; a region or content container under 200 characters or under a quarter of the page's text
+          is skipped, and at most 50 are compared
+
+  @S-source-acquisition-048
+  Scenario: a page title reads as text
+    Given a <title> and a JSON-LD headline "Read &amp; write &#8212; a &quot;test&quot;"
+    Then  both read 'Read & write — a "test"'
 ```
 
 ## Must NOT
@@ -289,3 +319,4 @@ Feature: source acquisition
 - 2026-10-22 · +S-source-acquisition-042..043 ~S-source-acquisition-025 ~S-source-acquisition-033 · decision: D-0001 -- user: a 403 or a bot challenge is a refusal; the archive only with consent (synced with ant-peer-review 1c00c7d)
 
 - 2026-10-24 · +S-source-acquisition-044 single line breaks split paragraphs, so a pasted page is no longer one paragraph and A.md / final.md keep its lines (user: 按你建議, after the 91APP final.md came out as one 7,475-character line) · decision: none -- blank lines alone lost the structure of pasted and converted pages
+- 2026-11-03 · ~S-source-acquisition-020 +S-source-acquisition-045..048 · decision: none -- ported from ant-peer-review (c2f820c, 761a335, 1f359f1, 0774309, 04811b0): a dead link held a run for minutes; the first <article> won even as a teaser card or a BibTeX box; titles kept &amp;; programs' forms (GitHub raw, Markdown, JSON-LD) were never asked for

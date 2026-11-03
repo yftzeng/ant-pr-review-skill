@@ -87,6 +87,12 @@ Feature: cli
   Scenario: several jurisdictions in one non-interactive run
     When  "new --yes --backend fake --jurisdictions tw,us --depth full --target <text>" runs
     Then  the matrix has tw and us units, the merge ran, and a consolidated plus two jurisdiction reports exist
+
+  @S-cli-015
+  Scenario: a long pasted line is text, and names the run
+    When  a target is one line of 200 Chinese characters (over 255 bytes, the limit of one path part)
+    Then  it is a text target, the run folder is named after its first words, and nothing crashes;
+          every check whether typed text is an existing path goes through intake.existing_path
 ```
 
 ## Must NOT
@@ -94,3 +100,4 @@ Feature: cli
 
 ## Revisions
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5 and rewritten for PR risk review; ids restart in this repo · decision: D-PR-1
+- 2026-11-03 · +S-cli-015 · decision: none -- ported from ant-peer-review (0774309, 510ee34): a long pasted line crashed intake and slug_for with OSError ENAMETOOLONG; crisis mode asks for exactly such a paste

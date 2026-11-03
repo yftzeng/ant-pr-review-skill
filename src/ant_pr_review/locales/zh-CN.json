@@ -283,6 +283,8 @@
   "via.amp": "AMP 版本",
   "via.archive": "Wayback Machine 存档",
   "via.paste": "用户粘贴",
+  "via.github_readme": "GitHub README（原始文件）",
+  "via.jsonld": "JSON-LD 正文（articleBody）",
   "report.source": "来源",
   "sources.paste": "我自己粘贴正文",
   "sources.paste_for": "请粘贴 {url} 的正文（以 /done 或连按两次 Enter 结束）：",

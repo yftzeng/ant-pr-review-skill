@@ -118,11 +118,16 @@ def test_retry_after_then_success_and_bounded_failure(seq_server):
     Seq.replies = [(503, {}, b"down")]
     with pytest.raises(FetchError) as e:
         c.fetch(f"http://pub.example:{seq_server}/b")
-    assert e.value.reason == "http_status" and waits == [1.0, 2.0]
+    assert e.value.reason == "http_status" and waits == [1.0]          # one retry
     waits.clear()
     Seq.replies = [(429, {"Retry-After": "86400"}, b""), (200, {}, b"<p>ok</p>")]
     c.fetch(f"http://pub.example:{seq_server}/c")
-    assert waits == [30.0]  # capped
+    assert waits == [10.0]  # capped
+    waits.clear()
+    Seq.replies = [(502, {}, b"bad gateway")]
+    with pytest.raises(FetchError):
+        c.fetch(f"http://pub.example:{seq_server}/d")
+    assert waits == []                                               # 502 is not retried
 
 
 # ---- what never falls back -------------------------------------------------

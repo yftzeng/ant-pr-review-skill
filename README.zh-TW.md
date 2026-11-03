@@ -51,7 +51,7 @@ ant-pr-review            # 互動模式
 
 可列印的 PDF 與 Word 版本：`uv tool install '.[export]'`（fpdf2、python-docx），並需要系統有中文字型；找不到時可用 `ANT_PR_REVIEW_FONT` 指定 .ttf、.otf 或 .ttc 檔。
 
-JavaScript 渲染的網頁：`uv tool install '.[render]'`，再執行 `playwright install chromium`。抓取失敗時的順序是：退避重試 → 無頭瀏覽器 → AMP 版本 → 標註日期的 Wayback Machine 存檔 → 請你貼上內文。爬蟲不會偽裝成瀏覽器。
+JavaScript 渲染的網頁：`uv tool install '.[render]'`，再執行 `playwright install chromium`。會先用給程式讀的格式：GitHub 連結直接讀原始 README；每次請求都先要 Markdown；網頁抽不出足夠內文時才用 JSON-LD 的 `articleBody`。抓取失敗或內容太少時的順序是：重試一次（僅限 429／503）→ 無頭瀏覽器 → AMP 版本 → 標註日期的 Wayback Machine 存檔 → 請你貼上內文。時間上限：連線 5 秒、10 秒沒收到資料、單頁 30 秒、每個網址含所有退路 90 秒（config.toml 的 `[fetch]`）。爬蟲不會偽裝成瀏覽器。
 
 需要 Python 3.11 以上。使用 Claude 模型需要 `claude` CLI；使用其他廠商需設定對應的 key：`OPENAI_API_KEY`、`GEMINI_API_KEY`、`XAI_API_KEY`、`OPENROUTER_API_KEY`。沒有任何 runtime 相依套件。
 

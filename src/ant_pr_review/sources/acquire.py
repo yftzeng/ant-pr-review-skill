@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 import tempfile
 from datetime import datetime
 from pathlib import Path
@@ -22,6 +23,7 @@ from .quality import page_problem
 from .urls import redact
 from .htmlmd import html_to_markdown
 from .injection import scan
+from .agentready import first_heading, github_raw, html_blocks_to_text, jsonld
 from .render import RenderError
 from .segments import segment
 
@@ -122,7 +124,7 @@ def _rendered(crawler, renderer, idx, url, title):
     try:
         html, final = renderer.render(url, allow=crawler.request_allowed, allow_navigation=nav_ok,
                                       user_agent=_ua(crawler, url), max_bytes=crawler.max_bytes,
-                                      timeout=crawler.timeout * 3)
+                                      timeout=getattr(crawler, "deadline", crawler.timeout * 3))
     except (RenderError, FetchError):
         return None
     if final != url and not nav_ok(final):
@@ -135,6 +137,33 @@ def _rendered(crawler, renderer, idx, url, title):
         return None
     return _candidate(conv.markdown, conv.hidden, conv.title or title, html.encode("utf-8"),
                       f"D{idx}.rendered.html", redact(final), via="render")
+
+
+def _github(run, crawler, idx, url) -> dict | None:
+    """S-source-acquisition-045: a GitHub link read from its raw Markdown; None to go on."""
+    raw = github_raw(url)
+    if not raw:
+        return None
+    try:
+        r = crawler.fetch(raw, types=("text/plain", "text/markdown"))
+    except FetchError as e:
+        if e.reason in NO_FALLBACK:
+            raise
+        return None
+    md = html_blocks_to_text(r.body.decode("utf-8", "replace"))
+    cand = _candidate(md, [], first_heading(md) or url, r.body, f"D{idx}.md", redact(url),
+                      via="github_readme")
+    alt = _accept(run, idx, cand, 0)
+    return dict(alt, final_url=redact(url), hops=[redact(raw)]) if alt else None
+
+
+def _jsonld_body(idx, res, title):
+    """S-source-acquisition-048: the page's own JSON-LD articleBody, for a thin page only."""
+    ld = jsonld(res.body.decode("utf-8", "replace"))
+    if not ld.get("body"):
+        return None
+    return _candidate(ld["body"], [], ld.get("title") or title, res.body, f"D{idx}.jsonld.html",
+                      redact(res.final_url), via="jsonld")
 
 
 def _amp(crawler, idx, res, title):
@@ -223,6 +252,14 @@ def _fetch_item(run: Run, crawler: Crawler, idx: int, url: str, renderer=None,
     """D-PR-15 order: crawler (with bounded retries) -> browser for thin, empty or needs_js
     pages -> AMP -> archive. The paste step is offered by the sources phase."""
     profile = _profile(crawler, url)
+    start, budget = time.monotonic(), getattr(crawler, "url_budget", 90.0)
+
+    def spent() -> bool:   # S-source-acquisition-044: no further fallback past the budget
+        return time.monotonic() - start >= budget
+
+    gh = _github(run, crawler, idx, url)
+    if gh:
+        return gh
     try:
         res = crawler.fetch(url)
     except FetchError as e:
@@ -230,6 +267,8 @@ def _fetch_item(run: Run, crawler: Crawler, idx: int, url: str, renderer=None,
             raise
         if e.reason == "http_status" and e.detail in BLOCK_STATUS and not archive_on_block:
             raise _blocked(crawler, url, e.reason, e.detail)
+        if spent():
+            raise
         alt = _accept(run, idx, _archive(crawler, idx, url), 0)
         if alt:
             return dict(alt, fell_back_from=e.reason)
@@ -242,7 +281,7 @@ def _fetch_item(run: Run, crawler: Crawler, idx: int, url: str, renderer=None,
     if problem in BLOCK_PROBLEMS and not archive_on_block:
         raise _blocked(crawler, url, problem, redact(res.final_url))
     if problem and problem not in THIN_PROBLEMS:
-        alt = _accept(run, idx, _archive(crawler, idx, url), 0)
+        alt = _accept(run, idx, _archive(crawler, idx, url), 0) if not spent() else None
         if alt:
             return dict(alt, fell_back_from=problem)
         raise FetchError(problem, redact(res.final_url))
@@ -250,14 +289,20 @@ def _fetch_item(run: Run, crawler: Crawler, idx: int, url: str, renderer=None,
     _store_raw(run, f"D{idx}.{ext}", res.body)  # the original stays, whatever replaces it
     live = len(md.strip())
     thin = ext == "html" and (problem is not None or live < THIN_PAGE_CHARS)
+    over_budget = False
     if ext == "html" and (thin or profile.get("needs_js")):
         steps = []
+        if thin:   # cheap, and only standing in for a page that yields too little text
+            steps.append(lambda: _jsonld_body(idx, res, title))
         if renderer is not None:
             steps.append(lambda: _rendered(crawler, renderer, idx, res.final_url, title))
         if thin:
             steps += [lambda: _amp(crawler, idx, res, title),
                       lambda: _archive(crawler, idx, url)]
         for step in steps:
+            if spent():
+                over_budget = True
+                break
             alt = _accept(run, idx, step(), live)
             if alt:
                 why = problem or ("thin_page" if thin else "needs_js")
@@ -271,6 +316,8 @@ def _fetch_item(run: Run, crawler: Crawler, idx: int, url: str, renderer=None,
     if thin:
         item["warning"] = "thin_page_maybe_js_rendered" + ("" if renderer else
                                                             "; no_browser_installed")
+    if over_budget:
+        item["warning"] = "; ".join(x for x in (item.get("warning"), "url_budget_exceeded") if x)
     return item
 
 

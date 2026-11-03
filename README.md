@@ -35,7 +35,7 @@ ant-pr-review            # interactive
 
 Printable PDF and Word copies: `uv tool install '.[export]'` (fpdf2, python-docx) and a CJK font on the machine; set `ANT_PR_REVIEW_FONT` to a .ttf, .otf or .ttc file if none is found.
 
-JavaScript-rendered pages: `uv tool install '.[render]'` and `playwright install chromium`. A failed fetch falls back to retries with backoff, then the headless browser, then the AMP version, then a dated Wayback Machine copy, and finally asks you to paste the text. The crawler never disguises itself as a browser.
+JavaScript-rendered pages: `uv tool install '.[render]'` and `playwright install chromium`. Programs' forms come first: a GitHub link is read from its raw README, every request asks for Markdown first, and a page with too little text may use its JSON-LD `articleBody`. A failed or thin fetch falls back to one retry (429/503 only), then the headless browser, then the AMP version, then a dated Wayback Machine copy, and finally asks you to paste the text. Limits: 5 s to connect, 10 s without a byte, 30 s a page, 90 s a URL with every fallback (config.toml `[fetch]`). The crawler never disguises itself as a browser.
 
 Python 3.11+. You need the `claude` CLI for Claude models, and keys for the other vendors: `OPENAI_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`, `OPENROUTER_API_KEY`. No runtime dependencies.
 
