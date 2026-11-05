@@ -55,6 +55,11 @@ Feature: menus
     Given the CLI running in a pty with a saved config
     When  Enter is sent at the purpose question and Down, Enter at the direction question
     Then  the run's intake purpose is "audit" and its direction is "operation"
+  @S-menus-009
+  Scenario: pasted text with broken UTF-8 is cleaned when it is read, never left to crash a later write
+    Given the terminal hands input() a line whose bytes it could not decode (lone surrogates, as Python's surrogateescape gives them)
+    When  the line is read
+    Then  bytes that form a valid character are put back together ("\udce4\udcb8\udcad" becomes "中") and bytes that do not become "\ufffd"; the run's intake is written
 ```
 
 ## Must NOT
@@ -65,3 +70,4 @@ Feature: menus
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5; kept unchanged · decision: D-PR-1
 - 2026-10-22 · ~S-menus-008 the purpose question now comes first (drafting mode); the pty test takes audit and moves down the direction question · decision: D-0005
 - 2026-10-30 · S-menus-001 unchanged: the purpose menu now lists crisis, audit, drafting with audit the default, so Enter still keeps audit; the radio scenario stays generic (user: 就用 crisis，然後放在第一個) · decision: D-0007
+- 2026-11-06 · +S-menus-009 input is cleaned of lone surrogates when read (user: 評估 ant peer review 又出錯了 … UnicodeEncodeError: surrogates not allowed) · decision: none -- a bug fix at the input boundary

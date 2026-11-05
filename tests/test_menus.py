@@ -186,3 +186,12 @@ def test_real_pty_arrow_keys(tmp_path):
     assert intake["card"]["jurisdictions"] == ["tw"]
     assert intake["roles"]["identities"] == ["responsible:organization"]
     assert intake["posture"] == "clarify_apologize" and intake["means"] == ["white", "gray", "black"]
+
+
+# @S-menus-009
+def test_broken_utf8_in_pasted_text_is_cleaned(monkeypatch):
+    import builtins
+    from ant_pr_review.ui import ConsoleIO
+    monkeypatch.setattr(builtins, "input", lambda prompt="": "a\udce4\udcb8\udcad b\udcff\udcf0\udc9f")
+    got = ConsoleIO().ask("? ")
+    assert got == "a中 b\ufffd\ufffd" and got.encode("utf-8")
