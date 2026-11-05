@@ -76,6 +76,11 @@ Feature: roster
   Scenario: aliases are normalized and malformed models refused
     When  --models "opus,sonnet" and then --models "opus,acme:x" are given
     Then  the first becomes claude:opus,claude:sonnet and the second is a usage error naming acme:x
+  @S-roster-013
+  Scenario: with no saved settings the language defaults to the system's
+    Given no config.toml, and the environment LC_ALL, LC_MESSAGES, LANG or LANGUAGE (the first set one wins)
+    When  the settings are loaded
+    Then  zh_TW, zh_HK, zh_MO or zh_Hant gives "zh-TW", any other zh gives "zh-CN", anything else (C, POSIX, en_US, unset) gives "en"; the first-use menu starts on that language, and a saved lang or --lang always wins
 ```
 
 ## Must NOT
@@ -83,3 +88,4 @@ Feature: roster
 
 ## Revisions
 - 2026-10-22 · forked from ant-peer-review @3ddd7f5 and rewritten for PR risk review; ids restart in this repo · decision: D-PR-1
+- 2026-11-06 · +S-roster-013 the first-use language defaults to the system locale; SKILL.md tells the agent to pass --lang in the user's language (user: 關於預設語系，本專案有自動判斷顯示語系嗎 …; 好) · decision: none -- a default for the first run only; the saved setting and --lang keep their order

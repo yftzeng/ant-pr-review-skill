@@ -28,3 +28,11 @@ def _no_politeness_delay(monkeypatch):
     import ant_pr_review.sources.crawler as crawler
     if hasattr(crawler, "DEFAULT_MIN_INTERVAL"):
         monkeypatch.setattr(crawler, "DEFAULT_MIN_INTERVAL", 0.0)
+
+
+@pytest.fixture(autouse=True)
+def _english_locale(monkeypatch):
+    """S-roster-013 reads the system locale on first use: tests start from English."""
+    for k in ("LC_ALL", "LC_MESSAGES", "LANGUAGE"):
+        monkeypatch.delenv(k, raising=False)
+    monkeypatch.setenv("LANG", "C.UTF-8")
