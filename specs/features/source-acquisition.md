@@ -313,6 +313,11 @@ Feature: source acquisition
     And   a paragraph of a cited page that tries to steer a reviewer or checker is listed under "injection" and withheld from
           the checker as "[withheld: <category>]"
     And   under embargo no cited URL is fetched: each is "skipped" for "embargo"
+  @S-source-acquisition-050
+  Scenario: a URL with Chinese in its path or query is sent percent-encoded, and a URL that cannot be sent fails as a fetch error
+    Given a server answering /wiki/%E8%87%BA%E7%81%A3?q=%E4%B8%AD
+    When  "http://pub.example/wiki/臺灣?q=中" and the same URL already percent-encoded are fetched, and a URL holding a character that cannot be encoded
+    Then  the first two reach the same page (an encoded URL is not encoded twice) and the last raises a fetch error "bad_url", never a crash of the run
 ```
 
 ## Must NOT
@@ -333,3 +338,4 @@ Feature: source acquisition
 - 2026-10-24 · +S-source-acquisition-044 single line breaks split paragraphs, so a pasted page is no longer one paragraph and A.md / final.md keep its lines (user: 按你建議, after the 91APP final.md came out as one 7,475-character line) · decision: none -- blank lines alone lost the structure of pasted and converted pages
 - 2026-11-03 · ~S-source-acquisition-020 +S-source-acquisition-045..048 · decision: none -- ported from ant-peer-review (c2f820c, 761a335, 1f359f1, 0774309, 04811b0): a dead link held a run for minutes; the first <article> won even as a teaser card or a BibTeX box; titles kept &amp;; programs' forms (GitHub raw, Markdown, JSON-LD) were never asked for
 - 2026-11-03 · +S-source-acquisition-049 · decision: none -- ported from ant-peer-review (0774309): an allegation's own evidence link was never read; here the injection scan and the embargo apply to cited pages too
+- 2026-11-06 · +S-source-acquisition-050 non-ASCII paths are percent-encoded and an unsendable URL is a fetch error (user: 評估 … 發生的錯誤 UnicodeEncodeError, in ant-peer-review; the same crawler code is here) · decision: none -- a bug fix in the crawler
