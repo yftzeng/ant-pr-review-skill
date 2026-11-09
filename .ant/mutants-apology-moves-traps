@@ -1,0 +1,28 @@
+# traps not checked
+@@ src/ant_pr_review/drafting.py
+-                  for wid, rx in APOLOGY_TRAPS for m in rx.finditer(text)]
++                  for wid, rx in APOLOGY_TRAPS[:0] for m in rx.finditer(text)]
+# conditional apology dropped
+@@ src/ant_pr_review/drafting.py
+- APOLOGY_TRAPS = (("W13", PASSIVE_EVASION), ("W14", CONDITIONAL), ("W15", SELF_EXONERATION),
++ APOLOGY_TRAPS = (("W13", PASSIVE_EVASION), ("W15", SELF_EXONERATION),
+# retract asked without an earlier statement
+@@ src/ant_pr_review/drafting.py
+-         if prior and posture == "clarify_apologize" and "retract" not in have:
++         if posture == "clarify_apologize" and "retract" not in have:
+# retract never asked
+@@ src/ant_pr_review/drafting.py
+-         if prior and posture == "clarify_apologize" and "retract" not in have:
++         if False:
+# W18 for every posture
+@@ src/ant_pr_review/drafting.py
+-     if posture == "clarify_apologize" and paras and \
++     if paras and \
+# W18 looks at the first paragraph only
+@@ src/ant_pr_review/drafting.py
+-             "stance" not in {p.get("part") for p in paras[:2]}:              # S-drafting-029
++             "stance" not in {p.get("part") for p in paras[:4]}:              # S-drafting-029
+# prior not passed by the caller
+@@ src/ant_pr_review/drafting.py
+-         v["w"] = w_checks(v, posture, lang, prior=bool(brief.get("prior")))
++         v["w"] = w_checks(v, posture, lang)

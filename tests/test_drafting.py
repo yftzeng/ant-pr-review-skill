@@ -276,6 +276,43 @@ def test_readability_checks_w1_to_w8():
     assert "W3" not in {h["id"] for h in drafting.w_checks(zh, "promote")}
 
 
+# @S-drafting-029
+def test_apology_moves_and_traps(tmp_path):
+    from ant_pr_review import prompts
+    traps = {"W13": ["錯誤已經發生，我們會改進。", "Mistakes were made in March."],
+             "W14": ["如果造成部分用戶不舒服，我們致歉。", "We apologise if anyone was offended."],
+             "W15": ["目前沒有任何資料外洩。", "Nothing was compromised."],
+             "W16": ["關於媒體報導提到的疑慮，我們說明如下。", "On the concerns raised in news reports, we answer."],
+             "W17": ["讓我們向前看。", "Now it is back to work."]}
+    for wid, texts in traps.items():
+        for text in texts:
+            v = version(paras=[para("We are sorry: the seal on 1,200 units may fail.", "stance"),
+                               para(text, "facts")] + version()["paragraphs"][2:])
+            assert wid in {h["id"] for h in drafting.w_checks(v, "clarify_apologize")}, (wid, text)
+    clean = {h["id"] for h in drafting.w_checks(version(), "clarify_apologize")}
+    assert not clean & {"W13", "W14", "W15", "W16", "W17", "W18"}
+    hit = lambda v, prior: [h for h in drafting.w_checks(v, "clarify_apologize", prior=prior) if h["id"] == "W3"]
+    assert "retract" in hit(version(), True)[0]["hit"] and not hit(version(), False)
+    with_retract = version(paras=version()["paragraphs"] + [para("Earlier we said no unit was affected; that was wrong.", "retract")])
+    assert not hit(with_retract, True)
+    late = version(paras=[para("We replace it free from 1 November.", "measures"),
+                          para("On 20 October we found the seal fault.", "facts"),
+                          para("We are sorry.", "stance"), para("The cause is a supplier part.", "cause")])
+    assert "W18" in {h["id"] for h in drafting.w_checks(late, "clarify_apologize")}
+    assert "W18" not in {h["id"] for h in drafting.w_checks(late, "promote")}
+    sys_ = prompts.draft_system("en", {"posture": "clarify_apologize", "means": ["white"]}, tier4=False)
+    assert all(p in sys_ for p in ("retract (", "process (", "boundary ("))
+    assert "never its predicted outcome" in sys_
+    for prior, want in ((["On 18 October we said no unit was affected."], True), ([], False)):
+        out, _ = draft(drafting_run(tmp_path / str(want), dict(BRIEF, prior=prior)), backend())
+        w3 = [h["hit"] for v in out["versions"] for h in v["w"] if h["id"] == "W3"]
+        assert any("retract" in h for h in w3) == want, (want, w3)
+    from ant_pr_review.i18n import T
+    for lang in ("en", "zh-TW", "zh-CN"):
+        for n in range(13, 19):
+            assert T(lang)(f"draft.w.W{n}") != f"draft.w.W{n}", (lang, n)
+
+
 # @S-drafting-010 @S-drafting-012
 def test_each_version_audited_by_the_same_matrix(tmp_path):
     run = drafting_run(tmp_path)

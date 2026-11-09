@@ -35,7 +35,7 @@ FACT_STATUS = {"confirmed": "C", "alleged": "A", "unknown": "U"}
 ACTION_STATUS = {"actions_done": "done", "actions_in_progress": "in_progress",
                  "actions_planned": "planned"}
 CLASSES = ["public", "internal", "not_supportable", "needs_validation"]
-PARTS = ["stance", "facts", "cause", "measures", "other"]
+PARTS = ["stance", "facts", "retract", "cause", "process", "measures", "boundary", "other"]
 FOUR_PARTS = ["stance", "facts", "cause", "measures"]
 MAX_QUESTIONS = 3
 DRAFT_REVIEW_KINDS = ["unsupported_fact", "contradiction", "missing_part", "status_overstated",
@@ -228,6 +228,25 @@ SUPERLATIVE = re.compile(r"最好|最佳|最安全|第一品牌|唯一|頂尖|�
                          r"|#1", re.I)
 
 
+# S-drafting-029: the traps of an apology, each a line a reader quotes back at us
+PASSIVE_EVASION = re.compile(r"錯誤已(?:經)?發生|错误已(?:经)?发生|疏失已(?:經)?發生|疏失已(?:经)?发生"
+                             r"|\b(?:mistakes|errors) (?:were|have been) made\b", re.I)
+CONDITIONAL = re.compile(r"(?:如果|若|如)(?:有|造成|讓|让)[^。！？!?\n]{0,14}?(?:不舒服|不適|不适|冒犯|誤會|误会|困擾|困扰)"
+                         r"|\bif (?:anyone|any of you|we|this|our \w+) (?:was|were|has been|have been|felt|"
+                         r"caused|may have)[^.!?\n]{0,30}?(?:offended|upset|hurt|offence|offense)", re.I)
+SELF_EXONERATION = re.compile(r"沒有(?:任何)?(?:資料|個資|客戶資料|資訊)外洩|没有(?:任何)?(?:数据|资料|个资|信息)外泄"
+                              r"|未造成任何(?:影響|影响|損害|损害|危害)"
+                              r"|\bnothing was compromised\b|\bno (?:customer )?(?:data|information) was "
+                              r"(?:compromised|accessed|affected)\b", re.I)
+BLAME_MESSENGER = re.compile(r"媒體(?:報導|報道)(?:所)?(?:提到|提及|指出)的(?:疑慮|問題)|媒体报道(?:所)?(?:提到|提及|指出)的(?:疑虑|问题)"
+                             r"|不實報導|不实报道|外界(?:的)?誤解|外界(?:的)?误解"
+                             r"|\bconcerns raised in (?:news|media|press) reports\b|\bmedia inaccuracies\b"
+                             r"|\binaccurate (?:media )?report(?:s|ing)\b", re.I)
+MOVE_ON = re.compile(r"向前看|翻篇|回到工作崗位|回到工作岗位|讓我們繼續前進|让我们继续前进"
+                     r"|\b(?:let's|let us) move on\b|\bback to work\b|\bput this behind us\b", re.I)
+APOLOGY_TRAPS = (("W13", PASSIVE_EVASION), ("W14", CONDITIONAL), ("W15", SELF_EXONERATION),
+                 ("W16", BLAME_MESSENGER), ("W17", MOVE_ON))
+
 BLOCKS = re.compile(r"[\u2580-\u259f\u25a0\u25ae]")   # ▋ █ ■ ▮: broken glyphs a reader sees
 
 
@@ -239,8 +258,9 @@ def _long_para(s: str) -> bool:
     return len(_CJK.findall(s)) > 250 if _CJK.search(s) else len(s.split()) > 120
 
 
-def w_checks(v: dict, posture: str, lang: str | None = None) -> list[dict]:
-    """W1-W12: readability and accountability, never detection evasion (D-PR-7)."""
+def w_checks(v: dict, posture: str, lang: str | None = None, prior: bool = False) -> list[dict]:
+    """W1-W18: readability and accountability, never detection evasion (D-PR-7).
+    prior: the brief holds an earlier statement of ours, which an apology must correct."""
     hits = []
     paras = [p for p in v.get("paragraphs", []) if p.get("text", "").strip()]
     for n, p in enumerate(paras, 1):
@@ -261,11 +281,18 @@ def w_checks(v: dict, posture: str, lang: str | None = None) -> list[dict]:
         hits += [{"id": "W11", "where": where, "hit": m.group(0)} for m in BLOCKS.finditer(text)]
         hits += [{"id": "W12", "where": where, "hit": i["detail"]}           # S-drafting-028
                  for i in outlang.check(text, lang)]
+        hits += [{"id": wid, "where": where, "hit": m.group(0)}               # S-drafting-029
+                 for wid, rx in APOLOGY_TRAPS for m in rx.finditer(text)]
     if posture in ("clarify_apologize", "rebut"):
         have = {p.get("part") for p in paras}
         missing = [x for x in FOUR_PARTS if x not in have]
+        if prior and posture == "clarify_apologize" and "retract" not in have:
+            missing.append("retract")
         if missing:
             hits.append({"id": "W3", "where": "", "hit": ", ".join(missing)})
+    if posture == "clarify_apologize" and paras and \
+            "stance" not in {p.get("part") for p in paras[:2]}:              # S-drafting-029
+        hits.append({"id": "W18", "where": "P1", "hit": paras[0].get("part") or ""})
     lead = v.get("lead_5w1h") or {}
     gaps = [k for k in ("who", "what", "when", "where", "why", "how")
             if not str(lead.get(k, "")).strip()]
@@ -465,7 +492,7 @@ def run_draft(run: Run, backend: Backend, models: list[str], lang: str,
         write_text_atomic(run.path(f"{DIR}/{v['id']}.md"), text)
         v["claims"], v["disqualified"] = register(v.get("claims", []), brief, text)
         v["placeholders"] = deliverable_issues(text)
-        v["w"] = w_checks(v, posture, lang)
+        v["w"] = w_checks(v, posture, lang, prior=bool(brief.get("prior")))
         v["bounds"] = bound_hits(v, brief.get("cannot_commit", []))
     stage = _review_stage(backend, writer, checker, lang, brief, versions, say)
     for v in versions:

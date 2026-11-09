@@ -177,6 +177,20 @@ Feature: drafting
     Then  W12 reports "视" and "频" are not reported (they are inside a quote), "軟件 → 軟體" and "視頻 → 影片";
           a zh-CN run reports Traditional-only characters and Taiwan terms the same way; English runs have no W12
     And   the text is never changed by the check, and political naming is left to the sovereign red line
+
+  @S-drafting-029
+  Scenario: an apology's moves and traps are readability hits
+    Given posture clarify_apologize
+    When  the versions are checked
+    Then  W13-W17 report the traps, in Chinese and English: passive evasion ("錯誤已經發生", "mistakes were made"),
+          a conditional apology ("如果造成部分用戶不舒服", "if anyone was offended"), self-exoneration
+          ("沒有任何資料外洩", "nothing was compromised"), blaming the messenger ("媒體報導提到的疑慮", "concerns raised in
+          news reports") and rushing to move on ("讓我們向前看", "back to work")
+    And   W3 also asks for a "retract" paragraph when the brief holds an earlier statement of ours, and not when it holds none
+    And   W18 reports an apology whose first two paragraphs hold no "stance" (the admission comes first)
+    And   the writer is told the parts in order: stance, facts, retract (correct each earlier statement the confirmed facts
+          contradict), cause, process (an independent review, never its predicted outcome), measures, boundary (protect
+          uninvolved people, then close); W13-W18 never block the export and other postures are not checked for W3 or W18
 ```
 
 ## Must NOT
@@ -196,3 +210,4 @@ Feature: drafting
 - 2026-10-30 · +S-drafting-026 the worst case in the brief and the 40/20/40 proportion as a hint only (user: 開工, the shared crisis core) · decision: D-0007
 - 2026-11-03 · +S-drafting-027 · decision: none -- per D-PR-7 in docs/DESIGN.md; from ant-peer-review's writing gate only what serves the reader: a block character is a broken glyph in a published statement; its dash and stock-phrase rules stay out, as D-PR-7 and docs/REFERENCES.md #12 recorded
 - 2026-11-03 · +S-drafting-028 · decision: none -- ported from ant-peer-review's output-language check (script and regional terms): a Taiwan statement with mainland terms, or the reverse, tells readers where it was written; checked, not rewritten
+- 2026-11-10 · +S-drafting-029 · decision: none -- from the user's own notes on apology statements (2026-11-10): the order of moves, an explicit correction of earlier statements, and the trap phrases

@@ -252,7 +252,7 @@ DRAFT = obj({
     "versions": arr(obj({
         "approach": STR, "title": STR,
         "paragraphs": arr(obj({"text": STR,
-                               "part": enum(["stance", "facts", "cause", "measures", "other"])})),
+                               "part": enum(["stance", "facts", "retract", "cause", "process", "measures", "boundary", "other"])})),
         "lead_5w1h": obj({"who": STR, "what": STR, "when": STR, "where": STR, "why": STR,
                           "how": STR}),
         "claims": arr(obj({"text": STR, "basis": arr(STR),
