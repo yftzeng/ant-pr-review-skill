@@ -177,15 +177,18 @@ def stakeholder_task(unit: dict) -> str:
     def row(p):
         i = party_info(p)
         extra = "".join(f"; {k}: {i[k]}" for k in ("concerns", "viewpoint") if i.get(k))
+        if i.get("believes") and i["group"] != "politics":     # D-PR-17: assess, never steer
+            extra += f"; must believe: {i['believes']}"
         return f"   - {p}: {i['text']} [{i['group']}]{extra}"
     rows = "\n".join(row(p) for p in party_types_for(unit["scope"]))
     return ("7. stakeholders: answer EVERY party type below exactly once, by its key: relevance "
             "(none, low, high), their likely reaction, what they need from us, how we should "
             "handle them (lawful, disclosed, provable), likelihood and impact of harm to us "
-            "(0 when none). Describe parties as roles, communities, outlets and platforms, "
+            "(0 when none), and believes: after reading, would they believe what they must "
+            "(met, partly, not_met; na for a party with no 'must believe'). Describe parties as roles, communities, outlets and platforms, "
             "never as named private accounts or individuals; never try to identify, expose or "
             "act against a whistleblower; treat the individual at the centre as a role, not a "
-            "person. For political parties and party or state organs, assess how they may "
+            "person; treat families as a role and never name or describe family members. For political parties and party or state organs, assess how they may "
             "react, never how to influence, lobby or evade them. Astroturf is a threat to "
             "assess, never something we run.\n" + rows)
 

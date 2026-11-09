@@ -109,7 +109,8 @@ def review_schema() -> dict:
         "stakeholders": arr(obj({"type": enum(all_party_types()),
                                  "relevance": enum(["none", "low", "high"]), "reaction": STR,
                                  "needs": STR, "handling": STR, "likelihood": INT,
-                                 "impact": INT})),
+                                 "impact": INT,
+                                 "believes": enum(["met", "partly", "not_met", "na"])})),
     })
 
 

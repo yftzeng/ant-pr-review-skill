@@ -341,6 +341,18 @@ def scorecard_lines(t: T, syn: dict) -> list[str]:
     return out + [""]
 
 
+def _belief(t: T, b) -> str:
+    """S-review-matrix-036: a stored value outside the enum (an earlier run, a hand edit)
+    reads as unanswered, never as table text."""
+    from .consensus import BELIEF_RANK
+    return t("believes." + b) if isinstance(b, str) and b in BELIEF_RANK else UNANSWERED
+
+
+def _relevance(t: T, v) -> str:
+    from .consensus import REL_RANK
+    return t("relevance." + v) if isinstance(v, str) and v in REL_RANK else UNANSWERED
+
+
 def stakeholder_lines(t: T, rows: list[dict], models: list[str]) -> list[str]:
     """D-0003: grouped and sorted by relevance, then L×I. A party no model answered shows
     ∅, never "none"; a party every model rated none is one short line."""
@@ -355,16 +367,19 @@ def stakeholder_lines(t: T, rows: list[dict], models: list[str]) -> list[str]:
             continue
         out += ["", f"**{t('group.' + g)}**", "",
                 f"| {t('report.party')} | {t('report.relevance')} | L×I | {t('report.model')} | "
-                f"{t('report.reaction')} | {t('report.needs')} | {t('report.handling')} |",
-                "|---|---|---:|---|---|---|---|"]
+                f"{t('report.believes')} | {t('report.reaction')} | {t('report.needs')} | "
+                f"{t('report.handling')} |",
+                "|---|---|---:|---|---|---|---|---|"]
         for p in present:
             r = by[p]
             gaps = [m for m in models if m not in r["by_model"]]
-            rel = t("relevance." + r["relevance"]) if r["by_model"] else UNANSWERED
+            rel = _relevance(t, r["relevance"]) if r["by_model"] else UNANSWERED
             name = party_label(t, p)
-            if r["by_model"] and all(a["relevance"] == "none" for a in r["by_model"].values()):
+            if r["by_model"] and all(a.get("relevance") == "none" for a in r["by_model"].values()):
                 out.append(f"| {name} | {rel} | {r['score']} | "
                            + ", ".join(list(r["by_model"]) + [f"{m} {UNANSWERED}" for m in gaps])
+                           + " | " + ", ".join(f"{m} {_belief(t, a.get('believes'))}"
+                                               for m, a in r["by_model"].items())
                            + " | | | |")
                 continue
             head = f"| {name} | {rel} | {r['score']} |"
@@ -372,9 +387,11 @@ def stakeholder_lines(t: T, rows: list[dict], models: list[str]) -> list[str]:
                 a = r["by_model"].get(m)
                 lead = head if n == 0 else "| | | |"
                 if a is None:
-                    out.append(f"{lead} {m} {UNANSWERED} | | | |")
+                    out.append(f"{lead} {m} {UNANSWERED} | | | | |")
                 else:
-                    out.append(f"{lead} {m} ({t('relevance.' + a['relevance'])}) | "
+                    b = a.get("believes")      # an earlier run's answer has none: ∅
+                    out.append(f"{lead} {m} ({_relevance(t, a.get('relevance'))}) | "
+                               f"{_belief(t, b)} | "
                                f"{safe(a.get('reaction'))} | {safe(a.get('needs'))} | "
                                f"{safe(a.get('handling'))} |")
     return out

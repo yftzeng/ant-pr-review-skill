@@ -358,3 +358,73 @@ def test_apology_scorecard_from_item_verdicts(tmp_path):
             key = "report.scorecard" if d == "_" else f"scorecard.{d}"
             assert T(lang)(key) != key, (lang, key)
 
+
+# @S-review-matrix-036
+def test_party_goals_and_the_family(tmp_path):
+    from ant_pr_review.catalog import PARTIES, party_info, party_types_for
+    from ant_pr_review.consensus import tally_stakeholders
+    from ant_pr_review.prompts import stakeholder_task
+    from ant_pr_review.report import stakeholder_lines
+    from ant_pr_review.i18n import T
+    fam = party_info("family")
+    assert fam["group"] == "commerce" and "family" in party_types_for("tw")
+    no_goal = {"ruling_party", "opposition_party", "opposing_counsel", "competitors", "short_activists", "astroturf"}
+    for p in PARTIES:
+        assert bool(p.get("believes")) == (p["key"] not in no_goal), p["key"]
+    unit = {"id": "u1", "lenses": ["stakeholders"], "scope": "tw"}
+    task = stakeholder_task(unit)
+    assert "believes" in task and "must believe: " + fam["believes"] in task
+    assert "victims" in task and "must believe" not in [ln for ln in task.splitlines() if "- competitors:" in ln][0]
+    def ans(b):
+        return {"type": "victims", "relevance": "high", "reaction": "r", "needs": "n", "handling": "h",
+                "likelihood": 2, "impact": 3, **({"believes": b} if b else {})}
+    recs = {M1: {"data": {"stakeholders": [ans("met")]}}, M2: {"data": {"stakeholders": [ans("not_met")]}}}
+    row = next(r for r in tally_stakeholders(unit, recs, [M1, M2]) if r["type"] == "victims")
+    assert row["believes"] == "not_met"
+    old = {M1: {"data": {"stakeholders": [ans(None)]}}, M2: {"data": {"stakeholders": [ans("partly")]}}}
+    row = next(r for r in tally_stakeholders(unit, old, [M1, M2]) if r["type"] == "victims")
+    assert row["believes"] == "partly"
+    md = "\n".join(stakeholder_lines(T("en"), [row], [M1, M2]))
+    assert T("en")("believes.partly") in md and "∅" in md
+    # every model rated the party none: the short row still shows each model's belief (review round 1)
+    none = lambda b: dict(ans(b), relevance="none")
+    quiet = {M1: {"data": {"stakeholders": [none("met")]}}, M2: {"data": {"stakeholders": [none("not_met")]}}}
+    row = next(r for r in tally_stakeholders(unit, quiet, [M1, M2]) if r["type"] == "victims")
+    md = "\n".join(stakeholder_lines(T("en"), [row], [M1, M2]))
+    assert T("en")("believes.met") in md and T("en")("believes.not_met") in md
+    gone = {M1: {"data": {"stakeholders": [none(None)]}}, M2: {"data": {"stakeholders": [none(None)]}}}
+    row = next(r for r in tally_stakeholders(unit, gone, [M1, M2]) if r["type"] == "victims")
+    assert "∅" in "\n".join(stakeholder_lines(T("en"), [row], [M1, M2]))
+    # a stored value outside the enum, or not a string, never breaks the table or the run (security lens)
+    for bad in ("x | <img src=x onerror=alert(1)>", ["met"], 1):
+        recs = {M1: {"data": {"stakeholders": [dict(ans("met"), believes=bad)]}}}
+        row = next(r for r in tally_stakeholders(unit, recs, [M1]) if r["type"] == "victims")
+        assert row["believes"] is None
+        md = "\n".join(stakeholder_lines(T("en"), [row], [M1]))
+        line = next(ln for ln in md.splitlines() if ln.startswith("| ") and M1 in ln)
+        assert "<img" not in line and line.count("|") == 9, line
+    # no goal ever reaches a political party or organ, even if a pack carried one (D-PR-17)
+    import ant_pr_review.catalog as cat
+    pol = next(p for p in party_types_for("tw") if party_info(p)["group"] == "politics")
+    real = cat.pack_parties
+    try:
+        cat.pack_parties = lambda j: [dict(x, believes="votes for us") for x in real(j)]
+        assert not party_info(pol).get("believes")
+        assert "votes for us" not in stakeholder_task(unit)
+    finally:
+        cat.pack_parties = real
+    base = next(p for p in cat.PARTIES if p["key"] == "ruling_party")
+    base["believes"] = "votes for us"            # a base politics row with a goal is still not asked
+    try:
+        cat.pack_parties = lambda j: []          # no pack parties: the generic political rows are asked
+        task2 = stakeholder_task(unit)
+        assert "- ruling_party:" in task2 and "votes for us" not in task2
+    finally:
+        base.pop("believes")
+        cat.pack_parties = real
+    assert "never name or describe family members" in task
+    for lang in ("en", "zh-TW", "zh-CN"):
+        for k in ("believes.met", "believes.partly", "believes.not_met", "believes.na", "report.believes",
+                  "party.family"):
+            assert T(lang)(k) != k, (lang, k)
+

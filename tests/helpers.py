@@ -124,7 +124,7 @@ def auto_review(verdicts=None, **kw):
         if "EVERY party type" in prompt:  # a stakeholders unit (D-0003)
             data["stakeholders"] = [{"type": p, "relevance": "low", "reaction": "r",
                                      "needs": "n", "handling": "h", "likelihood": 1,
-                                     "impact": 1}
+                                     "impact": 1, "believes": "met"}
                                     for p in re.findall(r"^   - ([a-z_]+): ", prompt, re.M)]
         return data
     return h

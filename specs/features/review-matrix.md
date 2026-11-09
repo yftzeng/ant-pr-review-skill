@@ -212,6 +212,18 @@ Feature: review matrix
           reviewer's verdict (na left out), a grade A (90% or more), B (75%), C (50%) or D (below), and the items that did not
           pass; a dimension with no applicable verdict shows "—", never a grade
     And   the grades are computed in code, never by a model (D-PR-11), and other postures have no scorecard
+
+  @S-review-matrix-036
+  Scenario: each party's goal after reading is judged, and the family is a party
+    Given the parties, and a stakeholders unit answered by two models
+    When  the reviewers are asked and the synthesis and report run
+    Then  every party outside politics and the rivals states what it must believe after reading ("believes"), each model
+          answers "believes" with met, partly, not_met or na for every party, the row takes the worst, and the report shows
+          each model's answer; a party with no goal (politics, opposing counsel, competitors, short activists, astroturf) is
+          asked for na
+    And   "family" (the families of the people affected or of the person at the centre) is a party type in the commerce group,
+          described by role only
+    And   a stored answer without "believes" (an earlier run) shows ∅, never an error
 ```
 
 ## Must NOT
@@ -233,3 +245,4 @@ Feature: review matrix
 - 2026-10-26 · +S-review-matrix-033 · decision: none -- user: 按你建議 (a single C-grade page may no longer overturn a reviewer's dispute)
 - 2026-11-10 · +S-review-matrix-034 · decision: none -- from the user's own notes on apology statements: an audited statement gets the trap-phrase checks a draft gets
 - 2026-11-10 · +S-review-matrix-035 · decision: none -- from the user's own notes on apology statements; computed from item verdicts per D-PR-11
+- 2026-11-10 · +S-review-matrix-036 · decision: D-0003 -- from the user's own notes on apology statements: one statement, many readers, each with what it must believe after reading; no goal for parties we must only assess (D-PR-17)

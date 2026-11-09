@@ -261,7 +261,7 @@ def party_info(key: str) -> dict:
             if p["key"] == key:
                 return {**p, "group": "politics", "text": f"{p['name_en']} ({p['name']}), "
                         f"{p['side']}: {p['note']}, as of {p['as_of']}",
-                        "concerns": "", "viewpoint": ""}
+                        "concerns": "", "viewpoint": "", "believes": ""}   # D-PR-17: no goal
     return {"key": key, "group": "", "text": key, "concerns": "", "viewpoint": ""}
 
 

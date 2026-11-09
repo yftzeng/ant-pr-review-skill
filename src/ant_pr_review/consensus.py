@@ -84,6 +84,7 @@ def tally_items(unit: dict, recs: dict[str, dict], active: list[str],
 
 
 REL_RANK = {"none": 0, "low": 1, "high": 2}
+BELIEF_RANK = {"na": 0, "met": 1, "partly": 2, "not_met": 3}     # S-review-matrix-036: worst wins
 
 
 def tally_stakeholders(unit: dict, recs: dict[str, dict], active: list[str]) -> list[dict]:
@@ -105,6 +106,10 @@ def tally_stakeholders(unit: dict, recs: dict[str, dict], active: list[str]) -> 
                                      key=lambda v: REL_RANK.get(v, 0), default="none"),
                     "score": max((int(a.get("likelihood") or 0) * int(a.get("impact") or 0)
                                   for a in by_model.values()), default=0),
+                    "believes": max((a["believes"] for a in by_model.values()
+                                     if isinstance(a.get("believes"), str)
+                                     and a["believes"] in BELIEF_RANK),
+                                    key=BELIEF_RANK.get, default=None),
                     "by_model": by_model, "unanswered": unanswered})
     return out
 

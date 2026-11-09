@@ -491,7 +491,7 @@ def test_review_schema_accepts_a_pack_party_answer():
     from ant_pr_review.schemas import review_schema, validate
     data = dict(review_data(items=[]), stakeholders=[
         {"type": "tw_dpp", "relevance": "high", "reaction": "r", "needs": "n", "handling": "h",
-         "likelihood": 2, "impact": 3}])
+         "likelihood": 2, "impact": 3, "believes": "na"}])   # a party: no goal (S-review-matrix-036)
     assert validate(data, review_schema()) == []
     bad = dict(data, stakeholders=[dict(data["stakeholders"][0], type="martians")])
     assert validate(bad, review_schema())

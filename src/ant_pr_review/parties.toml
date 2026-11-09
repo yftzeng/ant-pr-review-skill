@@ -9,6 +9,7 @@ group = "governance"
 text = "senior executives"
 concerns = "personal liability, keeping their position, consistency between what they said and what the company says"
 viewpoint = "Does this statement leave me exposed, or contradict what I said before?"
+believes = "the statement is one line they can stand behind, consistent with what they said before"
 
 [[party]]
 key = "board"
@@ -16,6 +17,7 @@ group = "governance"
 text = "the board of directors and the controlling shareholders"
 concerns = "control of the company, directors' liability, the company's survival, whether to cut loose the executives involved"
 viewpoint = "Does this statement push liability up to the board, or promise compensation beyond what the company can bear?"
+believes = "the response is under control, its liability is bounded and the facts are being established independently"
 
 [[party]]
 key = "staff"
@@ -23,6 +25,7 @@ group = "governance"
 text = "rank-and-file employees"
 concerns = "being made the scapegoat, a hypocritical culture, their pay and bonus"
 viewpoint = "Will this anger staff enough to post an insider rebuttal on Dcard, Blind or Threads?"
+believes = "they are not being made the scapegoat, the leadership owns it, and they know what to do and say"
 
 [[party]]
 key = "whistleblower"
@@ -30,6 +33,7 @@ group = "governance"
 text = "an internal whistleblower"
 concerns = "retaliation, legal protection, whether the company tells the truth"
 viewpoint = "Does the statement contradict what I know, so that I go public or to a regulator?"
+believes = "the company is telling the truth and will not retaliate"
 
 [[party]]
 key = "implicated_individual"
@@ -37,6 +41,7 @@ group = "governance"
 text = "the individual at the centre of the matter"
 concerns = "personal reputation, the end of a career, criminal exposure"
 viewpoint = "Feeling abandoned by the company, would this person post something uncontrolled that breaks the line?"
+believes = "they will be treated fairly and by due process, neither abandoned nor prejudged"
 
 [[party]]
 key = "victims"
@@ -44,6 +49,7 @@ group = "commerce"
 text = "people harmed or affected"
 concerns = "a concrete remedy, refund and exchange terms, a real apology; they hate officialese and 'handled according to law'"
 viewpoint = "Does this tell me what I get and when, or does it brush me off?"
+believes = "the company names the harm, owns it and will make it right by a stated date"
 
 [[party]]
 key = "bystanders"
@@ -51,6 +57,15 @@ group = "commerce"
 text = "the watching public"
 concerns = "whether the brand is arrogant or its values are off; moved by emotional words and memes"
 viewpoint = "Does this read as arrogant at a glance?"
+believes = "whether they are affected, and what to do now"
+
+[[party]]
+key = "family"
+group = "commerce"
+text = "the families of the people affected or of the person at the centre"
+concerns = "privacy, being drawn into the story, being blamed"
+viewpoint = "Does this statement protect us, or drag us into the story?"
+believes = "they bear no blame and their privacy is protected"
 
 [[party]]
 key = "fans"
@@ -58,6 +73,7 @@ group = "commerce"
 text = "loyal fans of the brand"
 concerns = "arguments to defend the brand with; a weak or contradictory statement makes them feel betrayed and turn against it"
 viewpoint = "Can I defend the brand with this, or does it make me look foolish?"
+believes = "the brand admits the wrong without excuses and is working to earn their trust back"
 
 [[party]]
 key = "channel"
@@ -65,6 +81,7 @@ group = "commerce"
 text = "distributors, dealers, franchisees and the supply chain up and down"
 concerns = "returns, inventory write-downs, getting paid on time, protests at stores, franchisees blamed for the brand's own rules"
 viewpoint = "Do we pull the product as a precaution, and can my store staff use this statement to answer customers?"
+believes = "what to tell customers, and that they will not carry the cost alone"
 
 [[party]]
 key = "partners"
@@ -72,6 +89,7 @@ group = "commerce"
 text = "contract partners, advertisers and brand endorsers"
 concerns = "damage to their own reputation, termination clauses, penalties"
 viewpoint = "If this does not calm the public, we announce that we end the partnership, and others follow."
+believes = "the commitments to them stand and they are not being blamed"
 
 [[party]]
 key = "private_investors"
@@ -79,6 +97,7 @@ group = "capital"
 text = "private-market investors (angel, VC, PE)"
 concerns = "valuation, a down round, ratchet and redemption clauses, a delayed exit"
 viewpoint = "Does the statement show mature governance and defend the business model?"
+believes = "the problem is bounded, disclosed in full and being fixed by named owners on dates"
 
 [[party]]
 key = "public_investors"
@@ -86,6 +105,7 @@ group = "capital"
 text = "public-market investors (institutions, retail, analysts)"
 concerns = "earnings revisions, short attacks, material-information disclosure rules, stop-loss levels"
 viewpoint = "What does this cost this year's earnings, and does it meet the exchange's disclosure rules or mislead the market?"
+believes = "the problem is bounded, disclosed in full and being fixed by named owners on dates"
 
 [[party]]
 key = "lenders"
@@ -93,6 +113,7 @@ group = "capital"
 text = "lending banks and commercial creditors"
 concerns = "cash flow, financial covenants, collateral value"
 viewpoint = "Is the company financially resilient enough, or do we call the facility or raise the rate?"
+believes = "repayment is not at risk and the facts are disclosed"
 
 [[party]]
 key = "regulators"
@@ -100,6 +121,7 @@ group = "authority"
 text = "regulators and law enforcement"
 concerns = "statutory reporting duties, public anger turning into political pressure, whether to open an investigation"
 viewpoint = "Does the text admit a violation, and does it account to the public, or must we step in with penalties?"
+believes = "the company discloses in full, cooperates and corrects what it said before"
 
 [[party]]
 key = "opposing_counsel"
@@ -128,6 +150,7 @@ group = "opinion"
 text = "beat reporters and investigative media"
 concerns = "the news angle, fact-checking, timeliness, the most clickable headline, contradictions"
 viewpoint = "Which sentence dodges, is there a clear owner and timeline, and does paragraph 3 make a clean negative headline?"
+believes = "the facts are on the record now, earlier statements are corrected, and no contradiction is left to report"
 
 [[party]]
 key = "kol"
@@ -135,6 +158,7 @@ group = "opinion"
 text = "industry influencers, KOLs and commentators"
 concerns = "traffic, an angle that fits their persona, a viral video or thread"
 viewpoint = "Is there a laugh, a lecturing or condescending tone, I can make a satirical short of?"
+believes = "the facts are clear enough to explain without spin"
 
 [[party]]
 key = "community_leaders"
@@ -142,6 +166,7 @@ group = "opinion"
 text = "forum opinion leaders and core community members (PTT, Dcard, Threads, Reddit moderators)"
 concerns = "plain, sincere language; they hate hollow politeness, deleted comments and suing users"
 viewpoint = "Full of legal jargon, it becomes the summary 'we did nothing wrong, it is all the customers' fault'."
+believes = "the company respects the community and can be held to its promises"
 
 [[party]]
 key = "competitors"

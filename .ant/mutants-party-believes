@@ -1,0 +1,36 @@
+# best wins instead of worst
+@@ src/ant_pr_review/consensus.py
+-                                     key=BELIEF_RANK.get, default=None),
++                                     key=lambda v: -BELIEF_RANK[v], default=None),
+# goal not given to the reviewer
+@@ src/ant_pr_review/prompts.py
+-             extra += f"; must believe: {i['believes']}"
++             extra += ""
+# believes not required
+@@ src/ant_pr_review/schemas.py
+-                                  "believes": enum(["met", "partly", "not_met", "na"])})),
++                                  })),
+# short row loses the beliefs again
+@@ src/ant_pr_review/report.py
+-                            + " | " + ", ".join(f"{m} {_belief(t, a.get('believes'))}"
++                            + " | " + ", ".join(f"{m}"
+# a stored value outside the enum rendered as text
+@@ src/ant_pr_review/report.py
+-     return t("believes." + b) if isinstance(b, str) and b in BELIEF_RANK else UNANSWERED
++     return t("believes." + str(b)) if b else UNANSWERED
+# a list value reaches the rank lookup
+@@ src/ant_pr_review/consensus.py
+-                                      if isinstance(a.get("believes"), str)
++                                      if True
+# a pack party keeps a goal
+@@ src/ant_pr_review/catalog.py
+-                         "concerns": "", "viewpoint": "", "believes": ""}   # D-PR-17: no goal
++                         "concerns": "", "viewpoint": ""}   # D-PR-17: no goal
+# politics asked for a goal
+@@ src/ant_pr_review/prompts.py
+-         if i.get("believes") and i["group"] != "politics":     # D-PR-17: assess, never steer
++         if i.get("believes"):     # D-PR-17: assess, never steer
+# family role clause dropped
+@@ src/ant_pr_review/prompts.py
+- person; treat families as a role and never name or describe family members. 
++ person. 
