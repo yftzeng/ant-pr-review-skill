@@ -1,1 +1,2 @@
 70209622a64382d3c16641e07288e0067187a6c1	security-audit lens (guidance mode, fresh context) on its full diff after commit: no critical, high or medium finding (see the ledger commit)
+3830438761d5794d32c00c9c71f8ab9dac90cba8	the ledger commit for 7020962: a one-line data file, no code; read in full before recording
