@@ -649,6 +649,8 @@
   "draft.w.W17": "急著翻篇",
   "draft.w.W18": "承認沒有放在最前面",
   "report.apology_traps": "致歉陷阱句（W13-W17）",
+  "draft.budget": "各受眾分到的篇幅（僅呈現，不評斷）",
+  "audience.all": "所有人",
   "report.believes": "讀完是否相信該信的",
   "believes.met": "達到",
   "believes.partly": "部分達到",

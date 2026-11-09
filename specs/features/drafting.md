@@ -191,6 +191,15 @@ Feature: drafting
     And   the writer is told the parts in order: stance, facts, retract (correct each earlier statement the confirmed facts
           contradict), cause, process (an independent review, never its predicted outcome), measures, boundary (protect
           uninvolved people, then close); W13-W18 never block the export and other postures are not checked for W3 or W18
+
+  @S-drafting-030
+  Scenario: each version shows how its words are shared among the audiences it addresses
+    Given a version whose paragraphs are labelled with the audience they address ("all" or a party group)
+    When  the versions are checked and the report is written
+    Then  the report gives each version's share of words per audience, largest first, counted in code (CJK characters or
+          words), and leaves out a version with no labelled paragraph
+    And   the writer is asked to label each paragraph's audience; the share is shown, never judged (which audience matters
+          most is the user's call)
 ```
 
 ## Must NOT
@@ -211,3 +220,4 @@ Feature: drafting
 - 2026-11-03 · +S-drafting-027 · decision: none -- per D-PR-7 in docs/DESIGN.md; from ant-peer-review's writing gate only what serves the reader: a block character is a broken glyph in a published statement; its dash and stock-phrase rules stay out, as D-PR-7 and docs/REFERENCES.md #12 recorded
 - 2026-11-03 · +S-drafting-028 · decision: none -- ported from ant-peer-review's output-language check (script and regional terms): a Taiwan statement with mainland terms, or the reverse, tells readers where it was written; checked, not rewritten
 - 2026-11-10 · +S-drafting-029 · decision: none -- from the user's own notes on apology statements (2026-11-10): the order of moves, an explicit correction of earlier statements, and the trap phrases
+- 2026-11-10 · +S-drafting-030 · decision: none -- from the user's own notes on apology statements: one statement, many readers, and how much of it each gets

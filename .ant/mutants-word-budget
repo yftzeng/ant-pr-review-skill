@@ -1,0 +1,20 @@
+# audience dropped when cleaning
+@@ src/ant_pr_review/drafting.py
+-                   else "other", **({"audience": p["audience"]} if p.get("audience") in AUDIENCES else {})}
++                   else "other"}
+# order reversed
+@@ src/ant_pr_review/drafting.py
+-     return sorted(((a, c / total) for a, c in n.items()), key=lambda x: -x[1]) if total else []
++     return sorted(((a, c / total) for a, c in n.items()), key=lambda x: x[1]) if total else []
+# words of Latin text not counted
+@@ src/ant_pr_review/drafting.py
+-             n[p["audience"]] = n.get(p["audience"], 0) + (len(_CJK.findall(text)) +
++             n[p["audience"]] = n.get(p["audience"], 0) + (len(_CJK.findall(text)) * 0 +
+# not rendered
+@@ src/ant_pr_review/report.py
+-     if any(b for _, b in budgets):                                         # S-drafting-030
++     if False:                                         # S-drafting-030
+# writer not asked
+@@ src/ant_pr_review/prompts.py
+- "(protect uninvolved people, then close; only when someone needs it). Also label "
++ "(protect uninvolved people, then close; only when someone needs it). Also "

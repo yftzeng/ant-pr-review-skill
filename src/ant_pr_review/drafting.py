@@ -244,6 +244,21 @@ BLAME_MESSENGER = re.compile(r"媒體(?:報導|報道)(?:所)?(?:提到|提及|�
                              r"|\binaccurate (?:media )?report(?:s|ing)\b", re.I)
 MOVE_ON = re.compile(r"向前看|翻篇|回到工作崗位|回到工作岗位|讓我們繼續前進|让我们继续前进"
                      r"|\b(?:let's|let us) move on\b|\bback to work\b|\bput this behind us\b", re.I)
+AUDIENCES = ["all", "governance", "commerce", "capital", "authority", "politics", "opinion"]
+
+
+def word_budget(v: dict) -> list[tuple[str, float]]:
+    """S-drafting-030: each audience's share of the words, largest first; shown, never judged."""
+    n: dict[str, int] = {}
+    for p in v.get("paragraphs", []):
+        if p.get("audience") in AUDIENCES:
+            text = p.get("text", "")
+            n[p["audience"]] = n.get(p["audience"], 0) + (len(_CJK.findall(text)) +
+                                                          len(re.findall(r"[A-Za-z0-9]+", text)))
+    total = sum(n.values())
+    return sorted(((a, c / total) for a, c in n.items()), key=lambda x: -x[1]) if total else []
+
+
 APOLOGY_TRAPS = (("W13", PASSIVE_EVASION), ("W14", CONDITIONAL), ("W15", SELF_EXONERATION),
                  ("W16", BLAME_MESSENGER), ("W17", MOVE_ON))
 
@@ -391,7 +406,8 @@ def _clean_versions(data: dict) -> list[dict]:
     out = []
     for v in (data or {}).get("versions", [])[:2]:
         paras = [{"text": str(p.get("text", "")), "part": p.get("part") if p.get("part") in PARTS
-                  else "other"} for p in v.get("paragraphs", []) if str(p.get("text", "")).strip()]
+                  else "other", **({"audience": p["audience"]} if p.get("audience") in AUDIENCES else {})}
+                 for p in v.get("paragraphs", []) if str(p.get("text", "")).strip()]
         if paras:
             out.append(dict(v, paragraphs=paras))
     return out

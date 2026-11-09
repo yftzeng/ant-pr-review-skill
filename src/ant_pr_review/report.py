@@ -548,6 +548,13 @@ def drafting_lines(t: T, d: dict) -> list[str]:
             out += ["", f"**{v['id']} · W1-W18**", ""]
             out += [f"- {h['id']} {t('draft.w.' + h['id'])} {h['where']}: {safe(h['hit'])}"
                     for h in v["w"]]
+    from .drafting import word_budget
+    budgets = [(v["id"], word_budget(v)) for v in vs]
+    if any(b for _, b in budgets):                                         # S-drafting-030
+        out += ["", f"**{t('draft.budget')}**", ""]
+        out += [f"- {vid}: " + sep(t).join(
+                    f"{t('audience.all') if a == 'all' else t('group.' + a)} {int(100 * s + 0.5)}%"
+                    for a, s in b) for vid, b in budgets if b]
     chosen = next((v for v in vs if v["id"] == d.get("chosen")), None)
     if chosen and chosen.get("claims"):
         out += ["", f"**{t('draft.register')} ({chosen['id']})**", "",

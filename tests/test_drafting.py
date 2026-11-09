@@ -313,6 +313,33 @@ def test_apology_moves_and_traps(tmp_path):
             assert T(lang)(f"draft.w.W{n}") != f"draft.w.W{n}", (lang, n)
 
 
+# @S-drafting-030
+def test_word_budget_per_audience(tmp_path):
+    from ant_pr_review import prompts
+    v = version(paras=[dict(para("我們對受影響的家庭致歉，也會負責到底。", "stance"), audience="commerce"),
+                       dict(para("董事會已委託獨立調查。", "process"), audience="governance"),
+                       dict(para("We replace every unit free from 1 November and publish the results.", "measures"),
+                            audience="all")])
+    b = drafting.word_budget(v)
+    assert [a for a, _ in b] == ["commerce", "all", "governance"]
+    assert abs(sum(s for _, s in b) - 1.0) < 1e-9 and b[0][1] > b[2][1]
+    assert drafting.word_budget(version()) == []
+    sys_ = prompts.draft_system("en", {"posture": "clarify_apologize", "means": ["white"]}, tier4=False)
+    assert "label each paragraph's audience (all" in sys_
+    labelled = writer_answer()
+    for ver in labelled["versions"]:
+        ver["paragraphs"] = [dict(p, audience="commerce") for p in ver["paragraphs"]]
+    run = drafting_run(tmp_path)
+    out, _ = draft(run, backend(writer=labelled))
+    assert all(drafting.word_budget(v) == [("commerce", 1.0)] for v in out["versions"])
+    from ant_pr_review.i18n import T
+    from ant_pr_review.report import drafting_lines
+    md = "\n".join(drafting_lines(T("en"), out))
+    assert T("en")("draft.budget") in md and T("en")("group.commerce") + " 100%" in md
+    for lang in ("en", "zh-TW", "zh-CN"):
+        assert T(lang)("draft.budget") != "draft.budget" and T(lang)("audience.all") != "audience.all"
+
+
 # @S-drafting-010 @S-drafting-012
 def test_each_version_audited_by_the_same_matrix(tmp_path):
     run = drafting_run(tmp_path)
