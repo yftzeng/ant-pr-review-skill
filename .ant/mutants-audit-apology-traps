@@ -1,0 +1,12 @@
+# every posture
+@@ src/ant_pr_review/report.py
+-             and posture_of(intake) == "clarify_apologize":                  # S-review-matrix-034
++             and True:                  # S-review-matrix-034
+# inbound too
+@@ src/ant_pr_review/report.py
+-     if scope is None and purpose_of(intake) == "audit" and intake["direction"] == "outbound" \
++     if scope is None and purpose_of(intake) == "audit" \
+# headings scanned, paragraphs not
+@@ src/ant_pr_review/drafting.py
+-             for doc in segments.values() for s in doc if s.get("kind") == "para"
++             for doc in segments.values() for s in doc if s.get("kind") == "heading"

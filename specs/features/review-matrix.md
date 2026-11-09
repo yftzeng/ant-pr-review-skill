@@ -195,6 +195,14 @@ Feature: review matrix
     When  synthesis runs with an unsupported allegation whose sources are weak (only C)
     Then  the red line is not confirmed by that claim: it needs a ruling, and the claim is listed as weak evidence in the red line's comment
     And   with an unsupported allegation whose strength is strong, single or ungraded, the red line is "confirmed" with it as evidence, as before
+
+  @S-review-matrix-034
+  Scenario: an audited apology lists its trap phrases
+    Given an outbound audit under posture clarify_apologize whose text says "如果造成部分用戶不舒服，我們致歉。" and
+          "Mistakes were made."
+    When  the consolidated report is written
+    Then  it has a section listing W14 and W13 with the paragraph id and the words, the same checks as a draft (S-drafting-029)
+    And   a text without a trap phrase, another posture, or an inbound run has no such section
 ```
 
 ## Must NOT
@@ -214,3 +222,4 @@ Feature: review matrix
 - 2026-10-22 · +S-review-matrix-031..032 the event assessment and the control-axis subtotals (user: 開工) · decision: D-0006
 - 2026-10-22 · ~S-review-matrix-031..032 from the tier-3 review: a latent red line in an unpublished text, a missing kit, drafting's characterised, axis coverage, the regrade path · decision: D-0006
 - 2026-10-26 · +S-review-matrix-033 · decision: none -- user: 按你建議 (a single C-grade page may no longer overturn a reviewer's dispute)
+- 2026-11-10 · +S-review-matrix-034 · decision: none -- from the user's own notes on apology statements: an audited statement gets the trap-phrase checks a draft gets

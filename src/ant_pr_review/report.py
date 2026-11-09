@@ -491,7 +491,7 @@ def drafting_lines(t: T, d: dict) -> list[str]:
             out.append(f"- {t('draft.chosen_other', id=d['chosen'])}")
     for v in vs:
         if v.get("w"):
-            out += ["", f"**{v['id']} · W1-W12**", ""]
+            out += ["", f"**{v['id']} · W1-W18**", ""]
             out += [f"- {h['id']} {t('draft.w.' + h['id'])} {h['where']}: {safe(h['hit'])}"
                     for h in v["w"]]
     chosen = next((v for v in vs if v["id"] == d.get("chosen")), None)
@@ -756,6 +756,14 @@ def render(run: Run, syn: dict, *, lang: str, version: int, changelog: list[str]
     if scope is None:
         L += [f"## {t('report.event')}", ""] + event_lines(t, run, intake, syn,
                                                           _consolidated_views(syn)) + [""]
+    if scope is None and purpose_of(intake) == "audit" and intake["direction"] == "outbound" \
+            and posture_of(intake) == "clarify_apologize":                  # S-review-matrix-034
+        from .drafting import apology_traps
+        traps = apology_traps(read_json(run.path("01-sources/segments.json"), default={}))
+        if traps:
+            L += [f"## {t('report.apology_traps')}", ""]
+            L += [f"- {h['id']} {t('draft.w.' + h['id'])} {h['where']}: {safe(h['hit'])}"
+                  for h in traps] + [""]
     prof = read_json(run.path("01-profile.json"), default={})
     if prof.get("status") == "done":
         L += [f"## {t('report.profile')}", ""] + profile_lines(t, prof) + [""]

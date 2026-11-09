@@ -247,6 +247,13 @@ MOVE_ON = re.compile(r"向前看|翻篇|回到工作崗位|回到工作岗位|�
 APOLOGY_TRAPS = (("W13", PASSIVE_EVASION), ("W14", CONDITIONAL), ("W15", SELF_EXONERATION),
                  ("W16", BLAME_MESSENGER), ("W17", MOVE_ON))
 
+
+def apology_traps(segments: dict) -> list[dict]:
+    """S-review-matrix-034: the trap phrases in an audited text, by paragraph id."""
+    return [{"id": wid, "where": s["id"], "hit": m.group(0)}
+            for doc in segments.values() for s in doc if s.get("kind") == "para"
+            for wid, rx in APOLOGY_TRAPS for m in rx.finditer(s.get("text", ""))]
+
 BLOCKS = re.compile(r"[\u2580-\u259f\u25a0\u25ae]")   # ▋ █ ■ ▮: broken glyphs a reader sees
 
 

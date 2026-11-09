@@ -295,3 +295,26 @@ def test_synthesis_makes_no_model_call(monkeypatch):
 def test_unit_items_helper(tmp_path):
     run = make_run(tmp_path, lenses=["legal"])
     assert "LEG-01" in unit_items(run, "tw.all")
+
+
+# @S-review-matrix-034
+def test_audited_apology_lists_trap_phrases(tmp_path):
+    from ant_pr_review.jsonio import write_json
+    from ant_pr_review.report import write_report
+
+    def report(text, posture="clarify_apologize", direction="outbound", name="a"):
+        run = make_run(tmp_path / name, text=text, lenses=["legal"], direction=direction)
+        intake = read_json(run.path("00-intake.json"))
+        write_json(run.path("00-intake.json"), dict(intake, posture=posture))
+        reviews = run_round1(run, ScriptBackend({("*", "review"): auto_review()}), [M1, M2], "en", say=Q)
+        syn = synth(reviews, mx=read_json(run.path("03-matrix.json")))
+        write_json(run.path("06-synthesis.json"), syn)
+        write_report(run, syn, lang="en")
+        return run.path("08-report.v1.md").read_text()
+    traps = "# Statement\n\n如果造成部分用戶不舒服，我們致歉。\n\nMistakes were made."
+    md = report(traps)
+    assert "W14" in md and "W13" in md and "D1.P02" in md and "Mistakes were made" in md
+    assert "W13" not in report("# Statement\n\nWe were wrong and we are sorry.", name="b")
+    assert "W14" not in report(traps, posture="promote", name="c")
+    assert "W14" not in report(traps, direction="inbound", name="d")
+

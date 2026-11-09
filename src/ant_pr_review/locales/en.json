@@ -648,6 +648,7 @@
   "draft.w.W16": "placing the concern with the press",
   "draft.w.W17": "rushing to move on",
   "draft.w.W18": "the admission does not come first",
+  "report.apology_traps": "Apology trap phrases (W13-W17)",
   "brief.cannot_commit.short": "Too short to match safely ({lines}): give a key phrase of two CJK characters or three letters or more.",
   "draft.bounds_short": "crosses a cannot-commit line",
   "decide.final_issues": "final.md is written as you chose, but {n} item(s) would keep it from being ready to publish:",
