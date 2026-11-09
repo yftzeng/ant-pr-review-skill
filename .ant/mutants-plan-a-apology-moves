@@ -1,0 +1,12 @@
+# every posture gets it
+@@ src/ant_pr_review/prompts.py
+-             + (APOLOGY_REWRITE if posture == "clarify_apologize" else "") + "\n"
++             + APOLOGY_REWRITE + "\n"
+# never given
+@@ src/ant_pr_review/prompts.py
+-             + (APOLOGY_REWRITE if posture == "clarify_apologize" else "") + "\n"
++             + "" + "\n"
+# posture not passed
+@@ src/ant_pr_review/plans.py
+-                          system=prompts.plan_a_system(lang, posture_of(intake)),
++                          system=prompts.plan_a_system(lang),

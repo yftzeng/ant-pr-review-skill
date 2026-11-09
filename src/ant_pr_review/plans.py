@@ -165,7 +165,9 @@ def plan_a(run, backend, writer, lang, risks, article, intake, paras, ledger, se
             + _scan_all({k: v for k, v in d.items() if k != "paragraphs"}) \
             + ethics.laundering(text, ledger, sents)
 
-    data, rep = _guarded(backend, writer, task="plan_a", system=prompts.plan_a_system(lang),
+    from .intake import posture_of
+    data, rep = _guarded(backend, writer, task="plan_a",
+                         system=prompts.plan_a_system(lang, posture_of(intake)),
                          prompt=prompts.plan_prompt(risks, article, intake), schema=PLAN_A,
                          check=check)
     replaced, warn = changes(data)

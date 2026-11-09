@@ -171,3 +171,24 @@ def test_report_redacts_and_lints_evasion_in_mitigation(tmp_path):
     md = run.path("08-report.v1.md").read_text()
     assert "Rotate IP" not in md and "removed by ethics guard: evasion" in md
     assert any("ethics guard (evasion)" in p for p in meta["lint"])
+
+
+# @S-plans-048
+def test_apology_plan_a_adds_moves_and_brackets(tmp_path):
+    from ant_pr_review import prompts
+    from ant_pr_review.drafting import PLACEHOLDER
+    from ant_pr_review.jsonio import read_json, write_json
+    apo = prompts.plan_a_system("en", "clarify_apologize")
+    assert "keep the lines that already work" in apo and "[to verify: " in apo and "[待查證：" in apo
+    assert "correct earlier statements" in apo and "never predict its outcome" in apo
+    assert "keep the lines that already work" not in prompts.plan_a_system("en", "promote")
+    assert PLACEHOLDER.search("We met [待查證：the date of the meeting] in March.")
+    assert PLACEHOLDER.search("We met [to verify: the date] in March.")
+    run = setup(tmp_path)
+    intake = read_json(run.path("00-intake.json"))
+    write_json(run.path("00-intake.json"), dict(intake, posture="clarify_apologize"))
+    b = backend()
+    run_plans(run, b, [M1, M2], "en", say=Q)
+    sys_ = next(c for c in b.calls if c["task"] == "plan_a")["system"]
+    assert "keep the lines that already work" in sys_
+

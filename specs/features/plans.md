@@ -274,6 +274,16 @@ Feature: plans
     Given an audit or drafting run the event assessment grades I, II or III
     When  the plans run
     Then  a threats call writes 09-plans/TH.md with the same table and fixed lists as the crisis sheet, and the report shows it; at grade IV or ungraded there is no threats call
+
+  @S-plans-048
+  Scenario: an apology's plan A keeps what works, adds the missing moves and brackets what only we can confirm
+    Given an outbound run under posture clarify_apologize
+    When  plan A is written
+    Then  the editor is told to keep the lines that already work, to add the moves the statement lacks in order (admit
+          plainly first, own it, name who was hurt, correct earlier statements the confirmed facts contradict, an independent
+          review without predicting its outcome, actions with owners and dates, a boundary that protects uninvolved people),
+          and to put a fact only we can confirm in [待查證：…] ([to verify: …]) instead of inventing it
+    And   such a bracket blocks the ready-to-publish file like any placeholder; other postures get the plain smallest edit
 ```
 
 ## Must NOT
@@ -298,3 +308,4 @@ Feature: plans
 - 2026-10-30 · +S-plans-043..046 the six-part holding statement and its channel versions, a frontline Q&A, regulators and partners before the press, pausing promotions at grade III or higher (user: 是不是也應該提供對外公關聲明稿…; 開工 on the shared crisis core) · decision: D-0007
 - 2026-10-30 · +S-plans-047 the other side's gray and black tactics and the defence, at grade III or higher (user: 開工，灰色開放但標需核准) · decision: D-0007
 - 2026-10-30 · S-plans-047 unchanged: the ethics guard's persona list gains 小號 (it had only 小号), found by the threats review · decision: D-0007
+- 2026-11-10 · +S-plans-048 · decision: none -- from the user's own notes on apology statements: the rewrite keeps the voice and what works and adds what is missing, never invents

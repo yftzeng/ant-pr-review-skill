@@ -365,7 +365,18 @@ jurisdiction code with the strictest exposure, and why, in summary); notes per j
 """
 
 
-def plan_a_system(lang: str) -> str:
+APOLOGY_REWRITE = (
+    "This is an apology (S-plans-048): keep the lines that already work and the voice; add "
+    "the moves the statement lacks, in this order: admit the act plainly in the first two "
+    "sentences, own it in the first person, name who was hurt, correct earlier statements "
+    "the confirmed facts contradict, point to an independent review and never predict its "
+    "outcome, give actions with owners and dates, and protect uninvolved people before "
+    "closing. A fact only we can confirm (a date, a name of a body, an action taken) goes in "
+    "[待查證：<what to confirm>] or [to verify: <what to confirm>], never invented; use the "
+    "category 'move' for an added move.\n")
+
+
+def plan_a_system(lang: str, posture: str = "") -> str:
     return ("You are a PR editor making the smallest safe edit. Keep the message, structure and "
             "voice; change only what the listed risks require: remove or qualify unprovable "
             "statements about named parties, add required disclosures, soften superlatives you "
@@ -374,7 +385,8 @@ def plan_a_system(lang: str) -> str:
             "(disclosure, claim, tone, legal, term, banned_word, name). Use paragraph ids such as "
             "D1.P03; a sentence id such as D1.P03.S2 replaces only that sentence. Never invent "
             "facts; mark a needed source as [source needed]. Never change a sentence listed as "
-            "locked in the context card.\n\n"
+            "locked in the context card.\n"
+            + (APOLOGY_REWRITE if posture == "clarify_apologize" else "") + "\n"
             + SHARED_RULES.format(lang_name=_lang(lang)) + "\n" + ETHICS_RULES)
 
 
