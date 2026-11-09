@@ -304,6 +304,43 @@ def party_label(t: T, key: str) -> str:
     return cell(f"{name or key} ({t('side.' + i['side'])})" if i.get("side") else name or key)
 
 
+GRADES = ((0.9, "A"), (0.75, "B"), (0.5, "C"), (0.0, "D"))
+
+
+def scorecard_rows(syn: dict) -> list[dict]:
+    """S-review-matrix-035: per scorecard dimension, the pass rate of its items over every
+    reviewer's verdict (na left out) and a grade; computed here, never by a model."""
+    from .catalog import SCORECARD, item_index
+    idx = item_index()
+    seen, rows = set(), {d: {"dim": d, "passed": 0, "applicable": 0, "weak": []} for d in SCORECARD}
+    for o in syn["jurisdictions"].values():
+        for i in o["items"]:
+            dim = idx.get(i["item"], {}).get("scorecard")
+            if not dim or (i["item"], i["unit"]) in seen:
+                continue
+            seen.add((i["item"], i["unit"]))
+            vs = [v for v in i["by_model"].values() if v != "na"]
+            r = rows[dim]
+            r["passed"] += vs.count("pass")
+            r["applicable"] += len(vs)
+            if any(v != "pass" for v in vs) and i["item"] not in r["weak"]:
+                r["weak"].append(i["item"])
+    for r in rows.values():
+        rate = r["passed"] / r["applicable"] if r["applicable"] else None
+        r["grade"] = None if rate is None else next(g for floor, g in GRADES if rate >= floor)
+    return list(rows.values())
+
+
+def scorecard_lines(t: T, syn: dict) -> list[str]:
+    out = [f"## {t('report.scorecard')}", "",
+           f"| {t('report.scorecard_dim')} | {t('report.scorecard_grade')} | {t('report.overall_rate')} | "
+           f"{t('report.scorecard_weak')} |", "|---|---|---|---|"]
+    for r in scorecard_rows(syn):
+        out.append(f"| {t('scorecard.' + r['dim'])} | {r['grade'] or '—'} | "
+                   f"`{bar(r['passed'], r['applicable'])}` | {sep(t).join(r['weak']) or '—'} |")
+    return out + [""]
+
+
 def stakeholder_lines(t: T, rows: list[dict], models: list[str]) -> list[str]:
     """D-0003: grouped and sorted by relevance, then L×I. A party no model answered shows
     ∅, never "none"; a party every model rated none is one short line."""
@@ -756,6 +793,9 @@ def render(run: Run, syn: dict, *, lang: str, version: int, changelog: list[str]
     if scope is None:
         L += [f"## {t('report.event')}", ""] + event_lines(t, run, intake, syn,
                                                           _consolidated_views(syn)) + [""]
+    if scope is None and intake["direction"] == "outbound" \
+            and posture_of(intake) == "clarify_apologize":                  # S-review-matrix-035
+        L += scorecard_lines(t, syn)
     if scope is None and purpose_of(intake) == "audit" and intake["direction"] == "outbound" \
             and posture_of(intake) == "clarify_apologize":                  # S-review-matrix-034
         from .drafting import apology_traps

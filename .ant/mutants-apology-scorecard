@@ -1,0 +1,20 @@
+# grade thresholds shifted
+@@ src/ant_pr_review/report.py
+- GRADES = ((0.9, "A"), (0.75, "B"), (0.5, "C"), (0.0, "D"))
++ GRADES = ((0.9, "A"), (0.7, "B"), (0.5, "C"), (0.0, "D"))
+# na counted
+@@ src/ant_pr_review/report.py
+-             vs = [v for v in i["by_model"].values() if v != "na"]
++             vs = list(i["by_model"].values())
+# a dimension without verdicts gets a grade
+@@ src/ant_pr_review/report.py
+-         rate = r["passed"] / r["applicable"] if r["applicable"] else None
++         rate = r["passed"] / r["applicable"] if r["applicable"] else 0.0
+# scorecard for every posture
+@@ src/ant_pr_review/report.py
+-             and posture_of(intake) == "clarify_apologize":                  # S-review-matrix-035
++             and True:                  # S-review-matrix-035
+# unknown dimension accepted
+@@ src/ant_pr_review/catalog.py
+-         if i.get("scorecard") and i["scorecard"] not in SCORECARD:
++         if False:

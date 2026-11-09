@@ -318,3 +318,43 @@ def test_audited_apology_lists_trap_phrases(tmp_path):
     assert "W14" not in report(traps, posture="promote", name="c")
     assert "W14" not in report(traps, direction="inbound", name="d")
 
+
+# @S-review-matrix-035
+def test_apology_scorecard_from_item_verdicts(tmp_path):
+    from ant_pr_review.report import scorecard_rows
+    from ant_pr_review.i18n import T
+    def item(iid, *verdicts):
+        return {"item": iid, "unit": "u1", "verdict": "pass", "score": 0,
+                "by_model": {f"m{n}": v for n, v in enumerate(verdicts)}}
+    syn = {"jurisdictions": {"tw": {"items": [
+        item("APO-01", "pass", "pass"), item("RTM-02", "pass", "fail"),        # remorse 3/4 = B
+        item("APO-04", "fail", "concern"),                                       # consistency 0/2 = D
+        item("JOU-03", "na", "na"),
+        item("APO-03", "pass", "pass"),                                          # action 2/2 = A
+        item("SOC-07", *(["pass"] * 7 + ["fail"] * 3))]}}}                       # clarity 7/10 = C
+    rows = {r["dim"]: r for r in scorecard_rows(syn)}
+    assert [r["dim"] for r in scorecard_rows(syn)] == ["remorse", "ownership", "clarity", "governance",
+                                                      "consistency", "action", "release"]
+    assert (rows["remorse"]["grade"], rows["remorse"]["passed"], rows["remorse"]["applicable"]) == ("B", 3, 4)
+    assert rows["remorse"]["weak"] == ["RTM-02"]
+    assert rows["consistency"]["grade"] == "D" and rows["consistency"]["weak"] == ["APO-04"]
+    assert rows["action"]["grade"] == "A" and rows["ownership"]["grade"] is None
+    assert rows["clarity"]["grade"] == "C"
+    def report(posture, name):
+        from ant_pr_review.jsonio import write_json
+        from ant_pr_review.report import write_report
+        run = make_run(tmp_path / name, lenses=["legal"])
+        intake = read_json(run.path("00-intake.json"))
+        write_json(run.path("00-intake.json"), dict(intake, posture=posture))
+        reviews = run_round1(run, ScriptBackend({("*", "review"): auto_review()}), [M1, M2], "en", say=Q)
+        s = synth(reviews, mx=read_json(run.path("03-matrix.json")))
+        write_json(run.path("06-synthesis.json"), s)
+        write_report(run, s, lang="en")
+        return run.path("08-report.v1.md").read_text()
+    assert T("en")("report.scorecard") in report("clarify_apologize", "a")
+    assert T("en")("report.scorecard") not in report("promote", "b")
+    for lang in ("en", "zh-TW", "zh-CN"):
+        for d in ("remorse", "ownership", "clarity", "governance", "consistency", "action", "release", "_"):
+            key = "report.scorecard" if d == "_" else f"scorecard.{d}"
+            assert T(lang)(key) != key, (lang, key)
+

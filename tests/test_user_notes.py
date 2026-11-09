@@ -37,3 +37,22 @@ def test_disclaimer_in_three_languages():
     assert "makes no tactic acceptable" in T("en")("report.disclaimer")
     assert "僅評估傳播風險" in T("zh-TW")("report.disclaimer")
     assert "仅评估传播风险" in T("zh-CN")("report.disclaimer")
+
+
+# @S-checklist-023
+def test_apology_items_and_scorecard_dimensions():
+    import pytest
+    from ant_pr_review.catalog import SCORECARD, checklist, validate_items
+    idx = item_index()
+    assert "earlier statement" in idx["APO-04"]["text"]
+    assert "Uninvolved people" in idx["APO-05"]["text"]
+    assert "draft" in idx["JOU-20"]["text"] and "at once" in idx["JOU-20"]["text"]
+    for i in ("APO-04", "APO-05", "JOU-20"):
+        assert idx[i]["postures"] == ["clarify_apologize"]
+    assert SCORECARD == ["remorse", "ownership", "clarity", "governance", "consistency", "action", "release"]
+    dims = {i["scorecard"] for i in checklist() if i.get("scorecard")}
+    assert dims == set(SCORECARD)
+    assert idx["APO-01"]["scorecard"] == "remorse" and idx["APO-04"]["scorecard"] == "consistency"
+    with pytest.raises(ValueError, match="scorecard"):
+        validate_items([dict(idx["APO-01"], scorecard="style")])
+

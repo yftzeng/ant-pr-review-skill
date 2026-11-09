@@ -203,6 +203,15 @@ Feature: review matrix
     When  the consolidated report is written
     Then  it has a section listing W14 and W13 with the paragraph id and the words, the same checks as a draft (S-drafting-029)
     And   a text without a trap phrase, another posture, or an inbound run has no such section
+
+  @S-review-matrix-035
+  Scenario: an apology gets a scorecard computed from the checklist
+    Given an outbound run under posture clarify_apologize
+    When  the consolidated report is written
+    Then  it has a scorecard with one row per dimension in order: the pass rate of that dimension's items over every
+          reviewer's verdict (na left out), a grade A (90% or more), B (75%), C (50%) or D (below), and the items that did not
+          pass; a dimension with no applicable verdict shows "—", never a grade
+    And   the grades are computed in code, never by a model (D-PR-11), and other postures have no scorecard
 ```
 
 ## Must NOT
@@ -223,3 +232,4 @@ Feature: review matrix
 - 2026-10-22 · ~S-review-matrix-031..032 from the tier-3 review: a latent red line in an unpublished text, a missing kit, drafting's characterised, axis coverage, the regrade path · decision: D-0006
 - 2026-10-26 · +S-review-matrix-033 · decision: none -- user: 按你建議 (a single C-grade page may no longer overturn a reviewer's dispute)
 - 2026-11-10 · +S-review-matrix-034 · decision: none -- from the user's own notes on apology statements: an audited statement gets the trap-phrase checks a draft gets
+- 2026-11-10 · +S-review-matrix-035 · decision: none -- from the user's own notes on apology statements; computed from item verdicts per D-PR-11

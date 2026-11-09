@@ -114,6 +114,15 @@ Feature: checklist
     And   REG-07 asks whether each reporting deadline counted from when we first knew was met or is open, names it for counsel and never states it as met without a record
     And   STK-08 asks whether the frontline has a version to read aloud that matches the public facts and where it refers questions
     And   JOU-19 asks, for a press conference, for a trained single speaker, rehearsed hard questions, an announced length kept by a host, the core questions answered before leaving and a recording, and warns that a walk-out or a cut-off becomes the headline
+
+  @S-checklist-023
+  Scenario: the items from the user's notes on apology statements, and the scorecard dimension of each
+    When  the checklist loads
+    Then  APO-04 (correct each earlier statement the confirmed facts contradict), APO-05 (protect uninvolved people) and
+          JOU-20 (one final text, released at once with the action it announces, no draft out first) exist under
+          clarify_apologize
+    And   an item that measures an apology carries one scorecard dimension of remorse, ownership, clarity, governance,
+          consistency, action and release, every dimension has at least one item, and an unknown dimension is refused
 ```
 
 ## Revisions
@@ -133,3 +142,4 @@ Feature: checklist
 - 2026-10-24 · +S-checklist-020 JOU-06, JOU-17 and SOC-10 amended from the unsent statement at 24:17 of the second brake-pedal video (user: 開工) · decision: none -- paraphrased amendments of existing items
 - 2026-10-24 · +S-checklist-021 LEG-15 the bully frame and SOC-12 the underdog prop, from a commentary on a trademark suit against a small shop (user: 開工) · decision: none -- defensive items; the attack plan the video criticises is not borrowed
 - 2026-10-30 · +S-checklist-022 INT-09, REG-07, STK-08, JOU-19 from the crisis checklist the user supplied; the one-way press exit and the 40/20/40 rule are not borrowed (user: 開工) · decision: D-0007
+- 2026-11-10 · +S-checklist-023 · decision: none -- from the user's own notes on apology statements (2026-11-10): three items and a scorecard dimension per item

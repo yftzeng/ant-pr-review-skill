@@ -100,6 +100,8 @@ DEFAULT_LENSES = {
 
 DIMENSIONS = ["legal", "provability", "disclosure", "attribution", "backlash", "platform",
               "stakeholder", "timing", "ethics"]
+# S-checklist-023: what an item measures in an apology's scorecard, in display order
+SCORECARD = ["remorse", "ownership", "clarity", "governance", "consistency", "action", "release"]
 
 RED_LINES = ["fabrication_about_party", "undisclosed_inauthentic", "privacy_doxxing",
              "election_law", "market_manipulation", "health_claims", "hate_human_rights",
@@ -145,6 +147,8 @@ def validate_items(items: list[dict]) -> list[dict]:
             raise ValueError(f"{i['id']}: unknown lens {i['lens']}")
         if i["dimension"] not in DIMENSIONS:
             raise ValueError(f"{i['id']}: unknown dimension {i['dimension']}")
+        if i.get("scorecard") and i["scorecard"] not in SCORECARD:
+            raise ValueError(f"{i['id']}: unknown scorecard dimension {i['scorecard']}")
         if i.get("red_line") and i["red_line"] not in RED_LINES:
             raise ValueError(f"{i['id']}: unknown red line {i['red_line']}")
         if not set(i["directions"]) <= set(DIRECTIONS):

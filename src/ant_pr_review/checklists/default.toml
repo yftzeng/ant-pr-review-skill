@@ -98,6 +98,7 @@ id = "JOU-03"
 lens = "journalist"
 directions = ["outbound"]
 dimension = "backlash"
+scorecard = "consistency"
 text = "Does it contradict our past statements, actions or known facts that a reporter could put side by side?"
 
 [[item]]
@@ -105,6 +106,7 @@ id = "JOU-04"
 lens = "journalist"
 directions = ["outbound", "operation"]
 dimension = "timing"
+scorecard = "release"
 text = "Timing: does the publish window collide with sensitive dates, disasters, ongoing crises or news about the named parties (see the context section)?"
 
 [[item]]
@@ -225,6 +227,7 @@ id = "INT-03"
 lens = "internal"
 directions = ["outbound"]
 dimension = "stakeholder"
+scorecard = "governance"
 text = "Sign-off: is there evidence that everyone who must approve (legal, management, partners, people quoted) has approved, and does no statement in a named person's first person claim an experience or a quote that person has not confirmed?"
 
 [[item]]
@@ -322,6 +325,7 @@ lens = "social"
 directions = ["outbound", "inbound"]
 postures = ["clarify_apologize"]
 dimension = "backlash"
+scorecard = "remorse"
 text = "Apology, where one is due: does it name the specific wrong, take responsibility without blaming others, say what we do to fix it and avoid conditional wording such as 'if anyone was offended'? Where the facts show a wrong, is a clarification alone read as evasion? (na if nothing calls for an apology) Does it frame the harm as others' misunderstanding ('caused a misunderstanding', 'no ill intent') or explain our intentions before naming the wrong, and does it show we understand why people are angry?"
 
 [[item]]
@@ -403,6 +407,7 @@ id = "JOU-07"
 lens = "journalist"
 directions = ["outbound", "operation"]
 dimension = "backlash"
+scorecard = "consistency"
 text = "Across every version for each channel, language and audience (release, posts, staff note, customer email, Q&A): are the facts, numbers and commitments the same, so that no two can be put side by side as contradictory?"
 
 [[item]]
@@ -426,6 +431,7 @@ id = "SOC-07"
 lens = "social"
 directions = ["outbound"]
 dimension = "stakeholder"
+scorecard = "clarity"
 text = "If anyone may be harmed or affected (safety, money, data), does it tell them early whether they are affected and what to do now (stop using, refund, reset, contact), before explanation or defence? Where someone was injured or died, is the first sentence about them, before anything about the product?"
 
 [[item]]
@@ -455,6 +461,7 @@ lens = "journalist"
 directions = ["outbound", "inbound"]
 postures = ["clarify_apologize"]
 dimension = "provability"
+scorecard = "action"
 text = "Apology commitments: is each corrective action specific and checkable, with an owner role, a deadline and a published follow-up date, and is the remedy given without making affected people come forward to claim it? (na if nothing calls for an apology)"
 
 [[item]]
@@ -507,6 +514,7 @@ id = "SOC-09"
 lens = "social"
 directions = ["outbound"]
 dimension = "stakeholder"
+scorecard = "ownership"
 text = "Plain language and access: can the people affected grasp the core message in a few plain sentences, free of legal or official jargon and passive evasions ('mistakes were made'), and can they get it in an accessible form (text not only in images, alt text, captions, the languages they read)?"
 
 [[item]]
@@ -545,6 +553,7 @@ lens = "social"
 directions = ["outbound", "inbound"]
 postures = ["clarify_apologize", "rebut"]
 dimension = "backlash"
+scorecard = "clarity"
 text = "One objective: does a single message mix clarifying, apologising, rebutting and promoting (a product plug, brand slogan, achievement, company history, patents, awards, CSR or policy slogans in an apology or correction, or the crisis presented as our starting point, a higher standard or a reason to thank the public), so that the apology reads as advertising or the rebuttal as a denial?"
 
 [[item]]
@@ -552,6 +561,7 @@ id = "INT-06"
 lens = "internal"
 directions = ["outbound"]
 dimension = "stakeholder"
+scorecard = "action"
 text = "Delivery: can customer service, operations, legal, channel partners and leadership actually honour every promise, remedy, contact path and date in the text (staffed hotline, refund process, stock, a named owner), and has each owner confirmed? If the conduct itself is not defensible, the action changes before the words."
 
 [[item]]
@@ -596,6 +606,7 @@ id = "JOU-14"
 lens = "journalist"
 directions = ["outbound", "inbound"]
 dimension = "provability"
+scorecard = "action"
 text = "Done or planned: does the text present an action as taken (paused, recalled, refunded, reported to the regulator, independent review appointed) when it is only proposed, pending approval or partial? Each action should read as done, decided with a date, or under consideration, matching our records."
 
 [[item]]
@@ -603,6 +614,7 @@ id = "INT-07"
 lens = "internal"
 directions = ["outbound"]
 dimension = "stakeholder"
+scorecard = "action"
 text = "Bounded commitments: does it promise 'full compensation', 'unconditional refunds', 'we bear all losses' or a company-wide halt beyond a scope, budget and authority already confirmed? Does it say what continues as normal (unaffected batches, orders, stores) so customers and partners do not panic, and does it avoid shifting the cost onto suppliers, dealers, franchisees or staff?"
 
 [[item]]
@@ -634,6 +646,7 @@ lens = "journalist"
 directions = ["outbound", "inbound"]
 postures = ["clarify_apologize", "rebut"]
 dimension = "backlash"
+scorecard = "clarity"
 text = "Q&A and press answers: does each answer the question as asked, or say plainly that we cannot answer, why (law, privacy, an open investigation) and when we will? Flag pivots to our record, values or a broader topic ('the real issue is', 'more broadly'), a refused hypothetical where the question is about harm to people, a vague 'we are monitoring closely', and an omission or arrangement of facts that leaves a false impression. Assess only; never suggest a bridge."
 
 [[item]]
@@ -642,6 +655,7 @@ lens = "journalist"
 directions = ["outbound", "inbound"]
 postures = ["clarify_apologize", "rebut"]
 dimension = "provability"
+scorecard = "ownership"
 text = "Denial with a fix: does it say there is no defect, no fault or no problem and, in the same text, offer a free upgrade, inspection, replacement, 'design optimisation' or 'extra safety margin' without saying what it addresses? Readers take an unexplained preventive fix as an admission. Does it say what the fix is for and what is still being checked, or hold the offer until the findings say what it is for?"
 
 [[item]]
@@ -650,6 +664,7 @@ lens = "journalist"
 directions = ["outbound", "inbound"]
 postures = ["clarify_apologize", "rebut"]
 dimension = "provability"
+scorecard = "governance"
 text = "Verification: when the explanation rests on our own tests or internal review, can others check any of it (an accredited third party, the original tester invited to replicate or witness, sealed samples of the same batch, data we will publish)? Does it conclude on cause, safety or the other side's test method faster than that evidence allows, while naming fewer actions than conclusions? Does the independent check go ahead whether or not the accuser cooperates, rather than waiting on their data? Fast actions, slow conclusions."
 
 [[item]]
@@ -672,6 +687,7 @@ lens = "legal"
 directions = ["outbound", "inbound"]
 postures = ["clarify_apologize", "rebut"]
 dimension = "provability"
+scorecard = "ownership"
 text = "Exoneration claims: does it present a decision not to prosecute, a dismissed complaint, a passed inspection, an expired deadline or a regulator's silence as proof that we did nothing wrong or that a product is safe, beyond what that decision actually says? Quote the decision's own scope."
 
 [[item]]
@@ -760,6 +776,7 @@ id = "RTM-02"
 lens = "stakeholders"
 directions = ["outbound", "inbound"]
 dimension = "backlash"
+scorecard = "remorse"
 text = "Public emotion (people affected, community members): does it read as a sincere admission or as an arrogant word game? Quote the sentence that decides it."
 
 [[item]]
@@ -812,6 +829,7 @@ lens = "legal"
 directions = ["outbound", "operation", "inbound"]
 roles = ["board"]
 dimension = "legal"
+scorecard = "governance"
 text = "As the board: is the decision and its disclosure within the board's duties and recorded, is an independent committee needed where executives are conflicted, and does the communication match what the board approved?"
 
 [[item]]
@@ -925,3 +943,31 @@ lens = "social"
 directions = ["outbound", "inbound"]
 dimension = "backlash"
 text = "Underdog prop: are vulnerable people (low-paid staff, families, a 'little guy') used as props to turn a commercial or legal dispute into 'us against them', in our text or in the text we answer? Does our answer address the dispute without raising that divide, and without attacking the people used as the symbol?"
+
+# From the user's own notes on apology statements (2026-11-10)
+[[item]]
+id = "APO-04"
+lens = "journalist"
+directions = ["outbound", "inbound"]
+postures = ["clarify_apologize"]
+dimension = "backlash"
+scorecard = "consistency"
+text = "Earlier statements: does it correct or retract, explicitly and in plain words, each earlier statement of ours that the confirmed facts now contradict (a denial, 'routine', 'no impact'), instead of leaving it standing for someone else to set beside this one? (na if there is none)"
+
+[[item]]
+id = "APO-05"
+lens = "social"
+directions = ["outbound"]
+postures = ["clarify_apologize"]
+dimension = "stakeholder"
+scorecard = "ownership"
+text = "Uninvolved people: does it take the blame off people who bear none (family, junior staff, partners, the affected), say so by role, and close the door it should close (for example a request for privacy), without naming or exposing anyone? (na if no one is at risk of being drawn in)"
+
+[[item]]
+id = "JOU-20"
+lens = "journalist"
+directions = ["outbound"]
+postures = ["clarify_apologize"]
+dimension = "timing"
+scorecard = "release"
+text = "Release control: is there one final text, released at once on every channel, with no draft or partial version out first, and does it go out together with the action it announces (a review appointed, a step taken) rather than words now and action later?"
