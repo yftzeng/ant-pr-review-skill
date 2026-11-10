@@ -1,0 +1,40 @@
+# W19 never added
+@@ src/ant_pr_review/drafting.py
+-                  for m in LEGAL_ADVICE.finditer(text)]
++                  for m in LEGAL_ADVICE.finditer("")]
+# W19 without the advice noun: a retained lawyer is flagged
+@@ src/ant_pr_review/drafting.py
+- LEGAL_ADVICE = re.compile(r"(?:依|根據|根据|按照|遵照)(?:我們|我们|本公司)?(?:的)?(?:律師|律师|法律顧問|法律顾问)(?:的)?(?:建議|建议|意見|意见)"
++ LEGAL_ADVICE = re.compile(r"(?:律師|律师|法律顧問|法律顾问)"
+# English advice phrasing dropped
+@@ src/ant_pr_review/drafting.py
+-                           r"|\b(?:lawyers?|counsel|attorneys?|legal\s+advisers?)\s+(?:have\s+|has\s+)?(?:advised\b|told\s+us\s+(?:that\s+)?(?:we|to)\b)", re.I)
++                           r"|\b(?:lawyers?|counsel|attorneys?|legal\s+advisers?)\s+(?:have\s+|has\s+)?(?:advised\b|told\b)", re.I)
+# W19 key missing in a locale
+@@ src/ant_pr_review/locales/zh-CN.json
+-   "draft.w.W19": "引述律师意见，可能使律师与客户间的保密特权失效",
++   "draft.w.W19x": "引述律师意见，可能使律师与客户间的保密特权失效",
+# LEG-17 becomes a social item
+@@ src/ant_pr_review/checklists/default.toml
+- text = "Competition law: when
++ lens = "social"\ntext = "Competition law: when
+# the bare "律師的建議" branch dropped
+@@ src/ant_pr_review/drafting.py
+-                           r"|(?:律師|律师|法律顧問|法律顾问)的?(?:建議|建议|意見|意见)(?:是|為|为|認為|认为|指出|表示)"
++                           r"|(?!)"
+# LEG-17 states that the rules apply instead of asking
+@@ src/ant_pr_review/checklists/default.toml
+- or warn its customers? Ask counsel under this jurisdiction whether the competition authority's rules
++ or warn its customers? The competition authority's rules
+# "told us" without the advice that follows
+@@ src/ant_pr_review/drafting.py
+-                           r"|\b(?:lawyers?|counsel|attorneys?|legal\s+advisers?)\s+(?:have\s+|has\s+)?(?:advised\b|told\s+us\s+(?:that\s+)?(?:we|to)\b)", re.I)
++                           r"|\b(?:lawyers?|counsel|attorneys?|legal\s+advisers?)\s+(?:have\s+|has\s+)?advised\b", re.I)
+# the bare Chinese branch without the verb that follows
+@@ src/ant_pr_review/drafting.py
+-                           r"|(?:律師|律师|法律顧問|法律顾问)的?(?:建議|建议|意見|意见)(?:是|為|为|認為|认为|指出|表示)"
++                           r"|(?:律師|律师|法律顧問|法律顾问)的?(?:建議|建议|意見|意见)"
+# the verb form "律師建議我們" dropped
+@@ src/ant_pr_review/drafting.py
+-                           r"|(?:律師|律师|法律顧問|法律顾问)(?:建議|建议)(?:我們|我们|本公司|公司)"
++                           r"|(?!)"

@@ -259,6 +259,14 @@ def word_budget(v: dict) -> list[tuple[str, float]]:
     return sorted(((a, c / total) for a, c in n.items()), key=lambda x: -x[1]) if total else []
 
 
+# S-drafting-031: telling the public what our lawyers advised can waive privilege; a lawyer
+# merely retained is not advice.
+LEGAL_ADVICE = re.compile(r"(?:依|根據|根据|按照|遵照)(?:我們|我们|本公司)?(?:的)?(?:律師|律师|法律顧問|法律顾问)(?:的)?(?:建議|建议|意見|意见)"
+                          r"|(?:律師|律师|法律顧問|法律顾问)的?(?:建議|建议|意見|意见)(?:是|為|为|認為|认为|指出|表示)"
+                          r"|(?:律師|律师|法律顧問|法律顾问)(?:建議|建议)(?:我們|我们|本公司|公司)"
+                          r"|\bon\s+(?:the\s+)?advice\s+of\s+(?:our\s+)?(?:counsel|lawyers?|attorneys?)\b"
+                          r"|\b(?:lawyers?|counsel|attorneys?|legal\s+advisers?)\s+(?:have\s+|has\s+)?(?:advised\b|told\s+us\s+(?:that\s+)?(?:we|to)\b)", re.I)
+
 APOLOGY_TRAPS = (("W13", PASSIVE_EVASION), ("W14", CONDITIONAL), ("W15", SELF_EXONERATION),
                  ("W16", BLAME_MESSENGER), ("W17", MOVE_ON))
 
@@ -281,7 +289,7 @@ def _long_para(s: str) -> bool:
 
 
 def w_checks(v: dict, posture: str, lang: str | None = None, prior: bool = False) -> list[dict]:
-    """W1-W18: readability and accountability, never detection evasion (D-PR-7).
+    """W1-W19: readability and accountability, never detection evasion (D-PR-7).
     prior: the brief holds an earlier statement of ours, which an apology must correct."""
     hits = []
     paras = [p for p in v.get("paragraphs", []) if p.get("text", "").strip()]
@@ -305,6 +313,8 @@ def w_checks(v: dict, posture: str, lang: str | None = None, prior: bool = False
                  for i in outlang.check(text, lang)]
         hits += [{"id": wid, "where": where, "hit": m.group(0)}               # S-drafting-029
                  for wid, rx in APOLOGY_TRAPS for m in rx.finditer(text)]
+        hits += [{"id": "W19", "where": where, "hit": m.group(0)}             # S-drafting-031
+                 for m in LEGAL_ADVICE.finditer(text)]
     if posture in ("clarify_apologize", "rebut"):
         have = {p.get("part") for p in paras}
         missing = [x for x in FOUR_PARTS if x not in have]

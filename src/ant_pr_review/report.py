@@ -545,7 +545,7 @@ def drafting_lines(t: T, d: dict) -> list[str]:
             out.append(f"- {t('draft.chosen_other', id=d['chosen'])}")
     for v in vs:
         if v.get("w"):
-            out += ["", f"**{v['id']} · W1-W18**", ""]
+            out += ["", f"**{v['id']} · W1-W19**", ""]
             out += [f"- {h['id']} {t('draft.w.' + h['id'])} {h['where']}: {safe(h['hit'])}"
                     for h in v["w"]]
     from .drafting import word_budget

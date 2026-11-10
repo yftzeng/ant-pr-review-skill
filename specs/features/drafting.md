@@ -198,6 +198,13 @@ Feature: drafting
     When  the versions are checked and the report is written
     Then  the report gives each version's share of words per audience, largest first, counted in code (CJK characters or
           words), and leaves out a version with no labelled paragraph
+
+  @S-drafting-031
+  Scenario: a draft that tells the public what our lawyers advised is flagged
+    When  the versions are checked, in any posture
+    Then  W19 reports a paragraph that cites legal advice ("依律師建議", "根據法律顧問的意見", "律师建议", "on the advice of
+          counsel", "our lawyers advised"), since quoting it can waive privilege; a mention of lawyers without their advice
+          ("我們已委任律師", "we have retained counsel") is not reported, and W19 never blocks the export
     And   the writer is asked to label each paragraph's audience; the share is shown, never judged (which audience matters
           most is the user's call)
 ```
@@ -221,3 +228,4 @@ Feature: drafting
 - 2026-11-03 · +S-drafting-028 · decision: none -- ported from ant-peer-review's output-language check (script and regional terms): a Taiwan statement with mainland terms, or the reverse, tells readers where it was written; checked, not rewritten
 - 2026-11-10 · +S-drafting-029 · decision: none -- from the user's own notes on apology statements (2026-11-10): the order of moves, an explicit correction of earlier statements, and the trap phrases
 - 2026-11-10 · +S-drafting-030 · decision: none -- from the user's own notes on apology statements: one statement, many readers, and how much of it each gets
+- 2026-11-10 · +S-drafting-031 · decision: none -- user: 按你建議 (phase 1 of the legal gap review): citing legal advice in public can waive privilege; advisory like W1-W18

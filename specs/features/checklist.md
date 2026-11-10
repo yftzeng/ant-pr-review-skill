@@ -123,6 +123,18 @@ Feature: checklist
           clarify_apologize
     And   an item that measures an apology carries one scorecard dimension of remorse, ownership, clarity, governance,
           consistency, action and release, every dimension has at least one item, and an unknown dimension is refused
+
+  @S-checklist-024
+  Scenario: confidentiality, privilege and competition law are checked, as questions for counsel
+    When  the checklist loads
+    Then  LEG-16 asks, for every outbound or operation plan, whether a cause or process told in detail discloses our trade
+          secrets, information a partner shared under a confidentiality agreement, a settlement's confidential terms or
+          what our lawyers advised (which can waive privilege), and whether a disclosure duty makes some of it mandatory
+    And   LEG-17 asks, whenever a statement names competitors, prices or the industry, whether it announces or hints at
+          prices or terms with peers or a trade association, disparages a competitor or compares without proof, calls for a
+          boycott, or accuses a competitor of infringement before a ruling or warns its customers, and asks counsel whether
+          the competition authority's rules on infringement warning letters apply
+    And   both are legal-lens items that ask questions for counsel under this jurisdiction and never state a legal conclusion
 ```
 
 ## Revisions
@@ -143,3 +155,4 @@ Feature: checklist
 - 2026-10-24 · +S-checklist-021 LEG-15 the bully frame and SOC-12 the underdog prop, from a commentary on a trademark suit against a small shop (user: 開工) · decision: none -- defensive items; the attack plan the video criticises is not borrowed
 - 2026-10-30 · +S-checklist-022 INT-09, REG-07, STK-08, JOU-19 from the crisis checklist the user supplied; the one-way press exit and the 40/20/40 rule are not borrowed (user: 開工) · decision: D-0007
 - 2026-11-10 · +S-checklist-023 · decision: none -- from the user's own notes on apology statements (2026-11-10): three items and a scorecard dimension per item
+- 2026-11-10 · +S-checklist-024 · decision: none -- user: 按你建議 (phase 1 of the legal gap review): our own confidentiality and privilege when a statement explains cause and process, and competition law when it touches competitors, prices or peers; existing LEG-06/08/10, REG-06 and LEG-15 already cover the rest

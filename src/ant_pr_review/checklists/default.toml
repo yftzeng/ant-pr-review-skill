@@ -971,3 +971,17 @@ postures = ["clarify_apologize"]
 dimension = "timing"
 scorecard = "release"
 text = "Release control: is there one final text, released at once on every channel, with no draft or partial version out first, and does it go out together with the action it announces (a review appointed, a step taken) rather than words now and action later?"
+
+[[item]]
+id = "LEG-16"
+lens = "legal"
+directions = ["outbound", "operation"]
+dimension = "legal"
+text = "Confidentiality and privilege: does the cause or process, told in detail, disclose our trade secrets, information a partner or customer shared under a confidentiality agreement, a settlement's confidential terms, or what our lawyers advised (quoting advice in public can waive privilege)? Is any of it mandatory to disclose under a disclosure duty, and has counsel under this jurisdiction cleared each such sentence? (na if the text explains no cause or process)"
+
+[[item]]
+id = "LEG-17"
+lens = "legal"
+directions = ["outbound", "operation", "inbound"]
+dimension = "legal"
+text = "Competition law: when the statement names competitors, prices or the industry, does it announce or hint at prices, capacity or terms together with peers or a trade association, disparage a competitor or compare without proof, call for a boycott, or accuse a competitor of infringement before a ruling or warn its customers? Ask counsel under this jurisdiction whether the competition authority's rules on infringement warning letters, or similar rules, apply before such a sentence goes out. (na if it touches none of them)"
