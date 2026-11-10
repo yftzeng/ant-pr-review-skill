@@ -124,7 +124,8 @@ def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict
           flags: dict[int, str], means: list[str], publish_at: str,
           jurisdictions: list[str], withheld: str, unreviewed: str = "not reviewed",
           t: T | None = None, posture: str = "clarify_apologize",
-          unverified: list[str] | None = None, grade: str | None = None) -> dict:
+          unverified: list[str] | None = None, grade: str | None = None,
+          key_dates: list[dict] | tuple = ()) -> dict:
     """labels: 1-based step number -> {category, reason}, or None when the review did not
     run (every step is then not_reviewed)."""
     kept, dropped, black = [], [], []
@@ -189,7 +190,8 @@ def build(steps: list[dict], labels: dict[int, dict] | None, excluded: list[dict
         s["n"] = n
         s["date"] = (t0 + timedelta(days=s["day"])).isoformat() if t0 else ""
         s["warnings"] = [f"{d['date']} {d['note']} ({d['jurisdiction']})"
-                         for d in sensitive_dates_near(jurisdictions, s["date"], days=1)] \
+                         for d in sensitive_dates_near(jurisdictions, s["date"], days=1,
+                                                       own=key_dates)] \
             if s["date"] else []
     _order_warnings([s for s in kept if not s.get("fixed")], posture, t, unverified or [])
     for s in kept:
@@ -327,7 +329,8 @@ def plan_t(backend: Backend, writer: str, checker: str, lang: str, risks: list[d
     card = intake.get("card", {})
     out = build(steps, labels, excluded, flags, means, card.get("publish_at", ""),
                 card.get("jurisdictions", []), t("plans.x.withheld"),
-                t("plans.x.unreviewed"), t, posture_of(intake), unverified, grade)
+                t("plans.x.unreviewed"), t, posture_of(intake), unverified, grade,
+                key_dates=card.get("key_dates", []))
     stricter = sum(1 for s in out["steps"] if s["category"] != s["writer_category"])
     black = sum(1 for n in range(1, len(steps) + 1)
                 if (labels or {}).get(n, {}).get("category") == "black")

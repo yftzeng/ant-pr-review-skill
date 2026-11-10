@@ -1,0 +1,28 @@
+# own dates ignored
+@@ src/ant_pr_review/catalog.py
+-         if abs((kd - d).days) <= days:
++         if False:
+# scan does not pass them
+@@ src/ant_pr_review/contextscan.py
+-                                                     own=card.get("key_dates", []))}
++                                                     own=[])}
+# timeline does not pass them
+@@ src/ant_pr_review/timeline.py
+-                                                        own=key_dates)] \
++                                                        own=())] \
+# asked on the first fill
+@@ src/ant_pr_review/intake.py
+-             if f not in MENU_ONLY:
++             if True:
+# a bad date accepted
+@@ src/ant_pr_review/intake.py
+-             date.fromisoformat(d)
++             pass
+# editor gives up on a bad date
+@@ src/ant_pr_review/intake.py
+-                 io.say(t("card.key_dates.bad"))
++                 io.say(t("card.key_dates.bad")); return
+# the plans phase does not pass the card's dates
+@@ src/ant_pr_review/timeline.py
+-                 key_dates=card.get("key_dates", []))
++                 key_dates=())

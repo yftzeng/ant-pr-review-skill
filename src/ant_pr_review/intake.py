@@ -22,7 +22,8 @@ LEGACY_STAKEHOLDERS = {"consumers": ["victims", "bystanders"], "employees": "sta
                        "communities": "community_leaders"}
 CARD_FIELDS = ["org", "parties", "jurisdictions", "channels", "stakeholders", "publish_at",
                "keywords", "embargo", "speaker", "background", "locked", "focus", "signals",
-               "characterised", "occurred_at", "known_at", "exposed_at"]
+               "characterised", "occurred_at", "known_at", "exposed_at", "key_dates"]
+MENU_ONLY = ("key_dates",)   # S-context-card-020: edited from the card menu, not asked on the first fill
 TIMES = ("occurred_at", "known_at", "exposed_at")  # D-0007: it happened, we knew, it went public
 URL_RE = re.compile(r"^https?://\S+$", re.I)
 
@@ -243,8 +244,26 @@ def value_label(t: T, field: str, value: str) -> str:
     return t(f"card.{field}.{value}")
 
 
+def parse_key_dates(text: str) -> list[dict]:
+    """S-context-card-020: "2026-11-17 Q3 earnings; 2026-11-18 hearing" -> [{date, label}]."""
+    from datetime import date
+    out = []
+    for item in (x.strip() for x in re.split(r"[;；\n]", text or "")):
+        if not item:
+            continue
+        d, _, label = item.partition(" ")
+        try:
+            date.fromisoformat(d)
+        except ValueError:
+            raise ValueError(f"key date {item!r}: start with a date in YYYY-MM-DD") from None
+        out.append({"date": d, "label": label.strip()})
+    return out
+
+
 def card_line(t: T, field: str, card: dict) -> str:
     v = card.get(field)
+    if field == "key_dates":
+        return "、".join(f"{d['date']} {d['label']}".strip() for d in v) if v else t("intake.skipped")
     if field in ("embargo", "characterised"):
         return t("ui.yes") if v else t("ui.no")
     if field == "locked" and v:
@@ -287,6 +306,13 @@ def ask_field(io: IO, t: T, field: str, card: dict, direction: str) -> None:
     elif field == "characterised":
         card[field] = confirm(io, t, t("card.characterised"),
                               default=bool(card.get("characterised", False)))
+    elif field == "key_dates":
+        while True:
+            try:
+                card[field] = parse_key_dates(ask_text(io, t("card.key_dates")))
+                return
+            except ValueError:
+                io.say(t("card.key_dates.bad"))
     elif field == "embargo":
         card[field] = confirm(io, t, t("card.embargo"),
                               default=card.get("embargo", direction == "outbound"))
@@ -300,7 +326,8 @@ def ask_card(io: IO, t: T, direction: str, initial: dict | None = None,
     fields = [f for f in CARD_FIELDS if f not in skip]
     if not initial:
         for f in fields:
-            ask_field(io, t, f, card, direction)
+            if f not in MENU_ONLY:
+                ask_field(io, t, f, card, direction)
     while True:
         io.say(section(t("intake.card")))
         for f in fields:
@@ -346,7 +373,8 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
                            purpose: str = "audit", brief: dict | None = None,
                            signals: str | None = None, characterised: bool = False,
                            academic: bool = False, occurred_at: str = "", known_at: str = "",
-                           exposed_at: str = "", export: bool = False) -> dict:
+                           exposed_at: str = "", export: bool = False,
+                           key_dates: str = "") -> dict:
     if direction not in DIRECTIONS:
         raise ValueError(f"direction must be one of {DIRECTIONS}")
     if purpose not in PURPOSES:
@@ -388,7 +416,7 @@ def build_intake_from_args(direction: str, targets: list[str], *, lang: str,
             "locked": [x.strip() for x in (locked or []) if x.strip()], "focus": focus or "",
             "signals": parse_signals(signals), "characterised": bool(characterised),
             "occurred_at": occurred_at.strip(), "known_at": known_at.strip(),
-            "exposed_at": exposed_at.strip(),
+            "exposed_at": exposed_at.strip(), "key_dates": parse_key_dates(key_dates),
             **({"tax_id": tax_id.strip()} if tax_id and tax_id.strip() else {})}
     identities = check_identities(roles or [DEFAULT_IDENTITY])
     from .catalog import POLITICAL_IDENTITIES, state_ruled

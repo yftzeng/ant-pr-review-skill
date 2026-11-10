@@ -25,7 +25,8 @@ def build_queries(card: dict) -> list[str]:
 def base_context(card: dict) -> dict:
     return {"status": "pending", "queries": [], "findings": [], "errors": [],
             "sensitive_dates": sensitive_dates_near(card.get("jurisdictions", []),
-                                                    card.get("publish_at", ""))}
+                                                    card.get("publish_at", ""),
+                                                    own=card.get("key_dates", []))}
 
 
 def run_queries(backend: Backend, searcher: str, queries: list[str], lang: str, *,

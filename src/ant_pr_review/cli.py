@@ -78,6 +78,8 @@ def build_parser() -> argparse.ArgumentParser:
     n.add_argument("--occurred-at", default="", help="when the event happened (D-0007)")
     n.add_argument("--known-at", default="", help="when we first knew internally")
     n.add_argument("--exposed-at", default="", help="when it first became public")
+    n.add_argument("--key-dates", default="",
+                   help='our own dates to time the release against, "YYYY-MM-DD label; ..."')
     n.add_argument("--export", action="store_true",
                    help="also write PDF and DOCX of the final text (needs the export extra)")
     n.add_argument("--context-scan", action="store_true",
@@ -315,7 +317,7 @@ def cmd_new(args, io: IO, store: Store, cfg: Config) -> int:
                 purpose="drafting" if args.brief and args.purpose == "audit" else args.purpose,
                 brief=brief, signals=args.signals, characterised=args.characterised,
                 academic=args.academic, occurred_at=args.occurred_at, known_at=args.known_at,
-                exposed_at=args.exposed_at, export=args.export)
+                exposed_at=args.exposed_at, export=args.export, key_dates=args.key_dates)
         except ValueError as e:
             io.say(f"error: {e}")
             return EXIT_USAGE

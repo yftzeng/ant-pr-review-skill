@@ -100,6 +100,16 @@ Feature: context card
   Scenario: the card records when it happened, when we first knew and when it became public
     When  the card is filled interactively (three optional text fields, Enter skips) and from --occurred-at, --known-at and --exposed-at
     Then  the card has occurred_at, known_at and exposed_at, each shown on the card summary and passed to every model with the card; an empty one is "not given", never guessed
+
+  @S-context-card-020
+  Scenario: the organisation's own key dates are on the card and checked like sensitive dates
+    Given --key-dates "2026-11-17 Q3 earnings; 2026-11-18 committee hearing", or the same typed when editing the card
+    When  the intake runs, the context is based and the timeline is built
+    Then  the card has key_dates [{date, label}], shown on the card summary; a date not in YYYY-MM-DD is refused (the command
+          line exits with an error, the card editor asks again)
+    And   a publish date or a timeline step within the window of a key date is warned like a pack's sensitive date, with
+          the label and "org" for its place
+    And   the first fill of the card does not ask for key dates; they are edited from the card menu
 ```
 
 ## Must NOT
@@ -115,3 +125,4 @@ Feature: context card
 - 2026-10-22 · +S-context-card-018 event signals and characterised on the card (user: 開工) · decision: D-0006
 - 2026-10-22 · ~S-context-card-018 --characterised refused for drafting (tier-3 review) · decision: D-0006
 - 2026-10-30 · +S-context-card-019 the three times of an event on the card (user: 開工, the shared crisis core) · decision: D-0007
+- 2026-11-10 · +S-context-card-020 · decision: none -- from the user's own notes on apology statements: timing is part of the message; the release is placed against the organisation's own dates (earnings, hearings)

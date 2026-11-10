@@ -279,8 +279,10 @@ def red_lines_for(items: list[str]) -> list[str]:
     return [k for k in RED_LINES if k in keys]
 
 
-def sensitive_dates_near(jurisdictions: list[str], publish_at: str, days: int = 3) -> list[dict]:
-    """Pack dates within +-days of an ISO publish date (no web needed)."""
+def sensitive_dates_near(jurisdictions: list[str], publish_at: str, days: int = 3,
+                         own: list[dict] | tuple = ()) -> list[dict]:
+    """Pack dates, and the organisation's own key dates (S-context-card-020), within +-days
+    of an ISO publish date (no web needed)."""
     from datetime import date
     try:
         d = date.fromisoformat(publish_at.strip()[:10])
@@ -297,6 +299,13 @@ def sensitive_dates_near(jurisdictions: list[str], publish_at: str, days: int = 
                     continue
                 if abs((cand - d).days) <= days:
                     out.append({"jurisdiction": j, "date": cand.isoformat(), "note": s["note"]})
+    for k in own:
+        try:
+            kd = date.fromisoformat(str(k.get("date", ""))[:10])
+        except ValueError:
+            continue
+        if abs((kd - d).days) <= days:
+            out.append({"jurisdiction": "org", "date": kd.isoformat(), "note": k.get("label", "")})
     return out
 
 # ---- the event assessment (D-0006) ----
